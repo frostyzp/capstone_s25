@@ -85,3 +85,16 @@ window.addEventListener("deviceorientation", (event) => {
         document.body.style.backgroundColor = "white"; // Default
     }
 });
+
+
+function requestPermission() {
+    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+        DeviceMotionEvent.requestPermission().then(response => {
+            if (response === "granted") {
+                alert("Permission granted! Tilt your device.");
+            }
+        }).catch(console.error);
+    } else {
+        alert("Your browser does not require permission.");
+    }
+}
