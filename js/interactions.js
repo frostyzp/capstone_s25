@@ -84,6 +84,8 @@ window.addEventListener("deviceorientation", (event) => {
 
     } else if (Math.abs(gamma) > 30) {
         document.body.style.backgroundColor = "purple"; // Tilted left or right
+        window.scrollBy(0, +scrollSpeed); // Scroll up
+
     } else {
         document.body.style.backgroundColor = "white"; // Default
     }
