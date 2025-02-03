@@ -85,7 +85,6 @@ document.addEventListener("click", function() {
             }
         }
 
-
 window.addEventListener("deviceorientation", (event) => {
     const beta = event.beta;  // Front-back tilt (-90 to 90)
     const gamma = event.gamma; // Left-right tilt (-90 to 90)
