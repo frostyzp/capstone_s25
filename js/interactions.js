@@ -94,8 +94,6 @@ function requestPermission() {
         DeviceMotionEvent.requestPermission().then(response => {
             if (response === "granted") {
                 alert("Permission granted! Tilt your device.");
-                startListening();
-
             }
         }).catch(console.error);
     } else {
@@ -103,23 +101,10 @@ function requestPermission() {
     }
 }
 
-function startListening() {
-    window.addEventListener("deviceorientation", (event) => {
-        const beta = event.beta; // Forward/backward tilt (-90 to 90)
-        const scrollSpeed = Math.max(0, (beta - 10) * 2); // Adjust sensitivity
-
-        if (beta < 10) {
-            // window.scrollBy(0, -scrollSpeed); // Scroll up
-        }
-    });
-}
-
-
-
 
 // BOILER PLATE STUFF TO PREVENT SCROLL
 document.addEventListener("DOMContentLoaded", function () {
-    disableUserScroll(); // Now safe to run
+    // disableUserScroll(); // Now safe to run
 });
 
 function disableUserScroll() {
