@@ -111,3 +111,36 @@ function startListening() {
         }
     });
 }
+
+
+
+
+// BOILER PLATE STUFF TO PREVENT SCROLL
+document.addEventListener("DOMContentLoaded", function () {
+    disableUserScroll(); // Now safe to run
+});
+
+function disableUserScroll() {
+    document.body.style.overflow = "hidden"; // Prevent scrolling
+    window.addEventListener("wheel", preventScroll, { passive: false });
+    window.addEventListener("touchmove", preventScroll, { passive: false });
+    window.addEventListener("keydown", preventArrowScroll);
+}
+
+function enableUserScroll() {
+    document.body.style.overflow = "auto"; // Restore scrolling
+    window.removeEventListener("wheel", preventScroll);
+    window.removeEventListener("touchmove", preventScroll);
+    window.removeEventListener("keydown", preventArrowScroll);
+}
+
+function preventScroll(event) {
+    event.preventDefault();
+}
+
+function preventArrowScroll(event) {
+    const keys = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]; // Spacebar too
+    if (keys.includes(event.key)) {
+        event.preventDefault();
+    }
+}
