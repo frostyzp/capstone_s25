@@ -14,7 +14,7 @@ var onlongtouch;
 var timer;
 var touchduration = 500; //length of time we want the user to touch before we do something
 
-let isInteraction = true;
+let isInteraction = false;
 
 function touchstart() {
     timer = setTimeout(onlongtouch, touchduration); 
@@ -73,12 +73,10 @@ function handleTouchMove(evt) {
     yDown = null;                                             
 };
 
-
-
-window.addEventListener("deviceorientation", (event) => {
-    const beta = event.beta;  // Front-back tilt (-90 to 90)
-    const gamma = event.gamma; // Left-right tilt (-90 to 90)
-    const scrollSpeed = 3; // Adjust as needed
+document.addEventListener("click", function() {
+    isInteraction = true;
+    console.log("User interaction detected");
+});
 
         // Function to trigger haptic feedback
         function triggerHapticFeedback() {
@@ -86,6 +84,13 @@ window.addEventListener("deviceorientation", (event) => {
                 navigator.vibrate(100); // Vibrate for 100ms
             }
         }
+
+
+window.addEventListener("deviceorientation", (event) => {
+    const beta = event.beta;  // Front-back tilt (-90 to 90)
+    const gamma = event.gamma; // Left-right tilt (-90 to 90)
+    const scrollSpeed = 3; // Adjust as needed
+
     
 
     if (beta > 30) {
