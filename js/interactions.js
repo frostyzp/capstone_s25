@@ -14,6 +14,8 @@ var onlongtouch;
 var timer;
 var touchduration = 500; //length of time we want the user to touch before we do something
 
+let isInteraction = true;
+
 function touchstart() {
     timer = setTimeout(onlongtouch, touchduration); 
 }
