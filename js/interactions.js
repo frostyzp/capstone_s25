@@ -79,10 +79,12 @@ window.addEventListener("deviceorientation", (event) => {
 
     if (beta > 30) {
         document.body.style.backgroundColor = "blue";  // Tilted forward (UP)
+        window.scrollBy(0, -scrollSpeed); // Scroll up
+
     } else if (Math.abs(gamma) > 30) {
         document.body.style.backgroundColor = "purple"; // Tilted left or right
     } else {
-        // document.body.style.backgroundColor = "white"; // Default
+        document.body.style.backgroundColor = "white"; // Default
     }
 });
 
@@ -107,7 +109,7 @@ function startListening() {
         const scrollSpeed = Math.max(0, (beta - 10) * 2); // Adjust sensitivity
 
         if (beta < 10) {
-            window.scrollBy(0, -scrollSpeed); // Scroll up
+            // window.scrollBy(0, -scrollSpeed); // Scroll up
         }
     });
 }
