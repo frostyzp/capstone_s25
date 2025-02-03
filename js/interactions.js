@@ -82,8 +82,8 @@ window.addEventListener("deviceorientation", (event) => {
 
         // Function to trigger haptic feedback
         function triggerHapticFeedback() {
-            if (navigator.vibrate) {
-                navigator.vibrate(200); // Vibrate for 100ms
+            if (isInteraction && navigator.vibrate) {
+                navigator.vibrate(100); // Vibrate for 100ms
             }
         }
     
@@ -94,11 +94,11 @@ window.addEventListener("deviceorientation", (event) => {
         triggerHapticFeedback(); // Activate haptic feedback for scrolling up
 
 
-    } else if (beta < -30) {
+    } else if (beta < -15) {
         document.body.style.backgroundColor = "red";  // Tilted backward (DOWN)
         window.scrollBy(0, scrollSpeed); // Scroll down
 
-    } else if (Math.abs(gamma) > 30) {
+    } else if (Math.abs(gamma) > 15) {
         document.body.style.backgroundColor = "purple"; // Tilted left or right
         // window.scrollBy(0, +scrollSpeed); // Scroll up
 
