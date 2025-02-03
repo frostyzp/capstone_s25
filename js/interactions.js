@@ -76,6 +76,7 @@ function handleTouchMove(evt) {
 window.addEventListener("deviceorientation", (event) => {
     const beta = event.beta;  // Front-back tilt (-90 to 90)
     const gamma = event.gamma; // Left-right tilt (-90 to 90)
+    const scrollSpeed = 10; // Adjust as needed
 
     if (beta > 30) {
         document.body.style.backgroundColor = "blue";  // Tilted forward (UP)
