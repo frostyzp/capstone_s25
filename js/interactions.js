@@ -78,31 +78,40 @@ document.addEventListener("click", function() {
     console.log("User interaction detected");
 });
 
-        // Function to trigger haptic feedback
-        function triggerHapticFeedback() {
-            if (isInteraction && navigator.vibrate) {
-                navigator.vibrate(100); // Vibrate for 100ms
-            }
-        }
+// Function to trigger haptic feedback
+function triggerHapticFeedback() {
+    if (isInteraction && navigator.vibrate) {
+        navigator.vibrate(100); // Vibrate for 100ms
+    }
+}
+
+
+// ––––––––––––––––––––––––– TILTING -------------------------------------- 
 
 window.addEventListener("deviceorientation", (event) => {
     const beta = event.beta;  // Front-back tilt (-90 to 90)
     const gamma = event.gamma; // Left-right tilt (-90 to 90)
-    const scrollSpeed = 3; // Adjust as needed
+    // const scrollSpeed = 3; // Adjust as needed
 
+        // Map beta angle to a scrolling speed range
+    function mapRange(value, inMin, inMax, outMin, outMax) {
+        return Math.min(outMax, Math.max(outMin, (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin));
+    }
+            
+    let scrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 20); // Scroll faster when tilting more
     
-
     if (beta > 30) {
         document.body.style.backgroundColor = "blue";  // Tilted forward (UP)
         window.scrollBy(0, -scrollSpeed); // Scroll up
         triggerHapticFeedback(); // Activate haptic feedback for scrolling up
 
 
-    } else if (beta < -15) {
+    } else if (beta < -10) {
         document.body.style.backgroundColor = "red";  // Tilted backward (DOWN)
         window.scrollBy(0, scrollSpeed); // Scroll down
+        
 
-    } else if (Math.abs(gamma) > 15) {
+    } else if (Math.abs(gamma) > 10) {
         document.body.style.backgroundColor = "purple"; // Tilted left or right
         // window.scrollBy(0, +scrollSpeed); // Scroll up
 
@@ -127,7 +136,7 @@ function requestPermission() {
 
 // BOILER PLATE STUFF TO PREVENT SCROLL
 document.addEventListener("DOMContentLoaded", function () {
-    // disableUserScroll(); // Now safe to run
+    disableUserScroll(); // Now safe to run
 });
 
 function disableUserScroll() {
