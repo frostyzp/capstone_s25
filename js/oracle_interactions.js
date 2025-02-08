@@ -100,11 +100,11 @@ window.addEventListener("deviceorientation", (event) => {
         const oracleBody = document.querySelector('.oracleBody');
 
         if (oracleBody) {
-            oracleBody.style.transform = `rotateY(${tiltX}deg)`;
+            oracleBody.style.transform = `rotateY(-${tiltX}deg)`;
         }
 
         if (!hasTiltTriggered) {
-            document.body.style.backgroundColor = "black"; // Tilted left or right
+            // document.body.style.backgroundColor = "black"; // Tilted left or right
             hasTiltTriggered = true;
 
             setTimeout(() => {
