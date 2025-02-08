@@ -28,7 +28,9 @@ body {
     color: #2a52be;
     margin: 2rem 12%;
     padding: 2rem 1rem;
+}
 
+.oracle_wrapper {
     background-color: black;
     text-align: center;
     border-radius: 20px; /* ✅ Adjust for roundness */

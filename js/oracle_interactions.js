@@ -102,7 +102,7 @@ window.addEventListener("deviceorientation", (event) => {
 
     } else if (beta < -10) {
 
-    } else if (Math.abs(gamma) > 50 && !hasTiltTriggered) {
+    } else if (Math.abs(gamma) > 25 && !hasTiltTriggered) {
         document.body.style.backgroundColor = "black"; // Tilted left or right
         hasTiltTriggered = true;
     
@@ -138,11 +138,17 @@ function requestPermission() {
     if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
         DeviceMotionEvent.requestPermission().then(response => {
             if (response === "granted") {
-                alert("Navigate through the site gently with care. ");
+                alert("Navigate through the site gently with care.");
+                
+                // Remove the button after permission is granted
+                document.querySelector("button").remove();
             }
         }).catch(console.error);
     } else {
         alert("Your browser does not require permission.");
+        
+        // Remove the button anyway (for non-iOS devices)
+        document.querySelector("button").remove();
     }
 }
 
