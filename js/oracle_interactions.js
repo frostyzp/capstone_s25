@@ -100,7 +100,7 @@ window.addEventListener("deviceorientation", (event) => {
         const oracleBody = document.querySelector('.oracleBody');
 
         if (oracleBody) {
-            oracleBody.style.transform = `rotateX(${tiltY}deg)`;
+            oracleBody.style.transform = `rotateY(${tiltX}deg)`;
         }
 
         if (!hasTiltTriggered) {
