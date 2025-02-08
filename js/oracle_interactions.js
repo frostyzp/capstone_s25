@@ -105,29 +105,29 @@ window.addEventListener("deviceorientation", (event) => {
     } else if (Math.abs(gamma) > 50 && !hasTiltTriggered) {
         document.body.style.backgroundColor = "black"; // Tilted left or right
         hasTiltTriggered = true;
+    
         setTimeout(() => {
             const oracleDiv = document.querySelector('.oracle_answer');
-            
+    
             // Add fade-out effect
             oracleDiv.classList.remove("fade-in");
             oracleDiv.classList.add("fade-out");
     
             setTimeout(() => {
-                // Update the message
                 getEightBallMessage();
     
                 // Add fade-in effect
                 oracleDiv.classList.remove("fade-out");
                 oracleDiv.classList.add("fade-in");
-
+    
+                // ✅ Reset cooldown **AFTER** fade-in finishes
+                setTimeout(() => {
+                    hasTiltTriggered = false;
+                }, 1000); // Adjust based on fade-in time
+    
             }, 1500); // Wait for fade-out before updating text
+    
         }, 500); // Delay before updating message
-
-            // ✅ Set a cooldown before allowing another trigger
-    setTimeout(() => {
-        hasTiltTriggered = false;
-    }, 2500); // Cooldown period (adjust as needed)
-
     } else {
         document.body.style.backgroundColor = "white"; // Default
     }
