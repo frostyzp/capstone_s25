@@ -22,3 +22,26 @@ body {
 .fade-in {
     opacity: 1;
 }
+
+.oracle_answer {
+    font-size: 1.4rem;
+    color: #2a52be;
+    margin: 2rem 12%;
+    padding: 2rem 1rem;
+
+    background-color: black;
+    text-align: center;
+    border-radius: 20px; /* ✅ Adjust for roundness */
+    outline: white;
+}
+
+.oracleBody {
+    background-color: #505050	;
+    border-radius: 20px; /* ✅ Adjust for roundness */
+    padding: 2rem;
+
+}
+
+.oracleTextp {
+    color: white;
+}

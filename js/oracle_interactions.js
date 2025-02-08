@@ -30,7 +30,7 @@ const eightBallMessages = [
     "Very doubtful."
 ];
 
-
+let hasTiltTriggered = false; // 
 
 var xDown = null;                                                        
 var yDown = null;
@@ -99,15 +99,12 @@ window.addEventListener("deviceorientation", (event) => {
     let scrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 20); // Scroll faster when tilting more
     
     if (beta > 30) {
-        document.body.style.backgroundColor = "blue";  // Tilted forward (UP)
-        // window.scrollBy(0, -scrollSpeed); // Scroll up
-        // triggerHapticFeedback(); // Activate haptic feedback for scrolling up
+
     } else if (beta < -10) {
-        document.body.style.backgroundColor = "red";  // Tilted backward (DOWN)
-        // window.scrollBy(0, scrollSpeed); // Scroll down
-    } else if (Math.abs(gamma) > 30) {
-        document.body.style.backgroundColor = "blue"; // Tilted left or right
-        // window.scrollBy(0, +scrollSpeed); // Scroll up
+
+    } else if (Math.abs(gamma) > 50 && !hasTiltTriggered) {
+        document.body.style.backgroundColor = "black"; // Tilted left or right
+        hasTiltTriggered = true;
         setTimeout(() => {
             const oracleDiv = document.querySelector('.oracle_answer');
             
@@ -122,6 +119,8 @@ window.addEventListener("deviceorientation", (event) => {
                 // Add fade-in effect
                 oracleDiv.classList.remove("fade-out");
                 oracleDiv.classList.add("fade-in");
+
+                hasTiltTriggered = false;
             }, 500); // Wait for fade-out before updating text
         }, 2000); // Delay before updating message
 
