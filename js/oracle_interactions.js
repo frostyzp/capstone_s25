@@ -95,39 +95,41 @@ window.addEventListener("deviceorientation", (event) => {
 
     } else if (beta < -10) {
 
-    } else if (Math.abs(gamma) > 25 && !hasTiltTriggered) {
-        document.body.style.backgroundColor = "black"; // Tilted left or right
-        hasTiltTriggered = true;
-
-        const tiltX = gamma/2; // Adjust the divisor to control tilt intensity
+    } else if (Math.abs(gamma) > 25) {
+        const tiltX = gamma; // Adjust the divisor to control tilt intensity
         const oracleBody = document.querySelector('.oracleBody');
 
         if (oracleBody) {
-            oracleBody.style.transform = `rotateX(${tiltX}deg)`;
+            oracleBody.style.transform = `rotateX(${tiltY}deg)`;
         }
-    
-        setTimeout(() => {
-            const oracleDiv = document.querySelector('.oracle_answer');
-    
-            // Add fade-out effect
-            oracleDiv.classList.remove("fade-in");
-            oracleDiv.classList.add("fade-out");
-    
+
+        if (!hasTiltTriggered) {
+            document.body.style.backgroundColor = "black"; // Tilted left or right
+            hasTiltTriggered = true;
+
             setTimeout(() => {
-                getEightBallMessage();
-    
-                // Add fade-in effect
-                oracleDiv.classList.remove("fade-out");
-                oracleDiv.classList.add("fade-in");
-    
-                // ✅ Reset cooldown **AFTER** fade-in finishes
+                const oracleDiv = document.querySelector('.oracle_answer');
+        
+                // Add fade-out effect
+                oracleDiv.classList.remove("fade-in");
+                oracleDiv.classList.add("fade-out");
+        
                 setTimeout(() => {
-                    hasTiltTriggered = false;
-                }, 1000); // Adjust based on fade-in time
-    
-            }, 1500); // Wait for fade-out before updating text
-    
-        }, 500); // Delay before updating message
+                    getEightBallMessage();
+        
+                    // Add fade-in effect
+                    oracleDiv.classList.remove("fade-out");
+                    oracleDiv.classList.add("fade-in");
+        
+                    // ✅ Reset cooldown **AFTER** fade-in finishes
+                    setTimeout(() => {
+                        hasTiltTriggered = false;
+                    }, 1000); // Adjust based on fade-in time
+        
+                }, 1500); // Wait for fade-out before updating text
+        
+            }, 500); // Delay before updating message
+        }
     } else {
         document.body.style.backgroundColor = "white"; // Default
     }
