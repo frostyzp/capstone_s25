@@ -120,9 +120,13 @@ window.addEventListener("deviceorientation", (event) => {
                 oracleDiv.classList.remove("fade-out");
                 oracleDiv.classList.add("fade-in");
 
-                hasTiltTriggered = false;
-            }, 2500); // Wait for fade-out before updating text
+            }, 1500); // Wait for fade-out before updating text
         }, 500); // Delay before updating message
+
+            // ✅ Set a cooldown before allowing another trigger
+    setTimeout(() => {
+        hasTiltTriggered = false;
+    }, 2500); // Cooldown period (adjust as needed)
 
     } else {
         document.body.style.backgroundColor = "white"; // Default
