@@ -27,7 +27,7 @@ body {
     font-size: 1.4rem;
     color: #2a52be;
     margin: 2rem 12%;
-    padding: 2rem 1rem;
+    padding: 20% 1rem;
 }
 
 .oracle_wrapper {
@@ -35,7 +35,7 @@ body {
     text-align: center;
     border-radius: 20px; /* ✅ Adjust for roundness */
     outline: white;
-    height: 50%;
+    height: 16rem;
 }
 
 .oracleBody {
@@ -43,7 +43,7 @@ body {
     border-radius: 20px; /* ✅ Adjust for roundness */
     padding: 2rem;
     perspective: 1000px; 
-    transition: transform 0.1s ease-out;
+    /* transition: transform 0.1s ease-out; */
 
 }
 
