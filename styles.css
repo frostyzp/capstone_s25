@@ -35,12 +35,15 @@ body {
     text-align: center;
     border-radius: 20px; /* ✅ Adjust for roundness */
     outline: white;
+    height: 50%;
 }
 
 .oracleBody {
     background-color: #505050	;
     border-radius: 20px; /* ✅ Adjust for roundness */
     padding: 2rem;
+    perspective: 1000px; 
+    transition: transform 0.1s ease-out;
 
 }
 

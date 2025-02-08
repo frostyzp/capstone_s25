@@ -77,13 +77,6 @@ document.addEventListener("click", function() {
     console.log("User interaction detected");
 });
 
-// // Function to trigger haptic feedback
-// function triggerHapticFeedback() {
-//     if (isInteraction && navigator.vibrate) {
-//         navigator.vibrate(100); // Vibrate for 100ms
-//     }
-// }
-
 // ––––––––––––––––––––––––– TILTING -------------------------------------- 
 
 window.addEventListener("deviceorientation", (event) => {
@@ -105,6 +98,13 @@ window.addEventListener("deviceorientation", (event) => {
     } else if (Math.abs(gamma) > 25 && !hasTiltTriggered) {
         document.body.style.backgroundColor = "black"; // Tilted left or right
         hasTiltTriggered = true;
+
+        const tiltX = gamma / 5; // Adjust the divisor to control tilt intensity
+        const oracleBody = document.querySelector('.oracleBody');
+
+        if (oracleBody) {
+            oracleBody.style.transform = 'rotateY(${tiltX}deg';
+        }
     
         setTimeout(() => {
             const oracleDiv = document.querySelector('.oracle_answer');
