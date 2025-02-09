@@ -96,7 +96,7 @@ window.addEventListener("deviceorientation", (event) => {
     } else if (beta < -10) {
 
     } else if (Math.abs(gamma) > 25) {
-        const tiltX = gamma; // Adjust the divisor to control tilt intensity
+        const tiltX = gamma/3; // Adjust the divisor to control tilt intensity
         const oracleBody = document.querySelector('.oracleBody');
 
         if (oracleBody) {
