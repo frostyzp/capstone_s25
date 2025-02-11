@@ -93,47 +93,40 @@ function triggerHapticFeedback() {
 
 // ––––––––––––––––––––––––– TILTING -------------------------------------- 
 
+PRESERVED CODE
+
 window.addEventListener("deviceorientation", (event) => {
     const beta = event.beta;  // Front-back tilt (-90 to 90)
     const gamma = event.gamma; // Left-right tilt (-90 to 90)
+    // const scrollSpeed = 3; // Adjust as needed
 
-    // Map beta angle to a scrolling speed range
+        // Map beta angle to a scrolling speed range
     function mapRange(value, inMin, inMax, outMin, outMax) {
         return Math.min(outMax, Math.max(outMin, (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin));
     }
+            
+    let scrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 10); // Scroll faster when tilting more
     
-    scrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 5); // Scroll faster when tilting more
-
     if (beta > 30) {
-        document.body.style.backgroundColor = "blue";  // Tilted forward (UP)
-        targetScroll = currentScroll - scrollSpeed; // Scroll up
-        triggerHapticFeedback();
+        // document.body.style.backgroundColor = "blue";  // Tilted forward (UP)
+        window.scrollBy(0, -scrollSpeed); // Scroll up
+        triggerHapticFeedback(); // Activate haptic feedback for scrolling up
+
+
     } else if (beta < -10) {
-        document.body.style.backgroundColor = "red";  // Tilted backward (DOWN)
-        targetScroll = currentScroll + scrollSpeed; // Scroll down
+        // document.body.style.backgroundColor = "red";  // Tilted backward (DOWN)
+        window.scrollBy(0, scrollSpeed); // Scroll down
+        
+
     } else if (Math.abs(gamma) > 10) {
-        document.body.style.backgroundColor = "purple"; // Tilted left or right
-        // Optionally add some scrolling logic for left-right tilts if needed
+        // document.body.style.backgroundColor = "purple"; // Tilted left or right
+        // window.scrollBy(0, +scrollSpeed); // Scroll up
+
     } else {
         document.body.style.backgroundColor = "white"; // Default
     }
-
-    // Smoothly scroll back to target position if not tilting
-    if (Math.abs(beta) < 10 && Math.abs(gamma) < 10) {
-        targetScroll = 0; // Target scroll position back to the top
-    }
-
-    // Update scroll position smoothly using requestAnimationFrame
-    function smoothScroll() {
-        currentScroll += (targetScroll - currentScroll) * decelerationFactor; // Smoothly decelerate towards the target
-        window.scrollTo(0, currentScroll); // Set the new scroll position
-        if (Math.abs(targetScroll - currentScroll) > 1) { // If not yet at the target position
-            requestAnimationFrame(smoothScroll); // Continue scrolling smoothly
-        }
-    }
-
-    smoothScroll(); // Start the smooth scroll process
 });
+
 
 
 function requestPermission() {
