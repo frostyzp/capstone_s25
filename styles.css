@@ -50,3 +50,24 @@ body {
 .oracleTextp {
     color: white;
 }
+
+
+.touch-mark {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: blue;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: opacity 4s ease-in-out;
+
+}
+.touch-message {
+    position: absolute;
+    font-size: 14px;
+    color: black;
+    white-space: nowrap;
+    transform: translate(-50%, 0);
+    transition: opacity 4s ease-in-out;
+}

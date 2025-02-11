@@ -8,27 +8,33 @@
 // document.addEventListener('touchmove', handleTouchMove, false);
 
 const eightBallMessages = [
-    "It is certain.",
-    "It is decidedly so.",
-    "Without a doubt.",
-    "Yes, definitely.",
-    "You may rely on it.",
-    "As I see it, yes.",
-    "Most likely.",
-    "Outlook good.",
-    "Yes.",
-    "Signs point to yes.",
-    "Reply hazy, try again.",
-    "Ask again later.",
-    "Better not tell you now.",
-    "Cannot predict now.",
-    "Concentrate and ask again.",
-    "Don't count on it.",
-    "My reply is no.",
-    "My sources say no.",
-    "Outlook not so good.",
-    "Very doubtful."
+    "It is certain – go touch grass",
+    "It is decidedly so – go befriend a tree",
+    "Ask again later – take a walk until you forget the question.",
+    "Don't count on it – go count some clouds instead.",
+    "My sources say no – touch tree bark, feel grounded."
 ];
+
+// "It is certain.",
+// "It is decidedly so.",
+// "Without a doubt.",
+// "Yes, definitely.",
+// "You may rely on it.",
+// "As I see it, yes.",
+// "Most likely.",
+// "Outlook good.",
+// "Yes.",
+// "Signs point to yes.",
+// "Reply hazy, try again.",
+// "Ask again later.",
+// "Better not tell you now.",
+// "Cannot predict now.",
+// "Concentrate and ask again.",
+// "Don't count on it.",
+// "My reply is no.",
+// "My sources say no.",
+// "Outlook not so good.",
+// "Very doubtful."
 
 let hasTiltTriggered = false; // 
 
