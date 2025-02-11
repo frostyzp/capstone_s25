@@ -103,17 +103,17 @@ window.addEventListener("deviceorientation", (event) => {
         return Math.min(outMax, Math.max(outMin, (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin));
     }
             
-    let scrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 10); // Scroll faster when tilting more
+    let scrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 25); // Scroll faster when tilting more
     
-    if (beta > 30) {
+    if (beta > 20) {
         // document.body.style.backgroundColor = "blue";  // Tilted forward (UP)
-        window.scrollBy(0, -scrollSpeed); // Scroll up
+        window.scrollBy(0, scrollSpeed); // Scroll up
         triggerHapticFeedback(); // Activate haptic feedback for scrolling up
 
 
-    } else if (beta < -10) {
+    } else if (beta < -15) {
         // document.body.style.backgroundColor = "red";  // Tilted backward (DOWN)
-        window.scrollBy(0, scrollSpeed); // Scroll down
+        window.scrollBy(0, -scrollSpeed); // Scroll down
         
 
     } else if (Math.abs(gamma) > 10) {
