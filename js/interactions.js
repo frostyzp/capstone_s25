@@ -101,8 +101,6 @@ window.addEventListener("deviceorientation", (event) => {
         return Math.min(outMax, Math.max(outMin, (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin));
     }
             
-    let targetScrollSpeed = 0;
-
     const opacity = mapRange(Math.abs(gamma), 0, 60, 0, 1);
     document.body.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
     
@@ -114,28 +112,12 @@ window.addEventListener("deviceorientation", (event) => {
     
     // Handle forward/backward tilt for scrolling
     if (beta > 20) {
-        targetScrollSpeed = -mapRange(Math.abs(beta), 0, 90, 0, 10);
+        window.scrollBy(0, -10); // Scroll up by 10 pixels
         document.body.style.backgroundColor = "red";
-
-        isScrolling = true;
         triggerHapticFeedback();
     } else if (beta < -15) {
-        targetScrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 10);
-        isScrolling = true;
-    } else {
-        targetScrollSpeed = 0;
-        isScrolling = false;
-    }
-
-    // Smooth transition between current and target scroll speed
-    if (isScrolling) {
-        currentScrollSpeed += (targetScrollSpeed - currentScrollSpeed) * 0.1;
-        window.scrollBy(0, currentScrollSpeed);
-        requestAnimationFrame(() => {
-            if (Math.abs(currentScrollSpeed) > 0.1) {
-                window.scrollBy(0, currentScrollSpeed);
-            }
-        });
+        window.scrollBy(0, 10); // Scroll down by 10 pixels
+        triggerHapticFeedback();
     }
 });
 
