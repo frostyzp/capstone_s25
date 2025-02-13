@@ -171,16 +171,29 @@ function requestPermission() {
 }
 
 function showContent() {
+    // Add console log for debugging
+    console.log('showContent called');
+    
     // Remove intro text and button
-    document.querySelector('.intro-text').style.display = 'none';
-    document.querySelector('#permission-button').style.display = 'none';
+    const introText = document.querySelector('.intro-text');
+    const permissionButton = document.querySelector('#permission-button');
+    
+    if (introText) introText.style.display = 'none';
+    if (permissionButton) permissionButton.style.display = 'none';
     
     // Show main content
     const content = document.querySelector('.content');
-    content.classList.remove('hidden');
-    setTimeout(() => {
+    if (content) {
+        console.log('Found content element, removing hidden class');
+        content.classList.remove('hidden');
+        
+        // Force a reflow before adding visible class
+        void content.offsetWidth;
+        
         content.classList.add('visible');
-    }, 400);
+    } else {
+        console.error('Content element not found');
+    }
 }
 
 function disableUserScroll() {
