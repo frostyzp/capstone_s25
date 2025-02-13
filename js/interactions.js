@@ -113,12 +113,12 @@ window.addEventListener("deviceorientation", (event) => {
     }
     
     // Handle forward/backward tilt for scrolling
-    if (beta > 12) {
-        window.scrollBy(0, -3); // Scroll up by 10 pixels
+    if (beta > 10) {
+        window.scrollBy(0, 3); // Scroll up by 10 pixels
         document.body.style.backgroundColor = "red";
         triggerHapticFeedback();
-    } else if (beta < -8) {
-        window.scrollBy(0, 3); // Scroll down by 10 pixels
+    } else if (beta < -15) {
+        window.scrollBy(0, -3); // Scroll down by 10 pixels
         triggerHapticFeedback();
     }
 });
