@@ -102,17 +102,21 @@ window.addEventListener("deviceorientation", (event) => {
     }
             
     let targetScrollSpeed = 0;
+
+    const opacity = mapRange(Math.abs(gamma), 0, 60, 0, 1);
+    document.body.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
     
     // Handle extreme left/right tilt
     if (Math.abs(gamma) > 60) {
-        const opacity = mapRange(Math.abs(gamma), 0, 60, 0, 1);
-        document.body.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
+        window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
         return;
     }
     
     // Handle forward/backward tilt for scrolling
     if (beta > 20) {
         targetScrollSpeed = -mapRange(Math.abs(beta), 0, 90, 0, 10);
+        document.body.style.backgroundColor = "red";
+
         isScrolling = true;
         triggerHapticFeedback();
     } else if (beta < -15) {
