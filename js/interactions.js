@@ -106,17 +106,18 @@ window.addEventListener("deviceorientation", (event) => {
     
     // Handle extreme left/right tilt
     if (Math.abs(gamma) > 60) {
-        window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+        // Redirect the current page instead of opening new window
+        window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
         return;
     }
     
     // Handle forward/backward tilt for scrolling
-    if (beta > 20) {
-        window.scrollBy(0, -10); // Scroll up by 10 pixels
+    if (beta > 15) {
+        window.scrollBy(0, -2); // Scroll up by 10 pixels
         document.body.style.backgroundColor = "red";
         triggerHapticFeedback();
-    } else if (beta < -15) {
-        window.scrollBy(0, 10); // Scroll down by 10 pixels
+    } else if (beta < -25) {
+        window.scrollBy(0, 2); // Scroll down by 10 pixels
         triggerHapticFeedback();
     }
 });

@@ -95,6 +95,8 @@ body {
 .visible {
     display: block;
     opacity: 1;
+    animation-delay: 1s;
+
 }
 
 #permission-button {
