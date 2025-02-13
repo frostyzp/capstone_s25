@@ -18,8 +18,8 @@ let isInteraction = false;
 
 let currentScroll = window.scrollY; // Track current scroll position
 let targetScroll = window.scrollY; // Target scroll position
-// let scrollSpeed = 0;
-let decelerationFactor = 0.1; // Adjust the deceleration for smoothness
+let currentScrollSpeed = 0;
+let isScrolling = false;
 
 function touchstart() {
     timer = setTimeout(onlongtouch, touchduration); 
@@ -96,33 +96,49 @@ function triggerHapticFeedback() {
 window.addEventListener("deviceorientation", (event) => {
     const beta = event.beta;  // Front-back tilt (-90 to 90)
     const gamma = event.gamma; // Left-right tilt (-90 to 90)
-    // const scrollSpeed = 3; // Adjust as needed
 
-        // Map beta angle to a scrolling speed range
     function mapRange(value, inMin, inMax, outMin, outMax) {
         return Math.min(outMax, Math.max(outMin, (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin));
     }
             
-    let scrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 25); // Scroll faster when tilting more
+    let targetScrollSpeed = 0;
+    
+    // Handle extreme left/right tilt – to open up a new link
+    if (Math.abs(gamma) > 60) {
+        // Map gamma angle to opacity value between 0 and 1
+        window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        const opacity = mapRange(Math.abs(gamma), 60, 90, 0, 1);
+        document.body.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
+        return;
+    }
     
     if (beta > 20) {
-        // document.body.style.backgroundColor = "blue";  // Tilted forward (UP)
-        window.scrollBy(0, scrollSpeed); // Scroll up
-        triggerHapticFeedback(); // Activate haptic feedback for scrolling up
-
-
+        targetScrollSpeed = -mapRange(Math.abs(beta), 0, 90, 0, 10);
+        isScrolling = true;
+        triggerHapticFeedback();
     } else if (beta < -15) {
-        // document.body.style.backgroundColor = "red";  // Tilted backward (DOWN)
-        window.scrollBy(0, -scrollSpeed); // Scroll down
-        
-
-    } else if (Math.abs(gamma) > 10) {
-        // document.body.style.backgroundColor = "purple"; // Tilted left or right
-        // window.scrollBy(0, +scrollSpeed); // Scroll up
-
-    } else {
-        document.body.style.backgroundColor = "white"; // Default
+        targetScrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 10);
+        isScrolling = true;
     }
+
+    if (!isScrolling) {
+        return;
+    }
+
+    // Smooth transition between current and target scroll speed
+    function updateScroll() {
+        if (Math.abs(currentScrollSpeed - targetScrollSpeed) < 0.1) {
+            currentScrollSpeed = 0;
+            isScrolling = false;
+            return;
+        }
+
+        currentScrollSpeed += (targetScrollSpeed - currentScrollSpeed) * 0.1;
+        window.scrollBy(0, currentScrollSpeed);
+        requestAnimationFrame(updateScroll);
+    }
+
+    requestAnimationFrame(updateScroll);
 });
 
 

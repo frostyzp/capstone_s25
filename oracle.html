@@ -9,28 +9,23 @@
     <title>Oracle</title>
 </head>
 <body>
+    <div class="intro-text">The future is uncertain...</div>
     
-    <div class="oracleBody">
-        <p class="oracleTextp"> 
-            (´･ω･`) <br>
-    
-        </p>    
-    
-        <br> 
-    
-        <p class="oracleTextp"> _^_^_^_^_^_^_ <br> 
-             </p>
-    
-        <button onclick="requestPermission()">Tap here to calibrate your phone</button>
-    
-        <div class="oracle_wrapper"> 
-            <div class="oracle_answer"> Ask a yes/no question.
-                Tilt your phone to the left or right away from you briefly </div>
+    <div class="content hidden">
+        <div class="oracleBody">
+            <p class="oracleTextp"> 
+                (´･ω･`) <br>
+            </p>    
+            <br> 
+            <p class="oracleTextp"> ––––––––––––––––––––––––– <br></p>
+            
+            <div class="oracle_wrapper"> 
+                <div class="oracle_answer">Ask a yes/no question.
+                    Tilt your phone to the left or right away from you briefly</div>
+            </div>
         </div>
-    
-    
     </div>
     
-
+    <button id="permission-button" onclick="requestPermission()"> Begin asking questions</button>
 </body>
 </html>

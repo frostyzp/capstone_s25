@@ -8,9 +8,9 @@
 // document.addEventListener('touchmove', handleTouchMove, false);
 
 const eightBallMessages = [
-    "It is certain – go touch grass",
-    "It is decidedly so – go befriend a tree",
-    "Ask again later – take a walk until you forget the question.",
+    "It is certain – go touch grass",
+    "It is decidedly so – go befriend a tree",
+    "Ask again later – take a walk until you forget the question.",
     "Don't count on it – go count some clouds instead.",
     "My sources say no – touch tree bark, feel grounded."
 ];
@@ -83,7 +83,7 @@ document.addEventListener("click", function() {
     console.log("User interaction detected");
 });
 
-// ––––––––––––––––––––––––– TILTING -------------------------------------- 
+// ––––––––––––––––––––––––– TILTING -------------------------------------- 
 
 window.addEventListener("deviceorientation", (event) => {
     const beta = event.beta;  // Front-back tilt (-90 to 90)
@@ -147,22 +147,32 @@ function requestPermission() {
         DeviceMotionEvent.requestPermission().then(response => {
             if (response === "granted") {
                 alert("Navigate through the site gently with care.");
-                
-                // Remove the button after permission is granted
                 document.querySelector("button").remove();
+                showContent();
+
             }
         }).catch(console.error);
     } else {
         alert("Your browser does not require permission.");
         
         // Remove the button anyway (for non-iOS devices)
-        document.querySelector("button").remove();
+        showContent();
+
     }
 }
 
-
-
-
+function showContent() {
+    // Remove intro text and button
+    document.querySelector('.intro-text').style.display = 'none';
+    document.querySelector('#permission-button').style.display = 'none';
+    
+    // Show main content
+    const content = document.querySelector('.content');
+    content.classList.remove('hidden');
+    setTimeout(() => {
+        content.classList.add('visible');
+    }, 400);
+}
 
 function disableUserScroll() {
     document.body.style.overflow = "hidden"; // Prevent scrolling
