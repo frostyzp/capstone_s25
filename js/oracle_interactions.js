@@ -141,23 +141,32 @@ window.addEventListener("deviceorientation", (event) => {
     }
 });
 
-
 function requestPermission() {
     if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
         DeviceMotionEvent.requestPermission().then(response => {
             if (response === "granted") {
                 alert("Navigate through the site gently with care.");
-                document.querySelector("button").remove();
+                document.querySelector("#permission-button").remove();
                 showContent();
+            }
+        }).catch(error => {
+            console.error(error);
+            // Show content anyway if permission fails
+            showContent();
+        });
+    } else {
+        // For non-iOS devices or desktop browsers
+        document.querySelector("#permission-button").style.display = 'none';
+        showContent();
+    }
 
+    // Also request device orientation permission if needed
+    if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission().then(response => {
+            if (response === "granted") {
+                // Permission granted for device orientation
             }
         }).catch(console.error);
-    } else {
-        alert("Your browser does not require permission.");
-        
-        // Remove the button anyway (for non-iOS devices)
-        showContent();
-
     }
 }
 

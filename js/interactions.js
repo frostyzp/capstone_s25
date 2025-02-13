@@ -103,15 +103,14 @@ window.addEventListener("deviceorientation", (event) => {
             
     let targetScrollSpeed = 0;
     
-    // Handle extreme left/right tilt – to open up a new link
+    // Handle extreme left/right tilt
     if (Math.abs(gamma) > 60) {
-        // Map gamma angle to opacity value between 0 and 1
-        window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-        const opacity = mapRange(Math.abs(gamma), 60, 90, 0, 1);
+        const opacity = mapRange(Math.abs(gamma), 0, 60, 0, 1);
         document.body.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`;
         return;
     }
     
+    // Handle forward/backward tilt for scrolling
     if (beta > 20) {
         targetScrollSpeed = -mapRange(Math.abs(beta), 0, 90, 0, 10);
         isScrolling = true;
@@ -119,26 +118,21 @@ window.addEventListener("deviceorientation", (event) => {
     } else if (beta < -15) {
         targetScrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 10);
         isScrolling = true;
-    }
-
-    if (!isScrolling) {
-        return;
+    } else {
+        targetScrollSpeed = 0;
+        isScrolling = false;
     }
 
     // Smooth transition between current and target scroll speed
-    function updateScroll() {
-        if (Math.abs(currentScrollSpeed - targetScrollSpeed) < 0.1) {
-            currentScrollSpeed = 0;
-            isScrolling = false;
-            return;
-        }
-
+    if (isScrolling) {
         currentScrollSpeed += (targetScrollSpeed - currentScrollSpeed) * 0.1;
         window.scrollBy(0, currentScrollSpeed);
-        requestAnimationFrame(updateScroll);
+        requestAnimationFrame(() => {
+            if (Math.abs(currentScrollSpeed) > 0.1) {
+                window.scrollBy(0, currentScrollSpeed);
+            }
+        });
     }
-
-    requestAnimationFrame(updateScroll);
 });
 
 
@@ -147,7 +141,14 @@ function requestPermission() {
     if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
         DeviceMotionEvent.requestPermission().then(response => {
             if (response === "granted") {
-                alert("Navigate through the site gently with care. ");
+                // Also request deviceorientation permission
+                if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+                    DeviceOrientationEvent.requestPermission().then(response => {
+                        if (response === "granted") {
+                            alert("Navigate through the site gently with care.");
+                        }
+                    }).catch(console.error);
+                }
             }
         }).catch(console.error);
     } else {
@@ -158,11 +159,11 @@ function requestPermission() {
 
 // BOILER PLATE STUFF TO PREVENT SCROLL
 document.addEventListener("DOMContentLoaded", function () {
-    disableUserScroll(); // Now safe to run
+    disableUserScroll();
 });
 
 function disableUserScroll() {
-    document.body.style.overflow = "hidden"; // Prevent scrolling
+    document.body.style.overflow = "hidden";
     window.addEventListener("wheel", preventScroll, { passive: false });
     window.addEventListener("touchmove", preventScroll, { passive: false });
     window.addEventListener("keydown", preventArrowScroll);
@@ -180,7 +181,7 @@ function preventScroll(event) {
 }
 
 function preventArrowScroll(event) {
-    const keys = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]; // Spacebar too
+    const keys = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "];
     if (keys.includes(event.key)) {
         event.preventDefault();
     }
