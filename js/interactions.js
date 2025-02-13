@@ -106,8 +106,9 @@ window.addEventListener("deviceorientation", (event) => {
     
     // Handle extreme left/right tilt
     if (Math.abs(gamma) > 60) {
+        window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
         // Redirect the current page instead of opening new window
-        window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        // window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
         return;
     }
     
@@ -133,13 +134,28 @@ function requestPermission() {
                     DeviceOrientationEvent.requestPermission().then(response => {
                         if (response === "granted") {
                             alert("Navigate through the site gently with care.");
+                            // Explicitly call showContent after permissions are granted
+                            showContent();
                         }
-                    }).catch(console.error);
+                    }).catch(error => {
+                        console.error('Orientation permission error:', error);
+                        // Show content anyway if permission fails
+                        showContent();
+                    });
+                } else {
+                    // If no orientation permission needed, show content
+                    showContent();
                 }
             }
-        }).catch(console.error);
+        }).catch(error => {
+            console.error('Motion permission error:', error);
+            // Show content anyway if permission fails
+            showContent();
+        });
     } else {
         alert("Your browser does not require permission.");
+        // Show content for browsers that don't need permission
+        showContent();
     }
 }
 
