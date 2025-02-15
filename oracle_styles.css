@@ -37,7 +37,7 @@ body {
     border-radius: 20px;
     outline: white;
     height: 24rem;
-    transition: background-color 0.5s ease, box-shadow 0.5s ease;  /* Smooth transition for color changes */
+    transition: background-color 1s ease, box-shadow 1s ease; 
 }
 
 .oracleBody {
@@ -118,8 +118,8 @@ body {
 }
 
 .oracle-color-2 {
-    background-color: #CC0000;  /* Deep red */
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    background-color: #cc00ad;  /* Deep red */
+    box-shadow: 0 0 20px rgba(255, 0, 140, 0.5);
 }
 
 .oracle-color-3 {
@@ -130,9 +130,4 @@ body {
 .oracle-color-4 {
     background-color: #660066;  /* Deep purple */
     box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
-}
-
-.oracle-color-5 {
-    background-color: #CC6600;  /* Deep orange */
-    box-shadow: 0 0 20px rgba(255, 165, 0, 0.5);
 }
