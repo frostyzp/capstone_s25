@@ -15,27 +15,6 @@ const eightBallMessages = [
     "My sources say no – touch tree bark, feel grounded."
 ];
 
-// "It is certain.",
-// "It is decidedly so.",
-// "Without a doubt.",
-// "Yes, definitely.",
-// "You may rely on it.",
-// "As I see it, yes.",
-// "Most likely.",
-// "Outlook good.",
-// "Yes.",
-// "Signs point to yes.",
-// "Reply hazy, try again.",
-// "Ask again later.",
-// "Better not tell you now.",
-// "Cannot predict now.",
-// "Concentrate and ask again.",
-// "Don't count on it.",
-// "My reply is no.",
-// "My sources say no.",
-// "Outlook not so good.",
-// "Very doubtful."
-
 let hasTiltTriggered = false; // 
 
 var xDown = null;                                                        
@@ -121,6 +100,7 @@ window.addEventListener("deviceorientation", (event) => {
                 oracleDiv.classList.add("fade-out");
         
                 setTimeout(() => {
+                    changeOracleColor();
                     getEightBallMessage();
         
                     // Add fade-in effect
@@ -219,5 +199,20 @@ function preventArrowScroll(event) {
     if (keys.includes(event.key)) {
         event.preventDefault();
     }
+}
+
+function changeOracleColor() {
+    const wrapper = document.querySelector('.oracle_wrapper');
+    const currentClass = Array.from(wrapper.classList)
+        .find(className => className.startsWith('oracle-color-'));
+    
+    // Remove current color class if it exists
+    if (currentClass) {
+        wrapper.classList.remove(currentClass);
+    }
+    
+    // Get random number between 1 and 5
+    const newColorNum = Math.floor(Math.random() * 5) + 1;
+    wrapper.classList.add(`oracle-color-${newColorNum}`);
 }
 
