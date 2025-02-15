@@ -2,7 +2,7 @@ body {
     background-color: black !important;  /* Added !important to ensure it takes precedence */
     transition: background-color 0.3s ease;
     height: 3000px;
-    padding-top: 10rem;
+    /* padding-top: 10rem; */
     text-align: center;
     font-family: serif;
 }
