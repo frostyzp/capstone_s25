@@ -1,0 +1,48 @@
+
+@font-face {
+    src: url('fonts/PanamaMonospaceRegular.otf') format('opentype');
+    font-family: 'mainFont'; 
+    font-weight: normal;
+    font-style: normal;
+} 
+ 
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} 
+
+p {
+    font: 'mainFont', serif;
+}
+
+ body {
+    background-color: #6A99D5;
+    font-family: 'mainFont', serif; 
+    color: white;
+}
+
+/* Set the p5.js canvas to cover the entire screen */
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1; /* Ensure canvas is behind other elements */
+}
+
+.blur {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  position: relative;
+  filter: blur(3px);
+  background: linear-gradient(129deg, #fff 0%, #c7c7c7 100%);
+  transition: filter 0.3s ease-in-out;
+  &:hover{
+    filter: blur(1px);
+  }
+}
+
+.mainText {
+  
+}
