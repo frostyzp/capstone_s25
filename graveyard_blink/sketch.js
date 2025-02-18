@@ -27,8 +27,9 @@ let audioStarted = false; // Boolean to track if the sound has been started
 
 //------------------------------------------
 function preload() {
-  myFont = loadFont('fonts/PanamaMonoSpaceRegular.otf');
-  // mySound = loadSound('music/blinkingMusic.mp3');
+  myFont = "monospace"; // Set the default font to monospace
+  //  myFont = loadFont('graveyard_blink/fonts/PanamaMonospaceRegular.otf');
+
 }
 
 function setup() {
@@ -139,7 +140,7 @@ function drawFaceLandmarks(){
       textAlign(CENTER, CENTER);
       textSize(24);
       fill('white');
-      text('You need to be present for this experience.', width/2, height/4);
+      text('You need to be present.', width/2, height/4);
 
   }
   } 
