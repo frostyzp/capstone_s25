@@ -70,7 +70,7 @@ function draw() {
   drawFaceLandmarks();
   detectBlinking();
 
-  textSize(18);
+  textSize(12);
   textAlign(CENTER,CENTER);
   fill('white');
   noStroke();
@@ -80,10 +80,6 @@ function draw() {
   of
   the
   unanswered
-  ...
-  Listen to it.
-  Explore it.
-  ...
   ^
   ^
   `;
@@ -138,9 +134,9 @@ function drawFaceLandmarks(){
     else {
       fill('black');
       textAlign(CENTER, CENTER);
-      textSize(24);
+      textSize(17);
       fill('white');
-      text('You need to be present.', width/2, height/4);
+      text('Your face needs to be present here.', width/2, height/4);
 
   }
   } 

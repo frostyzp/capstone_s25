@@ -1,0 +1,80 @@
+body {
+  background-color: white;
+  background-image: linear-gradient(rgb(201, 208, 218), #d4f1f4);
+}
+
+p {
+    color: white;
+    font-size: 1.5rem;
+}
+
+h2 {
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    margin-top: 50vh;
+}
+
+.wrapper {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* padding-top: 15rem; */
+}
+
+.snow {
+ color: #f4f0f0; /* Text color */
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff; /* Glowing effect */
+  font-size: 15px;
+  transform: rotateX(20deg) rotateY(50deg);
+  position: absolute;
+  white-space: pre;
+  text-align: center;
+  animation: rotateTree 20s linear infinite;
+
+}
+
+.snow2 {
+ color: #f4f0f0; /* Text color */
+  text-shadow: 0 0 5px #fff, 0 0 10px #fff; /* Glowing effect */
+   font-size: 15px;
+   transform: rotateX(20deg) rotateY(-50deg);
+    position: absolute;
+  white-space: pre;
+  text-align: center;
+  animation: rotateTree2 20s linear infinite;
+}
+
+@keyframes rotateTree {
+  0% {
+    transform: rotateX(20deg) rotateY(50deg);
+    top: -10vh
+  }
+  100% {
+    transform: rotateX(20deg) rotateY(410deg);
+    top: 100vh
+  }
+}
+@keyframes rotateTree2 {
+  0% {
+    transform: rotateX(20deg) rotateY(-50deg);
+    top: -10vh;
+  }
+  100% {
+    transform: rotateX(20deg) rotateY(310deg);
+    top: 100vh
+
+  }
+}
+
+
+.window-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allow clicks to pass through */
+    text-align: center;
+}
