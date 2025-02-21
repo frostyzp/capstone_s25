@@ -1,6 +1,6 @@
 body {
   background-color: white;
-  background-image: linear-gradient(rgb(201, 208, 218), #d4f1f4);
+  background-image: linear-gradient(white 1%, rgb(201, 208, 218), #d4f1f4, white 97%);
 }
 
 p {

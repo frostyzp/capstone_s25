@@ -89,19 +89,23 @@ document.addEventListener("DOMContentLoaded", function() {
     canvas.addEventListener('touchmove', draw);
 
     function startDrawing(e) {
+        e.preventDefault(); // Prevent default touch behavior
         drawing = true;
         ctx.beginPath();
         ctx.moveTo(getMousePos(e).x, getMousePos(e).y);
     }
 
-    function stopDrawing() {
+    function stopDrawing(e) {
+        e.preventDefault(); // Prevent default touch behavior
         drawing = false;
         ctx.closePath();
     }
 
     function draw(e) {
+        e.preventDefault(); // Prevent default touch behavior
         if (!drawing) return;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)'; // Semi-transparent white
+        
+        ctx.strokeStyle = 'rgba(250, 252, 255, 0.2)'; // Semi-transparent white (adjust alpha as needed)
         ctx.lineWidth = 25; // Stroke width
         ctx.lineCap = 'round'; // Rounded ends
         
