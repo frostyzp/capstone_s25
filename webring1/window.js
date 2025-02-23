@@ -88,6 +88,8 @@ document.addEventListener("DOMContentLoaded", function() {
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('touchmove', draw);
 
+    let strokes = []; // Array to store stroke data
+
     function startDrawing(e) {
         e.preventDefault(); // Prevent default touch behavior
         drawing = true;
@@ -105,13 +107,16 @@ document.addEventListener("DOMContentLoaded", function() {
         e.preventDefault(); // Prevent default touch behavior
         if (!drawing) return;
         
-        ctx.strokeStyle = 'rgba(250, 252, 255, 0.2)'; // Semi-transparent white (adjust alpha as needed)
+        const pos = getMousePos(e);
+        ctx.strokeStyle = 'rgba(250, 252, 255, 0.2)'; // Semi-transparent white
         ctx.lineWidth = 25; // Stroke width
         ctx.lineCap = 'round'; // Rounded ends
         
-        const pos = getMousePos(e);
         ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
+
+        // Store the stroke data
+        strokes.push({ x: pos.x, y: pos.y });
     }
 
     // Get mouse position
@@ -130,5 +135,122 @@ document.addEventListener("DOMContentLoaded", function() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     });
+
+
+    // document.querySelector('#saveButton').addEventListener('click', () => {
+    //     console.log('Save button clicked. Sending strokes to cloud...');
+    //     sendStrokesToCloud();
+    // });
+
+
+    // Send strokes to cloud storage
+    function sendStrokesToCloud() {
+        fetch('YOUR_CLOUD_STORAGE_API_ENDPOINT', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(strokes),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Call this function when you want to save the strokes, e.g., on a button click
+
+    showPermissionModal(); // Show the permission modal when the page loads
+
+    // Ensure the button exists before adding the event listener
+    const requestPermissionButton = document.getElementById('requestPermissionButton');
+    console.log('Request Permission Button:', requestPermissionButton); // Debugging line
+
+    if (requestPermissionButton) {
+        requestPermissionButton.addEventListener('click', function() {
+            // Request device orientation permission
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(response => {
+                    if (response === 'granted') {
+                        // Hide the modal and show the main content
+                        document.getElementById('permissionModal').style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+                    }
+                }).catch(console.error);
+            } else {
+                // Automatically grant permission on non-mobile devices
+                document.getElementById('permissionModal').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }
+        });
+    } else {
+        console.error('Request Permission Button not found!'); // Debugging line
+    }
 });
-  
+
+// Function to clear the canvas
+function clearCanvas() {
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the entire canvas
+    strokes = []; // Reset the strokes array
+    console.log('Canvas cleared.');
+}
+
+// Function to perform another action when tilted right
+function performRightAction() {
+    console.log('Tilted right! Performing another action...');
+    // Add your desired action here
+}
+
+// Function to show the permission modal
+function showPermissionModal() {
+    const modal = document.getElementById('permissionModal');
+    modal.style.display = 'block'; // Show the modal
+}
+
+// Function to request permission for device orientation
+function requestDeviceOrientationPermission() {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+            .then((response) => {
+                if (response === 'granted') {
+                    // Permission granted, start listening for device orientation
+                    startListeningForOrientation();
+                    closeModal(); // Close the modal
+                } else {
+                    console.error('Device orientation permission denied.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error requesting device orientation permission:', error);
+            });
+    } else {
+        // Permission is automatically granted on non-mobile devices
+        startListeningForOrientation();
+        closeModal(); // Close the modal
+    }
+}
+
+
+document.getElementById('requestPermissionButton').addEventListener('click', showPermissionModal);
+
+// Function to start listening for device orientation changes
+function startListeningForOrientation() {
+    window.addEventListener('deviceorientation', (event) => {
+        const tiltLeftThreshold = -60; // Degrees for tilting left
+        const tiltRightThreshold = 60; // Degrees for tilting right
+
+        // Check the gamma value (left/right tilt)
+        const tilt = event.gamma; // Gamma represents the left/right tilt
+
+        if (tilt < tiltLeftThreshold) {
+            clearCanvas(); // Clear the canvas if tilted left
+        } else if (tilt > tiltRightThreshold) {
+            performRightAction(); // Perform action if tilted right
+        }
+    });
+}

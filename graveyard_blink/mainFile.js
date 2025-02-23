@@ -45,6 +45,8 @@ let openedWindows = []; // Array to keep track of opened windows
     wordCounter = (wordCounter + 1) % emptyWordArr.length
     print('wordCounter :' +wordCounter);
 
+
+// ------------------------------ WHERE TEXT IS INPUTTED ------------------------------
   const storyTextElement = document.querySelector('.mainText');
   const typewriter = new Typewriter(storyTextElement, {
       loop: false, 
@@ -54,6 +56,9 @@ let openedWindows = []; // Array to keep track of opened windows
   typewriter.typeString(emptyWordArr[wordCounter]).start();
     
   }
+
+  // ------------------------------ END OF SPAWN WORDS ------------------------------
+
 
 //   function openFloatingWindow() {
 //     // Close the previously opened tab if it exists

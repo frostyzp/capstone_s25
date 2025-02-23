@@ -2,17 +2,39 @@
 
 <link rel="stylesheet" href="window.css">
 <script src="window.js"></script>
-<div class="wrapper">
   
-<!--   <div id="snow"> 
+
+
+
+
+
+
+  <!-- Start Generation Here -->
+<!-- Start Permission Modal -->
+<div id="permissionModal" class="modal">
+  <div class="modal-content">
+      <span class="close-button" id="closeModal">&times;</span>
+      <h2>Device Orientation Permission</h2>
+      <p>This website needs access to your device's orientation to provide a better experience. Please allow access.</p>
+      <button id="requestPermissionButton">Grant Permission</button>
   </div>
-  
-  <div id="snow2">
-  </div> -->
+</div>
+<!-- End Permission Modal -->
+
+<!-- Start Main Content -->
+<div id="mainContent" style="display: none;">
+  <img src="window.png" alt="Window" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
   
   <div class="window-frame">
     <p> ON DREAMING – SNOW </p>
-    <h2> Draw an image from your chilldhood or imagination </h2>
+    <h2> Draw an image from your childhood or imagination </h2>
+
+    <!-- <button id="saveButton">Save Drawing</button> -->
+
   </div>
-  <canvas id="drawingCanvas"></canvas>
+
+  <div class="canvas-container">
+    <canvas id="drawingCanvas"></canvas>
+
+    
 </div>

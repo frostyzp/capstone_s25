@@ -1,5 +1,5 @@
 body {
-  background-color: white;
+  background-color: black;
   background-image: linear-gradient(white 1%, rgb(201, 208, 218), #d4f1f4, white 97%);
 }
 
@@ -77,4 +77,53 @@ h2 {
     height: 100%;
     pointer-events: none; /* Allow clicks to pass through */
     text-align: center;
+    z-index: 3; /* Higher z-index for the window frame */
+    
 }
+
+.canvas-container {
+    border: 5px solid black; /* Dark frame around the canvas */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Optional shadow for depth */
+    display: block; /* Change to block to ensure full width */
+    width: 100%; /* Ensure it takes full width */
+    height: auto; /* Adjust as needed */
+    position: relative; /* Establish a positioning context */
+    z-index: 1; /* Lower z-index for the canvas container */
+}
+
+#drawingCanvas {
+    width: 100%; /* Ensure the canvas takes full width */
+    height: 100%; /* Ensure the canvas takes full height */
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+    position: relative; /* Ensure it follows the container's stacking context */
+    z-index: 1; /* Lower z-index for the canvas */
+}
+
+img {
+    position: absolute; /* Position the image absolutely */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    width: 100%; /* Ensure it takes full width */
+    height: 100%; /* Ensure it takes full height */
+    z-index: 2; /* Higher z-index for the image */
+}
+
+.modal {
+    display: flex; /* Center the modal */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    position: fixed; /* Fixed position to cover the entire screen */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    z-index: 10; /* Ensure it is above other content */
+}
+
+/* Ensure the main content is hidden initially */
+#mainContent {
+    display: none; /* Hide main content by default */
+}
+
