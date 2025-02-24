@@ -1,6 +1,5 @@
 body {
-    background-size: cover; /* Cover the entire viewport */
-    background-position: center; /* Center the background image */
+
     color: black;
     font-family: 'Courier New', monospace; /* Using a common monospace font */
     text-align: center;   
