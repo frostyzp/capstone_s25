@@ -8,11 +8,26 @@
 // document.addEventListener('touchmove', handleTouchMove, false);
 
 const eightBallMessages = [
-    "It is certain – go touch grass",
-    "It is decidedly so – go befriend a tree",
+    "It is certain – go touch grass.",
+    "It is decidedly so – go befriend a tree.",
+    "Without a doubt – go lie on the grass and stare at the sky.",
+    "Yes, definitely – go hug a tree.",
+    "You may rely on it – take a deep breath of fresh air.",
+    "As I see it, yes – listen to the wind in the leaves.",
+    "Most likely – follow a butterfly.",
+    "Outlook good – go chase the sun.",
+    "Yes – listen to the oceanwaves.",
+    "Signs point to yes – dip your feet in a stream.",
+    "Reply hazy, try again – let the breeze decide.",
     "Ask again later – take a walk until you forget the question.",
+    "Better not tell you now – look at the clouds above you instead.",
+    "Cannot predict now – wait for the wind’s answer.",
+    "Concentrate and ask again – but first, touch the earth.",
     "Don't count on it – go count some clouds instead.",
-    "My sources say no – touch tree bark, feel grounded."
+    "My reply is no – go watch the waves crash.",
+    "My sources say no – go touch some tree bark.",
+    "Outlook not so good – plant something and see what grows.",
+    "Very doubtful – go listen to the birds anyway."
 ];
 
 let hasTiltTriggered = false; // 
@@ -46,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function touchstart() {
     timer = setTimeout(onlongtouch, touchduration); 
 }
-
+  
 function touchend() {
     //stops short touches from firing the event
     if (timer)
