@@ -24,16 +24,16 @@ const widths = [250]; // Set both widths to just above 1/4 of the width
 const heights = [300]; // Set both heights to just above 1/4 of the height
 
 const lefts = [
-    window.innerWidth * 0.1, 
-    window.innerWidth * 0.3, 
+    0, 
+    window.innerWidth * 0.25, 
     window.innerWidth * 0.5, 
-    window.innerWidth * 0.7
+    window.innerWidth * 0.75
 ];
 const tops = [
     window.innerHeight * 0.1, 
-    window.innerHeight * 0.3, 
+    window.innerHeight * 0.25, 
     window.innerHeight * 0.5, 
-    window.innerHeight * 0.7
+    window.innerHeight * 0.75
 ];
 
 let storyAudio = [ ];
@@ -119,7 +119,7 @@ let openedWindows = []; // Array to keep track of opened windows
             } 
 
           body { 
-            background-color: black;
+            background-color: white;
             background-size: cover; /* Make the image cover the entire body */
             background-position: center; /* Center the image */
             background-repeat: no-repeat; /* Prevent tiling */
@@ -184,9 +184,9 @@ let openedWindows = []; // Array to keep track of opened windows
         // BACKGROUND IMAGE **************************************************** 
         let windowCounter = ${windowCounter}; // Value can be dynamically set
         if (windowCounter === 1) {
-            document.body.style.backgroundImage = "url('images/window1.png')";
+            document.body.style.backgroundImage = "url('tombstone.png')";
         } else {
-            document.body.style.backgroundImage = "url('images/window2.png')";
+            document.body.style.backgroundImage = "url('tombstone.png')";
         }
 
         // TEXT THAT SHOWS UP **************************************************

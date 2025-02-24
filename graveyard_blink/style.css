@@ -20,6 +20,10 @@ p {
     background-color: #6A99D5;
     font-family: 'mainFont', serif; 
     color: white;
+    background-image: url('images/graveyard_bg.png');
+    background-size: cover; /* Make the image cover the entire body */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent tiling */
 }
 
 /* Set the p5.js canvas to cover the entire screen */
