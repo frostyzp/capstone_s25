@@ -137,10 +137,17 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-    // document.querySelector('#saveButton').addEventListener('click', () => {
-    //     console.log('Save button clicked. Sending strokes to cloud...');
-    //     sendStrokesToCloud();
-    // });
+
+    document.getElementById('saveButton').addEventListener('click', () => {
+        console.log('Save button clicked. Sending strokes to cloud...');
+        performRightAction();
+    });
+
+
+    document.getElementById('requestPermissionButton').addEventListener('click', showPermissionModal);
+
+
+
 
 
     // Send strokes to cloud storage
@@ -201,8 +208,10 @@ function clearCanvas() {
 }
 
 // Function to perform another action when tilted right
-function performRightAction() {
+function nextWindow() {
     console.log('Tilted right! Performing another action...');
+    document.body.style.backgroundImage = "url('window_bg.png')"; // Change background image to window_bg.png
+    clearCanvas();
     // Add your desired action here
 }
 
@@ -236,7 +245,6 @@ function requestDeviceOrientationPermission() {
 }
 
 
-document.getElementById('requestPermissionButton').addEventListener('click', showPermissionModal);
 
 // Function to start listening for device orientation changes
 function startListeningForOrientation() {
@@ -250,8 +258,8 @@ function startListeningForOrientation() {
         if (tilt < tiltLeftThreshold) {
             clearCanvas(); // Clear the canvas if tilted left
         } else if (tilt > tiltRightThreshold) {
-            document.body.style.backgroundImage = "url('window_bg.png')"; // Change background image to window_bg.png
-            // performRightAction(); // Perform action if tilted right
+            nextWindow(); // Perform action if tilted right
         }
     });
 }
+

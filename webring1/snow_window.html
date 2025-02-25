@@ -4,29 +4,34 @@
 <script src="window.js"></script>
 
 <!-- Start Permission Modal -->
-<div id="permissionModal" class="modal">
-  <div class="modal-content">
-      <span class="close-button" id="closeModal">&times;</span>
-      <h2>by the windows</h2>
-      <p>...</p>
-      <button id="requestPermissionButton">journey through windows</button>
+ <body>
+  <div id="permissionModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="closeModal">&times;</span>
+        <h2>by the windows</h2>
+        <p>...</p>
+        <button id="requestPermissionButton">journey through windows</button>
+    </div>
   </div>
-</div>
-<!-- End Permission Modal -->
-
-<!-- Start Main Content -->
-<div id="mainContent" style="display: none;">
-  <img src="window_frame.png" alt="Window" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+  <!-- End Permission Modal -->
   
-  <div class="window-frame">
-    <p>   Draw an image frmo your childhood or imagination
-      <br> Tilt your phone to change the scenery. </p>
-
-    <!-- <button id="saveButton">Save Drawing</button> -->
-
+  <!-- Start Main Content -->
+  <div id="mainContent" style="display: none;">
+    <img src="window_frame.png" alt="Window" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+    
+    <div class="window-frame">
+      <p>   Draw an image frmo your childhood or imagination
+        <!-- <br> Tilt your phone to change the scenery. </p> -->
+  
+  
+    </div>
+  
+    <div class="canvas-container">
+      <canvas id="drawingCanvas"></canvas>
+  
   </div>
-
-  <div class="canvas-container">
-    <canvas id="drawingCanvas"></canvas>
-
-</div>
+  
+    <button id="saveButton">View another window</button>
+  
+  
+ </body>

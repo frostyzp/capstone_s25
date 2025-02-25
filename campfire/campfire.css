@@ -30,3 +30,11 @@ h1, h2, p {
     opacity: 0; /* Start invisible */
     transition: transform 0.5s, opacity 0.5s; /* Smooth transition for transform and opacity */
 }
+
+/* Add this to campfire.css */
+.random-text {
+    font-family: 'Courier New', Courier, monospace; /* Use a monospace font */
+    font-size: 24px; /* Increase font size */
+    color: #333; /* Set text color */
+    padding: 10px; /* Add some padding */
+}
