@@ -16,7 +16,7 @@ function handleTouchStart(event) {
     changeGlow();
     if (touchCount >= 4) {
         document.body.style.background = 'linear-gradient(to bottom, orange, red)'; // Change background to orange-red gradient
-        
+        spawnCampfire(wordsArray);
     }
 }
 
@@ -27,7 +27,7 @@ function handleTouchEnd() {
 }
 
 function changeGlow() {
-    const glowIntensity = Math.min(touchCount * 10, 100); // Limit glow intensity
+    const glowIntensity = Math.min(touchCount * 25, 100); // Limit glow intensity
     glowDiv.style.boxShadow = `0 0 ${glowIntensity}px rgba(255, 0, 0, 0.7)`;
 }
 
@@ -41,10 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const mark = document.createElement("div");
         mark.classList.add("touch-mark");
-        mark.style.left = `${touch.clientX}px`;
-        mark.style.top = `${touch.clientY}px`;
-        mark.style.width = '20px'; // Set width for the mark
-        mark.style.height = '20px'; // Set height for the mark
+        mark.style.left = `${touch.clientX - 25}px`; // Center the mark horizontally
+        mark.style.top = `${touch.clientY - 25}px`; // Center the mark vertically
+        mark.style.width = '50px'; // Set width for the mark
+        mark.style.height = '50px'; // Set height for the mark
         mark.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // Semi-transparent red
         mark.style.position = 'absolute'; // Position it absolutely
         mark.style.borderRadius = '50%'; // Make it circular
@@ -86,9 +86,11 @@ function spawnCampfire(words) {
         // Append the word to the body or a specific container
         document.body.appendChild(wordElement);
 
-        // Position the word in the center
-        wordElement.style.left = '50%';
-        wordElement.style.top = '50%';
+        // Randomly position the word within a defined area
+        const randomX = Math.random() * 100; // Random percentage for X position
+        const randomY = Math.random() * 100; // Random percentage for Y position
+        wordElement.style.left = `${randomX}%`;
+        wordElement.style.top = `${randomY}%`;
         wordElement.style.transform = 'translate(-50%, -50%) scale(0)'; // Center and scale
 
         // Trigger the animation
@@ -100,7 +102,7 @@ function spawnCampfire(words) {
         // Remove the word after the animation is complete
         setTimeout(() => {
             wordElement.remove();
-        }, 2000); // Wait for 2 seconds before removing
+        }, 5000); // Wait for 2 seconds before removing
 
         // Update the index for the next word
         index = (index + 1) % words.length; // Loop through the words
@@ -109,4 +111,3 @@ function spawnCampfire(words) {
 
 // Example usage
 const wordsArray = ["Fire", "Warmth", "Gather", "Share", "Light"];
-spawnCampfire(wordsArray);
