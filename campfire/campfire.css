@@ -3,7 +3,10 @@ body {
     background-color: black;
     font-family: 'Courier New', monospace; /* Using a common monospace font */
     text-align: center;   
-    
+    display: flex; /* Use flexbox for alignment */
+    flex-direction: column; /* Align items in a column */
+    justify-content: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
 }
 
 h1, h2, p {
