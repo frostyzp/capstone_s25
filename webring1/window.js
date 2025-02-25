@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById('saveButton').addEventListener('click', () => {
         console.log('Save button clicked. Sending strokes to cloud...');
-        performRightAction();
+        nextWindow();
     });
 
 
