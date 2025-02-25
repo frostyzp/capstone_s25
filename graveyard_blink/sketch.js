@@ -66,6 +66,7 @@ function setup() {
 //------------------------------------------
 function draw() {
   background('black');
+
   //drawVideoBackground();
   drawFaceLandmarks();
   detectBlinking();
@@ -84,7 +85,6 @@ function draw() {
   ^
   `;
   text(myText, width / 2, 200);
-
 }
 
 function windowResized() {

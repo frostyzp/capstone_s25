@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!drawing) return;
         
         const pos = getMousePos(e);
-        ctx.strokeStyle = 'rgba(250, 252, 255, 0.2)'; // Semi-transparent white
+        ctx.strokeStyle = 'rgba(250, 252, 255, 0.1)'; // Semi-transparent white
         ctx.lineWidth = 25; // Stroke width
         ctx.lineCap = 'round'; // Rounded ends
         
@@ -250,7 +250,8 @@ function startListeningForOrientation() {
         if (tilt < tiltLeftThreshold) {
             clearCanvas(); // Clear the canvas if tilted left
         } else if (tilt > tiltRightThreshold) {
-            performRightAction(); // Perform action if tilted right
+            document.body.style.backgroundImage = "url('window_bg.png')"; // Change background image to window_bg.png
+            // performRightAction(); // Perform action if tilted right
         }
     });
 }

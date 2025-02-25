@@ -1,7 +1,7 @@
 let emptyWordArr = [
     "Thank you for checking on me, everything will be alright. Have a great evening and see you tomorrow.",
     "Thank you for being a part of the group project!",
-    "Happy birthday.",
+    "Happy birthday...",
     "Please just tell me that you're safe. I'll get over it if you really don't want to tell me where you are. Whatever you're doing I'm not mad, I'm just scared that you aren't ok.",
     "We always said in another life. We tried this one and it wasn't meant to be. Maybe in the next one we'll finally get there like we always thought",
     "love you bb",
@@ -25,15 +25,35 @@ const heights = [300]; // Set both heights to just above 1/4 of the height
 
 const lefts = [
     0, 
-    window.innerWidth * 0.25, 
-    window.innerWidth * 0.5, 
-    window.innerWidth * 0.75
+    window.innerWidth / 7, 
+    (window.innerWidth * 2) / 7, 
+    (window.innerWidth * 3) / 7, 
+    (window.innerWidth * 4) / 7, 
+    (window.innerWidth * 5) / 7, 
+    (window.innerWidth * 6) / 7,
+    0, 
+    window.innerWidth / 7, 
+    (window.innerWidth * 2) / 7, 
+    (window.innerWidth * 3) / 7, 
+    (window.innerWidth * 4) / 7, 
+    (window.innerWidth * 5) / 7, 
+    (window.innerWidth * 6) / 7
 ];
 const tops = [
-    window.innerHeight * 0.1, 
-    window.innerHeight * 0.25, 
-    window.innerHeight * 0.5, 
-    window.innerHeight * 0.75
+    window.innerHeight * 0.45,  // Top left
+    window.innerHeight * 0.35,  // Bottom left
+    window.innerHeight * 0.25,  // Top middle
+    window.innerHeight * 0.3,   // Bottom middle
+    window.innerHeight * 0.25,  // Top right
+    window.innerHeight * 0.35,  // Bottom right
+    window.innerHeight * 0.45,  // Top far right --------------------------
+    window.innerHeight * 0.65,  // Bottom far right
+    window.innerHeight * 0.75,  // Top far right (going down)
+    window.innerHeight * 0.65,  // Bottom far right (going up)
+    window.innerHeight * 0.55,  // Top far right (going down)
+    window.innerHeight * 0.65,  // Bottom far right (going up)
+    window.innerHeight * 0.75,  // Top far right (going down)
+    window.innerHeight * 0.65,  // Bottom far right (going up)
 ];
 
 let storyAudio = [ ];
@@ -64,7 +84,7 @@ let openedWindows = []; // Array to keep track of opened windows
       delay: 50,
       cursor: ''   
   });
-  typewriter.typeString(emptyWordArr[wordCounter]).start();
+//   typewriter.typeString(emptyWordArr[wordCounter]).start();
     
   }
 
@@ -77,7 +97,7 @@ let openedWindows = []; // Array to keep track of opened windows
     // Close the previously opened tab if it exists
     // closeFirstWindowIfTwoOpen();
 
-    const randomIndex = getRandomInt(0, lefts.length);
+    const randomIndex = windowCounter % lefts.length;
 
     const width = widths[windowCounter % widths.length];
     const height = heights[windowCounter % heights.length];
@@ -98,7 +118,7 @@ let openedWindows = []; // Array to keep track of opened windows
     openedWindows.push(openedWindow);
 
     // Close the first opened window if there are more than 7
-    if (openedWindows.length > 7) {
+    if (openedWindows.length > 14) {
         closeFirstWindow();
     }
 
@@ -108,7 +128,7 @@ let openedWindows = []; // Array to keep track of opened windows
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>TOMBSTONE</title>
+      <title> To [...] </title>
       <style>
 
       @font-face {
@@ -119,7 +139,7 @@ let openedWindows = []; // Array to keep track of opened windows
             } 
 
           body { 
-            background-color: white;
+            background-color: black;
             background-size: cover; /* Make the image cover the entire body */
             background-position: center; /* Center the image */
             background-repeat: no-repeat; /* Prevent tiling */
@@ -127,7 +147,7 @@ let openedWindows = []; // Array to keep track of opened windows
 
             display: flex;
             align-items: center;
-            padding: 50px;
+            padding: 45px;
             justify-content: center;
             height: 50vh;
             text-align: center;
@@ -147,7 +167,7 @@ let openedWindows = []; // Array to keep track of opened windows
                 justify-content: center;
                 align-items:center;
                 position: relative;
-                filter: blur(0.6px);
+                filter: blur(0.4px);
     
 }
 

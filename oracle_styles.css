@@ -1,10 +1,15 @@
 body {
     background-color: black !important;  /* Added !important to ensure it takes precedence */
     transition: background-color 0.3s ease;
+    /* background-image: url('rock_bg.png'); */
+    background-size: cover;
+    background-position: center;
     height: 3000px;
     /* padding-top: 10rem; */
     text-align: center;
     font-family: serif;
+
+
 }
 
 .oracle_answer {
