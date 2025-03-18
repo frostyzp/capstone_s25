@@ -6,7 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
         "~Y~",
         "|",
         "^^^^^^",
-        "I miss you everyday baby..."
+        "I miss you everyday baby...",
+        "Thank you for checking on me, everything will be alright.\nHave a great evening and see you tomorrow.",
+        "Thank you for being a part of the group project!",
+        "Happy birthday...",
+        "Please just tell me that you're safe. I'll get over it if you really don't want to tell me where you are. Whatever you're doing I'm not mad, I'm just scared that you aren't ok.",
+        "We always said in another life. We tried this one and it wasn't meant to be. Maybe in the next one we'll finally get there like we always thought",
+        "love you bb",
+        "Perhaps you're the same. Ever since we've been friends, I can't help but feel my feelings growing you each day. Knowing you're in a relationship broke my heart.",
+        "Please remember how much I love you.",
+        "I wish there was more",
+        "Who are you?",
+        "Mama Papa I see them… the angels",
+        "I'm so tired. Can I go now?",
+        "I love you, and I'm so proud of you"
     ];
     let existingDivPositions = [];
     let openedWindows = [];
