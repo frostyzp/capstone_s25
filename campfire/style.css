@@ -1,0 +1,85 @@
+
+@font-face {
+    src: url('fonts/PanamaMonospaceRegular.otf') format('opentype');
+    font-family: 'mainFont'; 
+    font-weight: normal;
+    font-style: normal;
+} 
+ 
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} 
+
+p {
+    font: 'mainFont', serif;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.2rem;
+
+}
+
+ body {
+    background-color: #6A99D5;
+    font-family: 'mainFont', serif; 
+    color: white;
+    background-image: url('images/graveyard_bg.png');
+    background-size: cover; /* Make the image cover the entire body */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent tiling */
+}
+
+/* Set the p5.js canvas to cover the entire screen */
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1; /* Ensure canvas is behind other elements */
+}
+
+.blur {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  position: relative;
+  filter: blur(3px);
+  background: linear-gradient(129deg, #fff 0%, #c7c7c7 100%);
+  transition: filter 0.3s ease-in-out;
+  &:hover{
+    filter: blur(5px);
+  }
+}
+
+.mainText {
+  
+}
+
+.cloudText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+
+/*  for dream text */
+.dream-container {
+  pointer-events: none;
+}
+
+.floating-dream {
+  font-family: 'mainFont', serif;
+  padding: 1rem;
+  animation: glowPulse 5s infinite;
+  filter: blur(0.5px);
+}
+
+/* @keyframes glowPulse {
+  0% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.2); filter: blur(0.5px); }
+  50% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.9); filter: blur(1.5px); }
+  100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.2); filter: blur(0.5px); }
+} */

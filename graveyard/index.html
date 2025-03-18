@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="graveyard.js"></script>
+    <title>Interactive Canvas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-size: 1rem;
+        }
+
+        #canvas-container {
+            width: 500vw; /* 5x width */
+            height: 300vh; /* 3x height */
+            position: relative;
+            background-color: #f0f0f0;
+        }
+
+        .tap-text {
+            position: absolute;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+            font-family: monospace; /* Better for ASCII art */
+            white-space: pre; /* Preserves spaces and formatting */
+        }
+
+        .content-div {
+            position: absolute;
+            padding: 20px;
+            background-color: transparent; /* Changed from white */
+            font-family: monospace;
+            white-space: pre;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            transform: skewY(-20deg) translateZ(20px); /* Isometric effect */
+            perspective: 1000px; /* Perspective for 3D effect */
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/typewriter-effect@2.18.2/dist/core.js"></script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+   
+</body>
+</html>

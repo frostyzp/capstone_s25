@@ -9,13 +9,42 @@
     <script src="js/scroll_typewriter.js"></script>
     <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
 
-    <title>Document</title>
+    <title>Interactive Canvas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        #canvas-container {
+            width: 500vw; /* 5x width */
+            height: 300vh; /* 3x height */
+            position: relative;
+            background-color: #f0f0f0;
+        }
+
+        .tap-text {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.2rem;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        .content-div {
+            position: absolute;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+    </style>
 </head>
 <body>
-    
-    SEA$82## 
-
-    <br> 
+    <div id="canvas-container"></div>
 
     <button onclick="requestPermission()">Enable Motion</button>
     <!-- <button onclick="triggerHapticFeedback()">Test Vibration</button> -->
@@ -91,5 +120,108 @@
     </p>
     <br>
 
+    <script>
+        const container = document.getElementById('canvas-container');
+        const divContents = [
+            "Hello World", "Welcome", "Scroll around", "Keep exploring", 
+            "Find more", "Hidden messages", "Secret spots", "Journey on"
+        ];
+        let existingDivPositions = [];
+
+        // Create random divs
+        function createRandomDivs(count) {
+            for (let i = 0; i < count; i++) {
+                const div = document.createElement('div');
+                div.className = 'content-div';
+                
+                // Keep trying until we find a non-overlapping position
+                let position;
+                do {
+                    position = {
+                        x: Math.random() * (container.offsetWidth - 200),
+                        y: Math.random() * (container.offsetHeight - 100)
+                    };
+                } while (checkOverlap(position));
+
+                existingDivPositions.push({
+                    x: position.x,
+                    y: position.y,
+                    width: 200,
+                    height: 100
+                });
+
+                div.style.left = `${position.x}px`;
+                div.style.top = `${position.y}px`;
+                
+                container.appendChild(div);
+                
+                // Add typewriter effect
+                new Typewriter(div, {
+                    delay: 50,
+                    cursor: ''
+                })
+                .typeString(divContents[i % divContents.length])
+                .start();
+            }
+        }
+
+        // Check for div overlap
+        function checkOverlap(newPos) {
+            const buffer = 50; // Minimum space between divs
+            for (let pos of existingDivPositions) {
+                if (!(newPos.x + 200 + buffer < pos.x || 
+                    newPos.x > pos.x + pos.width + buffer ||
+                    newPos.y + 100 + buffer < pos.y || 
+                    newPos.y > pos.y + pos.height + buffer)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Handle tap/click events
+        container.addEventListener('click', (e) => {
+            const tapText = document.createElement('div');
+            tapText.className = 'tap-text';
+            tapText.style.left = `${e.pageX}px`;
+            tapText.style.top = `${e.pageY}px`;
+            container.appendChild(tapText);
+
+            // Add typewriter effect
+            new Typewriter(tapText, {
+                delay: 50,
+                cursor: ''
+            })
+            .typeString('^^^^^^')
+            .start();
+
+            // Remove after 10 seconds
+            setTimeout(() => {
+                tapText.style.opacity = '0';
+                setTimeout(() => tapText.remove(), 1000);
+            }, 10000);
+        });
+
+        // Check visibility and show/hide divs
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                } else {
+                    entry.target.style.opacity = '0';
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        // Create initial divs
+        createRandomDivs(20);
+
+        // Observe all content divs
+        document.querySelectorAll('.content-div').forEach(div => {
+            observer.observe(div);
+        });
+    </script>
 </body>
 </html>
