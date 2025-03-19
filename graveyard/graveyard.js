@@ -94,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-
         }
     }
 
@@ -191,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Create initial divs
-    createRandomDivs(50); // Increased number for more scattered elements
+    createRandomDivs(80); // Increased number for more scattered elements
 
     // Observe all content divs
     document.querySelectorAll('.content-div').forEach(div => {

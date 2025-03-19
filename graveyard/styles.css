@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-size: 1rem;
+    background-color: black; /* Set background to black */
+    color: white; /* Set text color to white */
+}
+
+#canvas-container {
+    width: 500vw; /* 5x width */
+    height: 300vh; /* 3x height */
+    position: relative;
+    background-color: black; /* Set background to black */
+}
+
+.tap-text {
+    position: absolute;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+    font-family: monospace; /* Better for ASCII art */
+    white-space: pre; /* Preserves spaces and formatting */
+    text-shadow: 0 0 10px white; /* Add slight glow effect */
+}
+
+.content-div {
+    position: absolute;
+    padding: 20px;
+    background-color: transparent; /* Changed from white */
+    font-family: monospace;
+    white-space: pre;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    transform: skewY(-20deg) translateZ(20px); /* Isometric effect */
+    perspective: 1000px; /* Perspective for 3D effect */
+    text-shadow: 0 0 10px white; /* Add slight glow effect */
+}
