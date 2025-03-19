@@ -6,12 +6,36 @@ document.addEventListener('DOMContentLoaded', () => {
         "~Y~",
         "|",
         "^^^^^^",
+        "{{}}",
+        "{}",
+        "~Y~",
+        "|",
+        "^^^^^^",
+        "{{}}",
+        "{}",
+        "~Y~",
+        "|",
+        "^^^^^^",
+        "{{}}",
+        "{}",
+        "~Y~",
+        "|",
+        "^^^^^^",
+        "{}",
+        "~Y~",
+        "|",
+        "^^^^^^",
+        "{{}}",
+        "{}",
+        "~Y~",
+        "|",
+        "^^^^^^",
         "I miss you everyday baby...",
         "Thank you for checking on me, everything will be alright.\nHave a great evening and see you tomorrow.",
-        "Thank you for being a part of the group project!",
-        "Happy birthday...",
-        "Please just tell me that you're safe. I'll get over it if you really don't want to tell me where you are. Whatever you're doing I'm not mad, I'm just scared that you aren't ok.",
-        "We always said in another life. We tried this one and it wasn't meant to be. Maybe in the next one we'll finally get there like we always thought",
+        "Thank you for \n being a part of \n the group project!",
+        "H a p p y \nbirthday...",
+        "Please just tell\n me that you're safe.\nI'll get over it \nif you really don't want \nto tell me where you are.\nWhatever you're doing I'm not mad, \nI'm just scared that you aren't ok.",
+        "We always said \nin another life. \nWe tried this one \nand it wasn't meant to be. \nMaybe in the next one \nwe'll finally get there \nlike we always thought",
         "love you bb",
         "Perhaps you're the same. Ever since we've been friends, I can't help but feel my feelings growing you each day. Knowing you're in a relationship broke my heart.",
         "Please remember how much I love you.",
@@ -53,6 +77,48 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Store the content but don't start typing yet
             div.dataset.content = asciiElements[Math.floor(Math.random() * asciiElements.length)];
+
+        const content = div.dataset.content;
+        if (content === "{{}}") {
+            div.style.cursor = 'pointer'; // Change cursor to pointer for clickable effect
+            div.addEventListener('click', () => {
+                // Create modal
+                const modal = document.createElement('div');
+                modal.style.position = 'fixed';
+                modal.style.top = `${window.scrollY + window.innerHeight / 2}px`; // Center vertically based on scroll position
+                modal.style.left = `${window.scrollX + window.innerWidth / 2}px`; // Center horizontally based on scroll position
+                modal.style.transform = 'translate(-50%, -50%)'; // Adjust position to truly center
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                modal.style.display = 'flex';
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
+                modal.style.zIndex = '1000';
+
+                // Create modal content
+                const modalContent = document.createElement('div');
+                modalContent.style.backgroundColor = 'white';
+                modalContent.style.padding = '20px';
+                modalContent.style.borderRadius = '5px';
+                modalContent.style.color = 'black';
+                modalContent.innerText = 'This is a pop-up modal!';
+
+                // Create close button
+                const closeButton = document.createElement('button');
+                closeButton.innerText = 'Close';
+                closeButton.style.marginTop = '10px';
+                closeButton.addEventListener('click', () => {
+                    modal.remove(); // Remove modal on close
+                });
+
+                modalContent.appendChild(closeButton);
+                modal.appendChild(modalContent);
+                document.body.appendChild(modal);
+            });
+        }
+
+
         }
     }
 
@@ -125,9 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach(entry => {
             if (entry.isIntersecting && !entry.target.dataset.typed) {
                 entry.target.style.opacity = '1';
-                // Start typewriter effect
+                // Start typewriter effect with a slower delay
                 new Typewriter(entry.target, {
-                    delay: 50,
+                    delay: 100, // Increased delay for slower typing
                     cursor: ''
                 })
                 .typeString(entry.target.dataset.content)
@@ -149,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Create initial divs
-    createRandomDivs(50); // Increased number for more scattered elements
+    createRandomDivs(80); // Increased number for more scattered elements
 
     // Observe all content divs
     document.querySelectorAll('.content-div').forEach(div => {
