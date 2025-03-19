@@ -78,45 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Store the content but don't start typing yet
             div.dataset.content = asciiElements[Math.floor(Math.random() * asciiElements.length)];
 
-        const content = div.dataset.content;
-        if (content === "{{}}") {
-            div.style.cursor = 'pointer'; // Change cursor to pointer for clickable effect
-            div.addEventListener('click', (event) => {
-                // Create modal
-                const modal = document.createElement('div');
-                modal.style.position = 'fixed';
-                modal.style.top = `${event.clientY}px`; // Position modal at the click location
-                modal.style.left = `${event.clientX}px`; // Position modal at the click location
-                modal.style.transform = 'translate(-50%, -50%)'; // Adjust position to center the modal on the click
-                modal.style.width = '300px'; // Set a fixed width for the modal
-                modal.style.height = '200px'; // Set a fixed height for the modal
-                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-                modal.style.display = 'flex';
-                modal.style.alignItems = 'center';
-                modal.style.justifyContent = 'center';
-                modal.style.zIndex = '1000';
-
-                // Create modal content
-                const modalContent = document.createElement('div');
-                modalContent.style.backgroundColor = 'white';
-                modalContent.style.padding = '20px';
-                modalContent.style.borderRadius = '5px';
-                modalContent.style.color = 'black';
-                modalContent.innerText = 'This is a pop-up modal!';
-
-                // Create close button
-                const closeButton = document.createElement('button');
-                closeButton.innerText = 'Close';
-                closeButton.style.marginTop = '10px';
-                closeButton.addEventListener('click', () => {
-                    modal.remove(); // Remove modal on close
-                });
-
-                modalContent.appendChild(closeButton);
-                modal.appendChild(modalContent);
-                document.body.appendChild(modal);
-            });
-        }
+        
 
 
         }
