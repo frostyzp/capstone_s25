@@ -81,15 +81,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = div.dataset.content;
         if (content === "{{}}") {
             div.style.cursor = 'pointer'; // Change cursor to pointer for clickable effect
-            div.addEventListener('click', () => {
+            div.addEventListener('click', (event) => {
                 // Create modal
                 const modal = document.createElement('div');
                 modal.style.position = 'fixed';
-                modal.style.top = `${window.scrollY + window.innerHeight / 2}px`; // Center vertically based on scroll position
-                modal.style.left = `${window.scrollX + window.innerWidth / 2}px`; // Center horizontally based on scroll position
-                modal.style.transform = 'translate(-50%, -50%)'; // Adjust position to truly center
-                modal.style.width = '100%';
-                modal.style.height = '100%';
+                modal.style.top = `${event.clientY}px`; // Position modal at the click location
+                modal.style.left = `${event.clientX}px`; // Position modal at the click location
+                modal.style.transform = 'translate(-50%, -50%)'; // Adjust position to center the modal on the click
+                modal.style.width = '300px'; // Set a fixed width for the modal
+                modal.style.height = '200px'; // Set a fixed height for the modal
                 modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
                 modal.style.display = 'flex';
                 modal.style.alignItems = 'center';
