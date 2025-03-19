@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "Please just tell\n me that you're safe.\nI'll get over it \nif you really don't want \nto tell me where you are.\nWhatever you're doing I'm not mad, \nI'm just scared that you aren't ok.",
         "We always said \nin another life. \nWe tried this one \nand it wasn't meant to be. \nMaybe in the next one \nwe'll finally get there \nlike we always thought",
         "love you bb",
-        "Perhaps you're the same. Ever since we've been friends, I can't help but feel my feelings growing you each day. Knowing you're in a relationship broke my heart.",
+        "Perhaps you're the same.\n Ever since we've been friends, I can't help but feel my feelings growing you each day. Knowing you're in a relationship broke my heart.",
         "Please remember how much I love you.",
         "I wish there was more",
         "Who are you?",
