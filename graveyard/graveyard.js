@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Create initial divs
-    createRandomDivs(120); // Increased number for more scattered elements
+    createRandomDivs(80); // Increased number for more scattered elements
     // The observe method is used to watch for visibility changes of the target elements.
     // Here, we are observing all content divs to trigger animations when they come into view.
     document.querySelectorAll('.content-div, .content-div-2').forEach(div => {
