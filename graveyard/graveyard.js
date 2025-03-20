@@ -1,25 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('canvas-container');
     const asciiElements = [
-        "{{}}",
-        "{}",
-        "~Y~",
-        "|",
-        "^^^^^^",
+        "  ^  ",
+        " ^^^ ",
+        "^^^^^",
+        "  |  ",
+        "~~~~~",
+        "  ^  ",
+        " ^^^ ",
+        "^^^^^",
+        "  |  ",
+        "~~~~~",
+        "  ^  ",
+        " ^^^ ",
+        "^^^^^",
+        "  |  ",
+        "~~~~~",
+        "  ^  ",
+        " ^^^ ",
+        "^^^^^",
+        "  |  ",
+        "~~~~~",
+        "  ^  ",
+        " ^^^ ",
+        "^^^^^",
+        "  |  ",
+        "~~~~~",
         "I miss you everyday baby...",
         "Thank you for checking on me, everything will be alright.\nHave a great evening and see you tomorrow.",
-        "Thank you for being a part of the group project!",
+        "Thank you \nfor being a part \nof the group project!",
         "Happy birthday...",
-        "Please just tell me that you're safe. I'll get over it if you really don't want to tell me where you are. Whatever you're doing I'm not mad, I'm just scared that you aren't ok.",
-        "We always said in another life. We tried this one and it wasn't meant to be. Maybe in the next one we'll finally get there like we always thought",
+        "Please just tell me that you're safe. \nI'll get over it if you really \ndon't want to tell me where you are. \nWhatever you're doing I'm not mad, \nI'm just scared that you aren't ok.",
+        "We always said in another life. \nWe tried this one and it wasn't meant to be. \nMaybe in the next one we'll finally get there like we always thought",
         "love you bb",
-        "Perhaps you're the same.\n Ever since we've been friends, I can't help but feel my feelings growing you each day. Knowing you're in a relationship broke my heart.",
-        "Please remember how much I love you.",
-        "I wish there was more",
+        "Perhaps you're the same.\n Ever since we've been friends, \nI can't help but feel my feelings growing for you each day. \nKnowing you're in a relationship broke my heart.",
+        "Please remember \nhow much I love you.",
+        "I wish there \nwas more",
         "Who are you?",
-        "Mama Papa I see them… the angels",
-        "I'm so tired. Can I go now?",
-        "I love you, and I'm so proud of you"
+        "Mama Papa I see them… \nthe angels",
+        "I'm so tired. \nCan I go now?",
+        "I love you,\n and I'm so proud of you"
     ];
     let existingDivPositions = [];
     let openedWindows = [];
@@ -28,7 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function createRandomDivs(count) {
         for (let i = 0; i < count; i++) {
             const div = document.createElement('div');
-            div.className = 'content-div';
+            // Randomly assign different classes
+            const classTypes = ['content-div', 'content-div-2'];
+            const randomClass = classTypes[Math.floor(Math.random() * classTypes.length)];
+            div.className = randomClass;
             
             // Keep trying until we find a non-overlapping position
             let position;
@@ -57,15 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const content = div.dataset.content;
         if (content === "{{}}") {
             div.style.cursor = 'pointer'; // Change cursor to pointer for clickable effect
-            div.addEventListener('click', () => {
+            div.addEventListener('click', (event) => {
                 // Create modal
                 const modal = document.createElement('div');
                 modal.style.position = 'fixed';
-                modal.style.top = `${window.scrollY + window.innerHeight / 2}px`; // Center vertically based on scroll position
-                modal.style.left = `${window.scrollX + window.innerWidth / 2}px`; // Center horizontally based on scroll position
-                modal.style.transform = 'translate(-50%, -50%)'; // Adjust position to truly center
-                modal.style.width = '100%';
-                modal.style.height = '100%';
+                modal.style.top = `${event.clientY}px`; // Position modal at the click location
+                modal.style.left = `${event.clientX}px`; // Position modal at the click location
+                modal.style.transform = 'translate(-50%, -50%)'; // Adjust position to center the modal
+                modal.style.width = '300px'; // Set a fixed width for the modal
+                modal.style.height = '200px'; // Set a fixed height for the modal
                 modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
                 modal.style.display = 'flex';
                 modal.style.alignItems = 'center';
@@ -99,12 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check for div overlap
     function checkOverlap(newPos) {
-        const buffer = 50;
+        const buffer = 15; // Reduced buffer for less spacing
         for (let pos of existingDivPositions) {
-            if (!(newPos.x + 200 + buffer < pos.x || 
-                newPos.x > pos.x + pos.width + buffer ||
-                newPos.y + 100 + buffer < pos.y || 
-                newPos.y > pos.y + pos.height + buffer)) {
+            if (!(newPos.x + 200 + buffer < pos.x || newPos.x > pos.x + pos.width + buffer || newPos.y + 100 + buffer < pos.y || newPos.y > pos.y + pos.height + buffer)) {
                 return true;
             }
         }
@@ -168,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 entry.target.style.opacity = '1';
                 // Start typewriter effect
                 new Typewriter(entry.target, {
-                    delay: 50,
+                    delay: 80,
                     cursor: ''
                 })
                 .typeString(entry.target.dataset.content)
@@ -190,10 +210,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Create initial divs
-    createRandomDivs(80); // Increased number for more scattered elements
-
-    // Observe all content divs
-    document.querySelectorAll('.content-div').forEach(div => {
+    createRandomDivs(120); // Increased number for more scattered elements
+    // The observe method is used to watch for visibility changes of the target elements.
+    // Here, we are observing all content divs to trigger animations when they come into view.
+    document.querySelectorAll('.content-div, .content-div-2').forEach(div => {
         observer.observe(div);
     });
 });
