@@ -9,8 +9,8 @@ body {
 }
 
 #canvas-container {
-    width: 500vw; /* 5x width */
-    height: 300vh; /* 3x height */
+    width: 650vw; /* 5x width */
+    height: 450vh; /* 3x height */
     position: relative;
     background-color: black; /* Set background to black */
 }
