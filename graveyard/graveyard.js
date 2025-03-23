@@ -16,32 +16,46 @@ document.addEventListener('DOMContentLoaded', () => {
         "~Y~",
         "|",
         "^^^^^^",
-        "I miss you everyday baby...",
+        "I miss you \neveryday baby...",
         "Thank you for checking on me, everything will be alright.\nHave a great evening and see you tomorrow.",
-        "Thank you for being a part of the group project!",
         "Happy birthday...",
-        "Please just tell me that you're safe. I'll get over it if you really don't want to tell me where you are. Whatever you're doing I'm not mad, I'm just scared that you aren't ok.",
-        "We always said in another life. We tried this one and it wasn't meant to be. Maybe in the next one we'll finally get there like we always thought",
+        "Please just tell me that you're safe.\n I'll get over it if you really don't\n want to tell me where you are.\n Whatever you're doing I'm not mad,\n I'm just scared that you aren't ok.",
+        "We always said in another life.\n We tried this one and it wasn't meant to be.\n Maybe in the next one we'll finally \nget there like we always thought",
         "love you bb",
-        "Perhaps you're the same.\n Ever since we've been friends, I can't help but feel my feelings growing you each day. Knowing you're in a relationship broke my heart.",
-        "Please remember how much I love you.",
+        "Perhaps you're the same.\n Ever since we've been friends, \nI can't help but feel my feelings growing you each day. \nKnowing you're in a relationship broke my heart.",
+        "Please remember how\n much I love you.",
         "I wish there was more",
         "Who are you?",
-        "Mama Papa I see them… the angels",
-        "I'm so tired. Can I go now?",
-        "I love you, and I'm so proud of you"
+        "Mama Papa \nI see them…\n the angels",
+        "I'm so tired. \nCan I go now?",
+        "I love you, \nand I'm so proud of you"
     ];
     let existingDivPositions = [];
     let openedWindows = [];
 
     // Create random divs
     function createRandomDivs(count) {
+        // Function to generate random ASCII art of specific length
+        function generateASCIICover(content) {
+            const asciiChars = ['~', '^', '{', '}', '|', '*', '+', '-', '>', '<', '/', '\\'];
+            let result = '';
+            // Process the content character by character
+            for (let i = 0; i < content.length; i++) {
+                // If we encounter a newline, preserve it in the ASCII cover
+                if (content[i] === '\n') {
+                    result += '\n';
+                } else {
+                    result += asciiChars[Math.floor(Math.random() * asciiChars.length)];
+                }
+            }
+            return result;
+        }
+
         for (let i = 0; i < count; i++) {
             const div = document.createElement('div');
-            // Randomly assign either content-div or content-div-2 class
             div.className = Math.random() < 0.5 ? 'content-div' : 'content-div-2';
             
-            // Keep trying until we find a non-overlapping position
+            // Position logic remains the same
             let position;
             do {
                 position = {
@@ -60,24 +74,76 @@ document.addEventListener('DOMContentLoaded', () => {
             div.style.left = `${position.x}px`;
             div.style.top = `${position.y}px`;
             
-            // Store the actual content in dataset but display '***'
-            div.dataset.content = asciiElements[Math.floor(Math.random() * asciiElements.length)];
-            div.textContent = '';
-            div.style.cursor = 'pointer';
+            // Store the actual content and generate matching ASCII cover
+            const content = asciiElements[Math.floor(Math.random() * asciiElements.length)];
+            const asciiCover = generateASCIICover(content);
+            div.dataset.content = content;
+            div.dataset.asciiCover = asciiCover;
+            div.dataset.revealedChars = '0';
+            div.textContent = asciiCover;
+            div.style.whiteSpace = 'pre'; // Preserve ASCII art formatting
 
-            // Add click/tap handler for all divs
-            div.addEventListener('click', function() {
-                if (!this.dataset.revealed) {
-                    this.dataset.revealed = 'true';
-                    // Clear the *** and start typewriter
-                    this.textContent = '';
-                    new Typewriter(this, {
-                        delay: 50,
-                        cursor: ''
-                    })
-                    .typeString(this.dataset.content)
-                    .start();
+            // Touch handling for swipe reveals
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            div.addEventListener('touchstart', function(e) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
+
+            div.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                const touchEndX = e.touches[0].clientX;
+                const touchEndY = e.touches[0].clientY;
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+                const content = this.dataset.content;
+                const asciiCover = this.dataset.asciiCover;
+                const currentRevealed = parseInt(this.dataset.revealedChars);
+                const newRevealed = Math.min(
+                    content.length,
+                    Math.floor(currentRevealed + (distance / 5)) // Made more sensitive
+                );
+
+                if (newRevealed > currentRevealed) {
+                    this.dataset.revealedChars = newRevealed.toString();
+                    // Combine revealed content with remaining ASCII cover
+                    const revealedText = content.substring(0, newRevealed);
+                    const remainingAscii = asciiCover.substring(newRevealed);
+                    this.textContent = revealedText + remainingAscii;
                 }
+
+                // Update start position for next movement
+                touchStartX = touchEndX;
+                touchStartY = touchEndY;
+            });
+
+            // For desktop, reveal based on mouse position
+            div.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const content = this.dataset.content;
+                const asciiCover = this.dataset.asciiCover;
+                
+                // Calculate reveal amount based on horizontal position
+                const revealAmount = Math.floor((x / rect.width) * content.length);
+                const revealedText = content.substring(0, revealAmount);
+                const remainingAscii = asciiCover.substring(revealAmount);
+                this.textContent = revealedText + remainingAscii;
+            });
+
+            div.addEventListener('mouseleave', function() {
+                const revealedChars = parseInt(this.dataset.revealedChars);
+                const content = this.dataset.content;
+                const asciiCover = this.dataset.asciiCover;
+                
+                // Show partially revealed state or full ASCII cover
+                const revealedText = content.substring(0, revealedChars);
+                const remainingAscii = asciiCover.substring(revealedChars);
+                this.textContent = revealedText + remainingAscii;
             });
             
             container.appendChild(div);
@@ -148,17 +214,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 0);
     });
 
-    // Modify the observer to not automatically start typewriter
+    // Modify the observer to maintain partially revealed state
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
+                const revealedChars = parseInt(entry.target.dataset.revealedChars);
+                const content = entry.target.dataset.content;
+                const asciiCover = entry.target.dataset.asciiCover;
+                
+                // Maintain partially revealed state
+                const revealedText = content.substring(0, revealedChars);
+                const remainingAscii = asciiCover.substring(revealedChars);
+                entry.target.textContent = revealedText + remainingAscii;
             } else {
                 entry.target.style.opacity = '0';
-                // Reset to *** if not revealed yet
-                if (!entry.target.dataset.revealed) {
-                    entry.target.textContent = '^ -- ^ -- ^';
-                }
             }
         });
     }, {
