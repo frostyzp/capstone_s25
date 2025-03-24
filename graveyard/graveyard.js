@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createRandomDivs(count) {
         // Function to generate random ASCII art of specific length
         function generateASCIICover(content) {
-            const asciiChars = ['~', '|', '/', '\\'];
+            const asciiChars = ['w', '|', 'o', '\\'];
             let result = '';
             // Process the content character by character
             for (let i = 0; i < content.length; i++) {
