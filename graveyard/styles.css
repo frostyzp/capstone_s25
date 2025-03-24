@@ -3,16 +3,17 @@ body {
     padding: 0;
     overflow-x: hidden;
     font-size: 1rem;
-    background-color: black; /* Set background to black */
     color: white; /* Set text color to white */
     text-align: center;
+    background-color: black; /* Set background to black */
+    font-family: monospace; /* Better for ASCII art */
+
 }
 
 #canvas-container {
     width: 650vw; /* 5x width */
     height: 450vh; /* 3x height */
     position: relative;
-    background-color: black; /* Set background to black */
 }
 
 .tap-text {
@@ -25,28 +26,82 @@ body {
     text-shadow: 0 0 10px white; /* Add slight glow effect */
 }
 
-.content-div {
+.content-div, .content-div-2, .content-div-landscape {
     position: absolute;
     padding: 20px;
-    background-color: transparent; /* Changed from white */
+    background-color: transparent;
     font-family: monospace;
-    white-space: pre;
-    opacity: 0;
+    white-space: pre-wrap;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50px;
+    height: auto;
+    min-height: 100px;
+    text-align: justify;
     transition: opacity 0.5s ease-in-out;
-    transform: skewY(-20deg) translateZ(20px); /* Isometric effect */
-    perspective: 1000px; /* Perspective for 3D effect */
-    text-shadow: 0 0 10px white; /* Add slight glow effect */
+    text-shadow: 0 0 10px white;
+    font-size: 1rem;
+    box-sizing: border-box;
+    /* line-height: 1.5; */
+}
+
+.content-div {
+    transform: skewY(-20deg) translateZ(20px);
+    perspective: 1000px;
 }
 
 .content-div-2 {
-    position: absolute;
-    padding: 20px;
-    background-color: transparent; /* Changed from white */
-    font-family: monospace;
-    white-space: pre;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-    transform: skewY(20deg) translateZ(-20px); /* Isometric effect with different sides */
-    perspective: 1000px; /* Perspective for 3D effect */
-    text-shadow: 0 0 10px white; /* Add slight glow effect */
+    transform: skewY(20deg) translateZ(-20px);
+    perspective: 1000px;
+}
+
+.content-div-landscape {
+    transform: skewY(20deg) translateZ(-20px);
+    perspective: 1000px;
+    opacity: 0.2;
+}
+
+.text-line {
+    display: block;
+    width: 100%;
+    text-align: justify;
+    text-align-last: justify;
+    margin: 2px 0;
+}
+
+.grained-element {
+    background-image: url('background.png');
+    background-repeat: repeat;
+    /* overflow: hidden; */
+}
+
+.grained-element::before {
+    background-image: url('background.png');
+    position: fixed;
+    content: "";
+    width: 650vw; /* 5x width */
+    height: 450vh; /* 3x height */
+   
+    animation-name: grained;
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+    animation-timing-function: steps(1);
+    z-index: -1; /* Ensure it stays behind other content */
+}
+
+@keyframes grained {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-5px, 5px); }
+    50% { transform: translate(3px, -6px); }
+    75% { transform: translate(-2px, 3px); }
+    100% { transform: translate(0, 0); }
+}
+
+.graveyard-count {
+    left: 50%;
+    top: 50%;
+    position: fixed;
+    /* font-size: 1.5rem; */
+    color: white;
 }
