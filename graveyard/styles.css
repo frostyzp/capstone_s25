@@ -78,14 +78,14 @@ body {
 
 .grained-element::before {
     background-image: url('background.png');
-    position: fixed;
+    position: absolute;
     content: "";
     width: 650vw; /* 5x width */
     height: 450vh; /* 3x height */
    
     animation-name: grained;
     animation-iteration-count: infinite;
-    animation-duration: 2s;
+    animation-duration: 1s;
     animation-timing-function: steps(1);
     z-index: -1; /* Ensure it stays behind other content */
 }

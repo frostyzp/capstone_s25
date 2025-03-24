@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     }
 
-    // Update the observer to add typewriter effect for ASCII cover
+    // Update the observer to only handle initial appearance
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -312,9 +312,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         .start();
                     }
                 }
-            } else {
-                entry.target.style.opacity = '0';
-                entry.target.dataset.typed = ''; // Reset typed status when out of view
+                // Unobserve the element after it's been revealed
+                observer.unobserve(entry.target);
             }
         });
     }, {
