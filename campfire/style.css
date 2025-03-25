@@ -14,6 +14,8 @@
 
 p {
     font: 'mainFont', serif;
+    animation: textShift 2s infinite steps(2);
+
 }
 
 h2 {
@@ -26,7 +28,7 @@ h2 {
     background-color: #6A99D5;
     font-family: 'mainFont', serif; 
     color: white;
-    background-image: url('images/graveyard_bg.png');
+    /* background-image: url('images/graveyard_bg.png'); */
     background-size: cover; /* Make the image cover the entire body */
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Prevent tiling */
@@ -83,3 +85,12 @@ h2 {
   50% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.9); filter: blur(1.5px); }
   100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.2); filter: blur(0.5px); }
 } */
+
+@keyframes textShift {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(0.5px, -0.3px); }
+  40% { transform: translate(-0.2px, 0.5px); }
+  60% { transform: translate(0.3px, 0.2px); }
+  80% { transform: translate(-0.4px, -0.2px); }
+  100% { transform: translate(0, 0); }
+}
