@@ -125,27 +125,123 @@ function transformWish(inputText, rippleNumber) {
 
 // Modify the generateWish function
 function generateWish(rippleNumber) {
-    if (rippleNumber === '1') {
-        // Get the current text from wish-input
-        const currentWish = document.getElementById('wish-input').value;
-        if (currentWish && currentWish !== 'i hope...') {
-            // Transform the actual input text
-            return transformWish(currentWish, rippleNumber);
-        } else {
-            // Use the default grammar if no input
-            let rules = {
-                start: "hope for $something even if it's $adj",
-                something: "something | anything",
-                adj: RiTa.randomWord({ pos: "jj" }),
-            };
-            return RiTa.grammar(rules).expand();
+    // First check if there's user input
+    const userInput = document.getElementById(`wish-input${rippleNumber === '1' ? '' : rippleNumber}`).value;
+    
+    // If there's valid user input, use it as the base for transformations
+    if (userInput && userInput !== 'i hope...' && userInput !== 'i wish...' && userInput !== 'i dream...') {
+        // Parse the user's input
+        const words = RiTa.tokenize(userInput);
+        const tags = RiTa.pos(words);
+        
+        // Find verbs and adjectives to potentially transform
+        const transformedWords = words.map((word, i) => {
+            if (tags[i].startsWith('vb')) {
+                // Randomly transform verbs
+                const transforms = [
+                    RiTa.conjugate(word, {tense: 'present'}),
+                    RiTa.conjugate(word, {tense: 'past'}),
+                    'will ' + RiTa.conjugate(word, {tense: 'present'}),
+                    'would ' + RiTa.conjugate(word, {tense: 'present'})
+                ];
+                return transforms[Math.floor(Math.random() * transforms.length)];
+            } else if (tags[i].startsWith('jj')) {
+                // Maybe replace adjectives with similar ones
+                const similar = RiTa.similarTo(word, { pos: 'jj' });
+                return similar.length > 0 ? similar[Math.floor(Math.random() * similar.length)] : word;
+            }
+            return word;
+        });
+        
+        const transformedWish = transformedWords.join(' ');
+        
+        // Add to appropriate array
+        if (rippleNumber === '1') {
+            wishesRipple1.push(transformedWish);
+        } else if (rippleNumber === '2') {
+            wishesRipple2.push(transformedWish);
+        } else if (rippleNumber === '3') {
+            wishesRipple3.push(transformedWish);
         }
-    } else if (rippleNumber === '2') {
-        console.log(RiTa.grammar(rules).expand());
-        return RiTa.grammar(rules).expand();
-    } else if (rippleNumber === '3') {
-        console.log(RiTa.grammar(rules).expand());
-        return RiTa.grammar(rules).expand();
+        
+        return transformedWish;
+    } 
+    // If no user input, fall back to generated wishes
+    else {
+        let rules;
+        if (rippleNumber === '1') {
+            rules = {
+                start: "$timeframe I $verb for $something",
+                timeframe: "today | tomorrow | someday",
+                verb: "hope | wish | dream | long",
+                something: "$adj $noun | $noun that is $adj",
+                adj: RiTa.randomWord({ pos: "jj" }),
+                noun: RiTa.randomWord({ pos: "nn" })
+            };
+        } else if (rippleNumber === '2') {
+            rules = {
+                start: "if only $subject would $verb $adj",
+                subject: "we | they | time | life",
+                verb: "become | grow | turn | remain",
+                adj: RiTa.randomWord({ pos: "jj" })
+            };
+        } else if (rippleNumber === '3') {
+            rules = {
+                start: "maybe $timeframe $subject will $verb",
+                timeframe: "tomorrow | next time | soon | eventually",
+                subject: "everything | nothing | anything",
+                verb: "change | transform | shift | evolve"
+            };
+        }
+
+        const generatedWish = RiTa.grammar(rules).expand();
+        
+        // Add to appropriate array
+        if (rippleNumber === '1') {
+            wishesRipple1.push(generatedWish);
+        } else if (rippleNumber === '2') {
+            wishesRipple2.push(generatedWish);
+        } else if (rippleNumber === '3') {
+            wishesRipple3.push(generatedWish);
+        }
+
+        return generatedWish;
+    }
+}
+
+// Function to add new wish when device is tilted
+function addWish(rippleNumber) {
+    const wish = generateWish(rippleNumber);
+    const rippleDiv = document.getElementById(`ripple-${rippleNumber}`);
+    
+    // Update the ripple content
+    rippleDiv.textContent = wish;
+    rippleDiv.style.opacity = 1;
+    rippleDiv.style.transition = 'opacity 0.5s ease-in';
+}
+
+// Modify the orientation handler
+function enableOrientationFeatures() {
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', function(event) {
+            const beta = event.beta;   // Rotation around the x-axis
+            const gamma = event.gamma; // Rotation around the y-axis
+
+            // Reset all ripples to hidden
+            document.querySelectorAll('#ripple-1, #ripple-2, #ripple-3')
+                   .forEach(ripple => ripple.style.opacity = 0);
+
+            // Generate new wishes based on device orientation
+            if (gamma < -30) {
+                addWish('1');
+            } else if (beta > 30) {
+                addWish('2');
+            } else if (gamma > 30) {
+                addWish('3');
+            }
+        });
+    } else {
+        alert("Device orientation is not supported on your device.");
     }
 }
 
@@ -158,58 +254,13 @@ async function requestOrientationPermission() {
             if (permission === 'granted') {
                 enableOrientationFeatures();
             } else {
-                alert("to enter the wishing well, please allow device orientation");
+                alert("hold your vessel gently, tilt and wait for the ripples to appear");
             }
         } catch (error) {
             console.error("Error requesting device orientation permission:", error);
         }
     } else {
         enableOrientationFeatures();
-    }
-}
-
-// Function containing your existing orientation code
-function enableOrientationFeatures() {
-    if (window.DeviceOrientationEvent) {
-        window.addEventListener('deviceorientation', function(event) {
-            const alpha = event.alpha; // Rotation around the z-axis
-            const beta = event.beta;   // Rotation around the x-axis
-            const gamma = event.gamma; // Rotation around the y-axis
-
-            // Get the ripple elements
-            const ripple1 = document.getElementById('ripple-1');
-            const ripple2 = document.getElementById('ripple-2');
-            const ripple3 = document.getElementById('ripple-3');
-
-            // Reset all ripples to hidden
-            ripple1.style.opacity = 0;
-            ripple2.style.opacity = 0;
-            ripple3.style.opacity = 0;
-
-            // Check the orientation and fade in the appropriate ripple
-            if (gamma < -30) { // Tilted to the left
-                ripple1.style.opacity = 1;
-                ripple1.style.transition = 'opacity 0.5s ease-in';
-                wishesRipple1.push(generateWish('1')); // Generate a new wish for ripple 2
-                wishInput1.value = wishesRipple1[wishesRipple1.length - 1]; // Store wish in input
-
-                
-            } else if (beta > 30) { // Tilted up
-                ripple2.style.opacity = 1;
-                ripple2.style.transition = 'opacity 0.5s ease-in';
-                wishesRipple2.push(generateWish('2')); // Generate a new wish for ripple 2
-                document.getElementById('ripple-2').textContent = wishesRipple2.join('\n'); // Update content
-                wishInput2.value = wishesRipple2[wishesRipple2.length - 1]; // Store wish in input
-            } else if (gamma > 30) { // Tilted to the right
-                ripple3.style.opacity = 1;
-                ripple3.style.transition = 'opacity 0.5s ease-in';
-                wishesRipple3.push(generateWish('3')); // Generate a new wish for ripple 3
-                document.getElementById('ripple-3').textContent = wishesRipple3.join('\n'); // Update content
-                wishInput3.value = wishesRipple3[wishesRipple3.length - 1]; // Store wish in input
-            }
-        });
-    } else {
-        alert("Device orientation is not supported on your device.");
     }
 }
 
