@@ -11,31 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let wishesRipple2 = [];
     let wishesRipple3 = [];
     
-    // You can either auto-request when page loads
-    requestOrientationPermission();
-
     // Get the text area
     const wishInput = document.getElementById('wish-input');
 
-    // Detect swipe up gesture
-    let touchStartY = 0;
-    let touchEndY = 0;
-
-    const container = document.getElementById('wish-input-container');
-
-    container.addEventListener('touchstart', (event) => {
-        touchStartY = event.changedTouches[0].screenY;
-    });
-
-    container.addEventListener('touchend', (event) => {
-        touchEndY = event.changedTouches[0].screenY;
-        handleGesture();
-    });
-
-    function handleGesture() {
-        if (touchStartY - touchEndY > 50) { // Swipe up detected
-            requestOrientationPermission();
-
+    // Button to submit wishes
+    const submitButton = document.getElementById('submit-wish');
+    submitButton.addEventListener('click', () => {
+        requestOrientationPermission().then(() => {
             // Get the content from the wish input fields
             const wish1 = document.getElementById('wish-input').value;
             const wish2 = document.getElementById('wish-input2').value;
@@ -64,6 +46,27 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Add fade out class to container
             container.classList.add('fade-out');
+        });
+    });
+
+    // Detect swipe up gesture
+    let touchStartY = 0;
+    let touchEndY = 0;
+
+    const container = document.getElementById('wish-input-container');
+
+    container.addEventListener('touchstart', (event) => {
+        touchStartY = event.changedTouches[0].screenY;
+    });
+
+    container.addEventListener('touchend', (event) => {
+        touchEndY = event.changedTouches[0].screenY;
+        handleGesture();
+    });
+
+    function handleGesture() {
+        if (touchStartY - touchEndY > 50) { // Swipe up detected
+            
         }
     }
 });
