@@ -275,18 +275,6 @@ function enableOrientationFeatures() {
             const ripple2 = document.getElementById('ripple-2');
             const ripple3 = document.getElementById('ripple-3');
 
-            // Check if device is in neutral position
-            if (Math.abs(gamma) < 20 && Math.abs(beta) < 20) {
-                // Reset everything when returning to neutral
-                ripple1.style.opacity = 0;
-                ripple2.style.opacity = 0;
-                ripple3.style.opacity = 0;
-                hasGeneratedWish1 = false;
-                hasGeneratedWish2 = false;
-                hasGeneratedWish3 = false;
-                return;
-            }
-
             // Handle left tilt
             if (gamma < -20) {
                 if (!hasGeneratedWish1) {
@@ -296,6 +284,7 @@ function enableOrientationFeatures() {
                 ripple1.style.opacity = 1;
             } else {
                 ripple1.style.opacity = 0;
+                hasGeneratedWish1 = false; // Reset only when left tilt condition ends
             }
 
             // Handle forward tilt
@@ -307,6 +296,7 @@ function enableOrientationFeatures() {
                 ripple2.style.opacity = 1;
             } else {
                 ripple2.style.opacity = 0;
+                hasGeneratedWish2 = false; // Reset only when forward tilt condition ends
             }
 
             // Handle right tilt
@@ -318,6 +308,7 @@ function enableOrientationFeatures() {
                 ripple3.style.opacity = 1;
             } else {
                 ripple3.style.opacity = 0;
+                hasGeneratedWish3 = false; // Reset only when right tilt condition ends
             }
         }, true);
     } else {
