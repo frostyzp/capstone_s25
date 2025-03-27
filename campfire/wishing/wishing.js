@@ -70,17 +70,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Generate wishes function
-function generateWish(rippleNumber) {
-    let rules = {
-        start: "hope for $something even if it's $adj",
-        something: "something | anything",
-        adj: RiTa.randomWord({ pos: "jj" }),
-    };
+// Function to transform wish text through different tenses
+function transformWish(inputText, rippleNumber) {
+    // Parse the input text
+    const words = RiTa.tokenize(inputText);
+    const tags = RiTa.pos(words);
+    let transformed = [];
     
+    // Create three different tense versions
+    const tenses = ['present', 'future', 'conditional'];
+    
+    words.forEach((word, i) => {
+        if (tags[i].startsWith('vb')) {  // If it's a verb
+            transformed.push({
+                present: RiTa.conjugate(word, {tense: 'present'}),
+                future: 'will ' + RiTa.conjugate(word, {tense: 'present'}),
+                conditional: 'would ' + RiTa.conjugate(word, {tense: 'present'})
+            });
+        } else if (tags[i].startsWith('jj')) {  // If it's an adjective
+            transformed.push({
+                present: word,
+                future: word,
+                conditional: word
+            });
+        } else {  // Other words remain unchanged
+            transformed.push({
+                present: word,
+                future: word,
+                conditional: word
+            });
+        }
+    });
+    
+    // Construct sentences in different tenses
+    const presentTense = transformed.map(t => t.present).join(' ');
+    const futureTense = transformed.map(t => t.future).join(' ');
+    const conditionalTense = transformed.map(t => t.conditional).join(' ');
+    
+    // Add all versions to the appropriate ripple array
     if (rippleNumber === '1') {
-        console.log(RiTa.grammar(rules).expand());
-        return RiTa.grammar(rules).expand();
+        wishesRipple1.push(presentTense);
+        wishesRipple1.push(futureTense);
+        wishesRipple1.push(conditionalTense);
+        
+        // Return the appropriate tense based on how many times it's been called
+        const currentLength = wishesRipple1.length;
+        if (currentLength % 3 === 1) return presentTense;
+        if (currentLength % 3 === 2) return futureTense;
+        return conditionalTense;
+    }
+    
+    return inputText; // Default return if not ripple1
+}
+
+// Modify the generateWish function
+function generateWish(rippleNumber) {
+    if (rippleNumber === '1') {
+        // Get the current text from wish-input
+        const currentWish = document.getElementById('wish-input').value;
+        if (currentWish && currentWish !== 'i hope...') {
+            // Transform the actual input text
+            return transformWish(currentWish, rippleNumber);
+        } else {
+            // Use the default grammar if no input
+            let rules = {
+                start: "hope for $something even if it's $adj",
+                something: "something | anything",
+                adj: RiTa.randomWord({ pos: "jj" }),
+            };
+            return RiTa.grammar(rules).expand();
+        }
     } else if (rippleNumber === '2') {
         console.log(RiTa.grammar(rules).expand());
         return RiTa.grammar(rules).expand();
@@ -131,28 +190,10 @@ function enableOrientationFeatures() {
             if (gamma < -30) { // Tilted to the left
                 ripple1.style.opacity = 1;
                 ripple1.style.transition = 'opacity 0.5s ease-in';
+                wishesRipple1.push(generateWish('1')); // Generate a new wish for ripple 2
+                wishInput1.value = wishesRipple1[wishesRipple1.length - 1]; // Store wish in input
+
                 
-                // Get the current wish count
-                const wishCount = wishesRipple1.length;
-                
-                if (wishCount === 0) {
-                    // First wish - store original
-                    const originalWish = document.getElementById('wish-input').value;
-                    wishesRipple1.push(originalWish);
-                    document.getElementById('ripple-1').textContent = originalWish;
-                } else if (wishCount < 3) {
-                    // Transform existing wish based on count
-                    const lastWish = wishesRipple1[wishesRipple1.length - 1];
-                    const transformedWish = transformWish(lastWish, wishCount);
-                    wishesRipple1.push(transformedWish);
-                    document.getElementById('ripple-1').textContent = transformedWish;
-                } else {
-                    // After 3 transformations, start word associations
-                    const lastWish = wishesRipple1[wishesRipple1.length - 1];
-                    const associativeWish = transformWish(lastWish, 3);
-                    wishesRipple1.push(associativeWish);
-                    document.getElementById('ripple-1').textContent = associativeWish;
-                }
             } else if (beta > 30) { // Tilted up
                 ripple2.style.opacity = 1;
                 ripple2.style.transition = 'opacity 0.5s ease-in';
@@ -172,51 +213,3 @@ function enableOrientationFeatures() {
     }
 }
 
-// Add this function to handle tense transformations
-function transformWish(wish, stage) {
-    // Parse the wish text to get parts of speech
-    const words = RiTa.tokenize(wish);
-    const tags = RiTa.pos(words);
-    let transformed = '';
-
-    switch(stage) {
-        case 1: // Present to Future
-            words.forEach((word, i) => {
-                if (tags[i].startsWith('vb')) {
-                    // Convert verb to future tense
-                    transformed += 'will ' + RiTa.conjugate(word, {tense: 'present'}) + ' ';
-                } else {
-                    transformed += word + ' ';
-                }
-            });
-            break;
-        
-        case 2: // Future to Conditional
-            words.forEach((word, i) => {
-                if (tags[i].startsWith('vb')) {
-                    // Convert verb to conditional
-                    transformed += 'would ' + RiTa.conjugate(word, {tense: 'present'}) + ' ';
-                } else {
-                    transformed += word + ' ';
-                }
-            });
-            break;
-        
-        case 3: // Word associations
-            words.forEach((word, i) => {
-                if (tags[i].startsWith('jj') || tags[i].startsWith('nn')) {
-                    // Get similar sounding or spelled words
-                    const similar = RiTa.spellsLike(word)[0] || 
-                                  RiTa.soundsLike(word)[0] || 
-                                  RiTa.rhymes(word)[0] || 
-                                  word;
-                    transformed += similar + ' ';
-                } else {
-                    transformed += word + ' ';
-                }
-            });
-            break;
-    }
-    
-    return transformed.trim();
-}
