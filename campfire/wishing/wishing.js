@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let wishesRipple3 = [];
     
     // You can either auto-request when page loads
-    // requestOrientationPermission();
 
     // Get the text area
     const wishInput = document.getElementById('wish-input');
@@ -32,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function handleGesture() {
-        if (touchStartY - touchEndY > 50) { // Swipe up detected
+        if (touchStartY - touchEndY > 120) { // Swipe up detected
             requestOrientationPermission();
 
             // Get the content from the wish input fields
@@ -69,22 +68,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Generate wishes function
 function generateWish(rippleNumber) {
+    let rules;
     if (rippleNumber === '1') {
-        let rules = {
-            start: "hope for $something even if it's $adj",
+        rules = {
+            start: "I hope for $something even if it's $adj. I will hope for $something even if it will be $adj. If I were to hope for $something, it would be $adj.",
             something: "something | anything",
             adj: RiTa.randomWord({ pos: "jj" }),
         };
-        console.log(RiTa.grammar(rules).expand());
-        return RiTa.grammar(rules).expand();
     } else if (rippleNumber === '2') {
-        let rules = {
-            start: "hope for $something even if it's $adj",
+        rules = {
+            start: "I hope for $something even if it's $adj. I will hope for $something even if it will be $adj. If I were to hope for $something, it would be $adj.",
             something: "something | anything",
             adj: RiTa.randomWord({ pos: "jj" }),
         };
     }
+
+    // Generate the wish
+    let wish = RiTa.grammar(rules).expand();
+    
+    // Activate associative leaps after 3 activations
+    if (wishesRipple1.length + wishesRipple2.length + wishesRipple3.length >= 3) {
+        let words = wish.split(' ');
+        words = words.map(word => {
+            let similarWords = RiTa.spellsLike(word).concat(RiTa.soundsLike(word)).concat(RiTa.rhymes(word));
+            return similarWords.length > 0 ? similarWords[Math.floor(Math.random() * similarWords.length)] : word;
+        });
+        wish = words.join(' ');
+    }
+
+    console.log(wish);
+    return wish;
 }
+
+// const submitWishButton = document.getElementById('submit-wish');
+// if (submitWishButton) {
+//     submitWishButton.addEventListener('click', function() {
+//         const wish1 = document.getElementById('wish-input').value;
+//         const wish2 = document.getElementById('wish-input2').value;
+//         const wish3 = document.getElementById('wish-input3').value;
+
+//         console.log('Wish 1:', wish1);
+//         console.log('Wish 2:', wish2);
+//         console.log('Wish 3:', wish3);
+        
+//         // Clear the input fields after logging
+//         document.getElementById('wish-input').value = '';
+//         document.getElementById('wish-input2').value = '';
+//         document.getElementById('wish-input3').value = '';
+//     });
+// }
 
 // Request permission for device orientation
 async function requestOrientationPermission() {
