@@ -7,6 +7,10 @@ let wishesRipple1 = [];
 let wishesRipple2 = [];
 let wishesRipple3 = [];
 
+// Add these variables at the top of your file with other declarations
+let lastTriggerTime = 0;
+const cooldownPeriod = 2000; // 2 seconds cooldown
+
 // Add a button or trigger to request permission
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded'); // Debug log
@@ -257,8 +261,9 @@ function enableOrientationFeatures() {
                 gamma: gamma?.toFixed(2)
             });
 
-            // Only process if we have valid values
-            if (beta !== null && gamma !== null) {
+            // Only process if we have valid values and enough time has passed
+            const currentTime = Date.now();
+            if (beta !== null && gamma !== null && currentTime - lastTriggerTime > cooldownPeriod) {
                 // Get the ripple elements
                 const ripple1 = document.getElementById('ripple-1');
                 const ripple2 = document.getElementById('ripple-2');
@@ -271,17 +276,20 @@ function enableOrientationFeatures() {
 
                 // Adjusted thresholds for more sensitive tilting
                 if (gamma < -20) { // Tilted left
-                    console.log('Tilted left');
+                    console.log('Tilted left - triggering wish');
                     addWish('1');
+                    lastTriggerTime = currentTime;
                 } else if (beta > 20) { // Tilted forward
-                    console.log('Tilted forward');
+                    console.log('Tilted forward - triggering wish');
                     addWish('2');
+                    lastTriggerTime = currentTime;
                 } else if (gamma > 20) { // Tilted right
-                    console.log('Tilted right');
+                    console.log('Tilted right - triggering wish');
                     addWish('3');
+                    lastTriggerTime = currentTime;
                 }
             }
-        }, true); // Added 'true' for useCapture to ensure event handling
+        }, true);
 
     } else {
         console.log("DeviceOrientationEvent is not supported");
