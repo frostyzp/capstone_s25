@@ -1,4 +1,3 @@
-
 // Add Rita.js library
 const rita = document.createElement('script');
 rita.src = "https://unpkg.com/rita@3.1.3/dist/rita.min.js";
@@ -132,9 +131,28 @@ function enableOrientationFeatures() {
             if (gamma < -30) { // Tilted to the left
                 ripple1.style.opacity = 1;
                 ripple1.style.transition = 'opacity 0.5s ease-in';
-                wishesRipple1.push(generateWish('1')); // Generate a new wish for ripple 1
-                document.getElementById('ripple-1').textContent = wishesRipple1[wishesRipple1.length - 1]; // Update content to last element
-                wishInput.value = wishesRipple1[wishesRipple1.length - 1]; // Store wish in input
+                
+                // Get the current wish count
+                const wishCount = wishesRipple1.length;
+                
+                if (wishCount === 0) {
+                    // First wish - store original
+                    const originalWish = document.getElementById('wish-input').value;
+                    wishesRipple1.push(originalWish);
+                    document.getElementById('ripple-1').textContent = originalWish;
+                } else if (wishCount < 3) {
+                    // Transform existing wish based on count
+                    const lastWish = wishesRipple1[wishesRipple1.length - 1];
+                    const transformedWish = transformWish(lastWish, wishCount);
+                    wishesRipple1.push(transformedWish);
+                    document.getElementById('ripple-1').textContent = transformedWish;
+                } else {
+                    // After 3 transformations, start word associations
+                    const lastWish = wishesRipple1[wishesRipple1.length - 1];
+                    const associativeWish = transformWish(lastWish, 3);
+                    wishesRipple1.push(associativeWish);
+                    document.getElementById('ripple-1').textContent = associativeWish;
+                }
             } else if (beta > 30) { // Tilted up
                 ripple2.style.opacity = 1;
                 ripple2.style.transition = 'opacity 0.5s ease-in';
@@ -152,4 +170,53 @@ function enableOrientationFeatures() {
     } else {
         alert("Device orientation is not supported on your device.");
     }
+}
+
+// Add this function to handle tense transformations
+function transformWish(wish, stage) {
+    // Parse the wish text to get parts of speech
+    const words = RiTa.tokenize(wish);
+    const tags = RiTa.pos(words);
+    let transformed = '';
+
+    switch(stage) {
+        case 1: // Present to Future
+            words.forEach((word, i) => {
+                if (tags[i].startsWith('vb')) {
+                    // Convert verb to future tense
+                    transformed += 'will ' + RiTa.conjugate(word, {tense: 'present'}) + ' ';
+                } else {
+                    transformed += word + ' ';
+                }
+            });
+            break;
+        
+        case 2: // Future to Conditional
+            words.forEach((word, i) => {
+                if (tags[i].startsWith('vb')) {
+                    // Convert verb to conditional
+                    transformed += 'would ' + RiTa.conjugate(word, {tense: 'present'}) + ' ';
+                } else {
+                    transformed += word + ' ';
+                }
+            });
+            break;
+        
+        case 3: // Word associations
+            words.forEach((word, i) => {
+                if (tags[i].startsWith('jj') || tags[i].startsWith('nn')) {
+                    // Get similar sounding or spelled words
+                    const similar = RiTa.spellsLike(word)[0] || 
+                                  RiTa.soundsLike(word)[0] || 
+                                  RiTa.rhymes(word)[0] || 
+                                  word;
+                    transformed += similar + ' ';
+                } else {
+                    transformed += word + ' ';
+                }
+            });
+            break;
+    }
+    
+    return transformed.trim();
 }
