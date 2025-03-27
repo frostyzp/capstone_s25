@@ -3,32 +3,73 @@ const rita = document.createElement('script');
 rita.src = "https://unpkg.com/rita@3.1.3/dist/rita.min.js";
 document.head.appendChild(rita);
 
+// Add a button or trigger to request permission
+document.addEventListener('DOMContentLoaded', () => {
+    // Arrays to store wishes for each ripple
+    let wishesRipple1 = [];
+    let wishesRipple2 = [];
+    let wishesRipple3 = [];
+    
+    // You can either auto-request when page loads
+    requestOrientationPermission();
+
+    // Get the submit button and text area
+    const submitButton = document.getElementById('submit-wish');
+    const wishInput = document.getElementById('wish-input');
+    submitButton.addEventListener('click', () => {
+        // Get the container
+        const container = document.getElementById('wish-input-container');
+        requestOrientationPermission();
+
+        // Get the content from the wish input fields
+        const wish1 = document.getElementById('wish-input').value;
+        const wish2 = document.getElementById('wish-input2').value;
+        const wish3 = document.getElementById('wish-input3').value;
+
+        // Update the ripple content with the wishes
+        wishesRipple1.push(wish1);
+        wishesRipple2.push(wish2);
+        wishesRipple3.push(wish3);
+        
+        document.getElementById('ripple-1').textContent = wish1;
+        document.getElementById('ripple-2').textContent = wish2;
+        document.getElementById('ripple-3').textContent = wish3;
+
+        // Clear any existing text
+        wishInput.value = '';
+        document.getElementById('wish-input2').value = '';
+        document.getElementById('wish-input3').value = '';
+
+        const instructions = document.querySelector('.instructions');
+        instructions.textContent = 'Tilt your vessel to and observe the ripples – each wish a rock, a skip'; // Change the text content
+        instructions.style.opacity = 1; // Make it visible
+        setTimeout(() => {
+            instructions.classList.add('fade-out'); // Add fade-out class after 5 seconds
+        }, 5000);
+        
+        // Add fade out class to container
+        container.classList.add('fade-out');
+    });
+});
+
 // Generate wishes function
 function generateWish(rippleNumber) {
-
     if (rippleNumber === '1') {
-    let rules = {
-        start: "hope for $something even if it's $adj",
-        something: "something | anything",
-        adj: RiTa.randomWord({ pos: "jj" }),
-    };
-        console.log(RiTa.grammar(rules).expand());
-        return RiTa.grammar(rules).expand();
-    } if (rippleNumber === '2') {
         let rules = {
             start: "hope for $something even if it's $adj",
             something: "something | anything",
             adj: RiTa.randomWord({ pos: "jj" }),
         };
-    } else {
-        
+        console.log(RiTa.grammar(rules).expand());
+        return RiTa.grammar(rules).expand();
+    } else if (rippleNumber === '2') {
+        let rules = {
+            start: "hope for $something even if it's $adj",
+            something: "something | anything",
+            adj: RiTa.randomWord({ pos: "jj" }),
+        };
     }
 }
-
-// Arrays to store wishes for each ripple
-let wishesRipple1 = [];
-let wishesRipple2 = [];
-let wishesRipple3 = [];
 
 // Request permission for device orientation
 async function requestOrientationPermission() {
@@ -73,8 +114,6 @@ function enableOrientationFeatures() {
                 ripple1.style.transition = 'opacity 0.5s ease-in';
                 wishesRipple1.push(generateWish('1')); // Generate a new wish for ripple 1
                 document.getElementById('ripple-1').textContent = wishesRipple1[wishesRipple1.length - 1]; // Update content to last element
-                // document.getElementById('ripple-1').textContent = wishesRipple1.join('\n'); // Update content
-
             } else if (beta > 30) { // Tilted up
                 ripple2.style.opacity = 1;
                 ripple2.style.transition = 'opacity 0.5s ease-in';
@@ -91,52 +130,3 @@ function enableOrientationFeatures() {
         alert("Device orientation is not supported on your device.");
     }
 }
-
-// Add a button or trigger to request permission
-document.addEventListener('DOMContentLoaded', () => {
-    // You can either auto-request when page loads
-    requestOrientationPermission();
-    
-    //     button.addEventListener('click', requestOrientationPermission);
-
-
-    // Get the submit button and text area
-    const submitButton = document.getElementById('submit-wish');
-    const wishInput = document.getElementById('wish-input');
-    submitButton.addEventListener('click', () => {
-        // Get the container
-        const container = document.getElementById('wish-input-container');
-        requestOrientationPermission();
-
-        // Get the content from the wish input fields
-        const wish1 = document.getElementById('wish-input').value;
-        const wish2 = document.getElementById('wish-input2').value;
-        const wish3 = document.getElementById('wish-input3').value;
-
-        // Update the ripple content with the wishes
-        wishesRipple1.push(wish1);
-        wishesRipple2.push(wish2);
-        wishesRipple3.push(wish3);
-        
-        document.getElementById('ripple-1').textContent = wish1;
-        document.getElementById('ripple-2').textContent = wish2;
-        document.getElementById('ripple-3').textContent = wish3;
-
-        // Clear any existing text
-        wishInput.value = '';
-        document.getElementById('wish-input2').value = '';
-        document.getElementById('wish-input3').value = '';
-
-        const instructions = document.querySelector('.instructions');
-        instructions.textContent = 'Tilt your vessel to and observe the ripples – each wish a rock, a skip'; // Change the text content
-        instructions.style.opacity = 1; // Make it visible
-        setTimeout(() => {
-            instructions.classList.add('fade-out'); // Add fade-out class after 5 seconds
-        }, 5000);
-        
-        // Add fade out class to container
-        container.classList.add('fade-out');
-        
-        // Request orientation permission
-    })
-});
