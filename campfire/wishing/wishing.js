@@ -280,11 +280,14 @@ function enableOrientationFeatures() {
                 if (!hasGeneratedWish1) {
                     ripple1.textContent = generateWish('1');
                     hasGeneratedWish1 = true;
+                    ripple1.style.opacity = 1;
                 }
-                ripple1.style.opacity = 1;
             } else {
                 ripple1.style.opacity = 0;
-                hasGeneratedWish1 = false; // Reset only when left tilt condition ends
+                // Only reset the flag when the tilt is fully removed
+                if (gamma > -10) {
+                    hasGeneratedWish1 = false;
+                }
             }
 
             // Handle forward tilt
@@ -292,11 +295,13 @@ function enableOrientationFeatures() {
                 if (!hasGeneratedWish2) {
                     ripple2.textContent = generateWish('2');
                     hasGeneratedWish2 = true;
+                    ripple2.style.opacity = 1;
                 }
-                ripple2.style.opacity = 1;
             } else {
                 ripple2.style.opacity = 0;
-                hasGeneratedWish2 = false; // Reset only when forward tilt condition ends
+                if (beta < 10) {
+                    hasGeneratedWish2 = false;
+                }
             }
 
             // Handle right tilt
@@ -304,11 +309,13 @@ function enableOrientationFeatures() {
                 if (!hasGeneratedWish3) {
                     ripple3.textContent = generateWish('3');
                     hasGeneratedWish3 = true;
+                    ripple3.style.opacity = 1;
                 }
-                ripple3.style.opacity = 1;
             } else {
                 ripple3.style.opacity = 0;
-                hasGeneratedWish3 = false; // Reset only when right tilt condition ends
+                if (gamma < 10) {
+                    hasGeneratedWish3 = false;
+                }
             }
         }, true);
     } else {
