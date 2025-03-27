@@ -1,15 +1,13 @@
 #ripple-container {
     display: flex;
-    justify-content: space-between; /* Take up as much space as possible */
-    align-items: stretch; /* Stretch items to take up full height */
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
-    height: 60vh; /* Set the container to take full viewport height */
 }
 
 #ripple-1, #ripple-2, #ripple-3 {
     text-align: center;
-    flex: 1; /* Allow each ripple to take up equal space */
-    opacity: 0;
+    /* opacity: 1; */
 }
 
 .instructions {
@@ -27,17 +25,18 @@
 
 /* TEXT INPUT SHENANIGANS ... */
 #wish-input-container {
-    display: flex; /* Use flexbox for centering */
-    flex-direction: column; /* Stack items vertically */
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    width: 100%;
+    position: fixed;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;
+    max-width: 500px;
+    text-align: center;
     opacity: 1;
     transition: opacity 0.5s ease-out;
-    margin: 0 auto; /* Center the container itself */
 }
 
-#wish-input, #wish-input2, #wish-input3 {
+#wish-input {
     width: 100%;
     padding: 15px;
     margin-bottom: 10px;
