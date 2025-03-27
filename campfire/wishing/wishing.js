@@ -239,9 +239,9 @@ function enableOrientationFeatures() {
             const beta = event.beta;   // Rotation around the x-axis
             const gamma = event.gamma; // Rotation around the y-axis
 
-            // Reset all ripples to hidden
-            document.querySelectorAll('#ripple-1, #ripple-2, #ripple-3')
-                   .forEach(ripple => ripple.style.opacity = 0);
+            // // Reset all ripples to hidden
+            // document.querySelectorAll('#ripple-1, #ripple-2, #ripple-3')
+            //        .forEach(ripple => ripple.style.opacity = 0);
 
             // Generate new wishes based on device orientation
             if (gamma < -30) {
