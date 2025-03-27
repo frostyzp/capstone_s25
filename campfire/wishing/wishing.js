@@ -245,6 +245,8 @@ function enableOrientationFeatures() {
 
             // Generate new wishes based on device orientation
             if (gamma < -30) {
+                document.body.style.backgroundColor = 'red';
+
                 addWish('1');
             } else if (beta > 30) {
                 addWish('2');
