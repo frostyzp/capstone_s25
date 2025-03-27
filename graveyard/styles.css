@@ -5,15 +5,15 @@ body {
     font-size: 1rem;
     color: white; /* Set text color to white */
     text-align: center;
-    background-color: black; /* Set background to black */
+    background: radial-gradient(circle, rgba(2, 15, 4, 0.95), rgba(0, 0, 0, 1)); /* Soft black gradient in circular format */
     font-family: monospace; /* Better for ASCII art */
-
 }
 
 #canvas-container {
     width: 650vw; /* 5x width */
     height: 450vh; /* 3x height */
     position: relative;
+
 }
 
 .tap-text {

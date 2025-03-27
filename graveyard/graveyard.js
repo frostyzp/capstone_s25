@@ -28,12 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
         "{}",
         "~Y~",
         "|",
+        "*",
+        "* *",
         "^^^^^^",
         "{{}}",
         "{}",
         "~Y~",
         "|",
-        "^^^^^^"
+        "^^^^^^",
+        "*",
+        "* *"
     ];
 
     // Create random divs
@@ -197,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentRevealed = parseInt(this.dataset.revealedChars);
                 const newRevealed = Math.min(
                     content.length,
-                    Math.floor(currentRevealed + (distance / 5))
+                    Math.floor(currentRevealed + (distance / 10)) // Reduced reveal speed
                 );
 
                 if (newRevealed > currentRevealed) {
@@ -208,10 +212,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     const newOpacity = 0.3 + (progress * 0.7);
                     this.style.opacity = newOpacity.toString();
 
-                    // Direct text update without typewriter
+                    // Gradually reveal text with typewriter effect
                     const revealedText = content.substring(0, newRevealed);
                     const remainingAscii = asciiCover.substring(newRevealed);
-                    this.textContent = revealedText + remainingAscii;
+                    
+                    // Clear existing content and start typewriter
+                    this.textContent = '';
+                    new Typewriter(this, {
+                        delay: 30, // Fast enough to feel responsive but still show animation
+                        cursor: ''
+                    })
+                    .typeString(revealedText + remainingAscii)
+                    .start();
                 }
 
                 touchStartX = touchEndX;
@@ -350,6 +362,11 @@ document.addEventListener('DOMContentLoaded', () => {
             landscapeDiv.dataset.content = content;
             landscapeDiv.style.whiteSpace = 'pre';
 
+            // Change color to bright green if content is "*" or "* *"
+            if (content === '*' || content === '* *') {
+                landscapeDiv.style.color = 'lime'; // Bright green
+            }
+
             // Create perpendicular div with inverse skew
             const perpendicularDiv = document.createElement('div');
             perpendicularDiv.className = 'content-div-landscape';
@@ -362,6 +379,11 @@ document.addEventListener('DOMContentLoaded', () => {
             perpendicularDiv.dataset.content = content;
             perpendicularDiv.style.whiteSpace = 'pre';
 
+            // Change color to bright green if content is "*" or "* *"
+            if (content === '*' || content === '* *') {
+                perpendicularDiv.style.color = 'lime'; // Bright green
+            }
+
             wrapper.appendChild(landscapeDiv);
             wrapper.appendChild(perpendicularDiv);
             container.appendChild(wrapper);
@@ -369,12 +391,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Observe both divs for typewriter effect
             observer.observe(landscapeDiv);
             observer.observe(perpendicularDiv);
-        }
+        } // Fixed bracket issue here
     }
 
     // Create landscape elements
-    createLandscapeElements(150); // Reduced from 20
+    createLandscapeElements(250); // Reduced from 20
+
+
+
 });
-
-
-

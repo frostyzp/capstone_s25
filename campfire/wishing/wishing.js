@@ -67,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
         requestOrientationPermission().then(() => {
             // Get the content from the wish input fields
             const wish1 = document.getElementById('wish-input').value;
-            const wish2 = document.getElementById('wish-input2').value;
-            const wish3 = document.getElementById('wish-input3').value;
+            const wish2 = document.getElementById('wish-input').value;
+            const wish3 = document.getElementById('wish-input').value;
 
             // Update the ripple content with the wishes
             wishesRipple1.push(wish1);
@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Clear any existing text
             wishInput.value = '';
-            document.getElementById('wish-input2').value = '';
-            document.getElementById('wish-input3').value = '';
+            // document.getElementById('wish-input2').value = '';
+            // document.getElementById('wish-input3').value = '';
 
             const instructions = document.querySelector('.instructions');
             instructions.textContent = 'Tilt your vessel to and observe the ripples – each wish a rock, a skip'; // Change the text content
@@ -246,9 +246,30 @@ function addWish(rippleNumber) {
     }
 }
 
-// Modify the orientation handler
+// Add this helper function to create word spans with fade-in effect
+function createWordElements(wish) {
+    const words = wish.split(' ');
+    const container = document.createElement('div');
+    container.style.opacity = 1;
+    
+    words.forEach((word, index) => {
+        const span = document.createElement('span');
+        span.textContent = word + ' ';
+        span.style.opacity = 0;
+        span.style.transition = 'opacity 0.5s ease-in';
+        // Delay each word's fade in
+        setTimeout(() => {
+            span.style.opacity = 1;
+        }, index * 200); // 200ms delay between each word
+        container.appendChild(span);
+    });
+    
+    return container;
+}
+
+// Modify the orientation handler's display logic
 function enableOrientationFeatures() {
-    if (window.DeviceOrientationEvent) {
+if (window.DeviceOrientationEvent) {
         // Add a test event to check if we're getting real values
         let orientationTest = function(e) {
             console.log('Orientation Test:', {
@@ -260,32 +281,33 @@ function enableOrientationFeatures() {
         window.addEventListener('deviceorientation', orientationTest);
 
         // Main orientation handler
-        window.addEventListener('deviceorientation', function(event) {
-            const beta = event.beta;   // Rotation around x-axis (-180 to 180)
-            const gamma = event.gamma; // Rotation around y-axis (-90 to 90)
+    window.addEventListener('deviceorientation', function(event) {
+            const beta = event.beta;
+            const gamma = event.gamma;
 
-            // Debug log orientation values
-            console.log('Orientation:', {
-                beta: beta?.toFixed(2),
-                gamma: gamma?.toFixed(2)
-            });
-
-            // Get the ripple elements
-            const ripple1 = document.getElementById('ripple-1');
-            const ripple2 = document.getElementById('ripple-2');
-            const ripple3 = document.getElementById('ripple-3');
+        const ripple1 = document.getElementById('ripple-1');
+        const ripple2 = document.getElementById('ripple-2');
+        const ripple3 = document.getElementById('ripple-3');
 
             // Handle left tilt
             if (gamma < -20) {
                 if (!hasGeneratedWish1) {
-                    ripple1.textContent = generateWish('1');
+                    const wish = generateWish('1');
+                    const wordElements = createWordElements(wish);
+                    ripple1.innerHTML = ''; // Clear previous content
+                    ripple1.appendChild(wordElements);
                     hasGeneratedWish1 = true;
-                    ripple1.style.opacity = 1;
                 }
+            ripple1.style.opacity = 1;
             } else {
-                ripple1.style.opacity = 0;
-                // Only reset the flag when the tilt is fully removed
                 if (gamma > -10) {
+                    // Fade out words in reverse order
+                    const words = ripple1.getElementsByTagName('span');
+                    Array.from(words).reverse().forEach((word, index) => {
+                        setTimeout(() => {
+                            word.style.opacity = 0;
+                        }, index * 100);
+                    });
                     hasGeneratedWish1 = false;
                 }
             }
@@ -293,13 +315,21 @@ function enableOrientationFeatures() {
             // Handle forward tilt
             if (beta > 20) {
                 if (!hasGeneratedWish2) {
-                    ripple2.textContent = generateWish('2');
+                    const wish = generateWish('2');
+                    const wordElements = createWordElements(wish);
+                    ripple2.innerHTML = '';
+                    ripple2.appendChild(wordElements);
                     hasGeneratedWish2 = true;
-                    ripple2.style.opacity = 1;
                 }
+            ripple2.style.opacity = 1;
             } else {
-                ripple2.style.opacity = 0;
                 if (beta < 10) {
+                    const words = ripple2.getElementsByTagName('span');
+                    Array.from(words).reverse().forEach((word, index) => {
+                        setTimeout(() => {
+                            word.style.opacity = 0;
+                        }, index * 100);
+                    });
                     hasGeneratedWish2 = false;
                 }
             }
@@ -307,13 +337,21 @@ function enableOrientationFeatures() {
             // Handle right tilt
             if (gamma > 20) {
                 if (!hasGeneratedWish3) {
-                    ripple3.textContent = generateWish('3');
+                    const wish = generateWish('3');
+                    const wordElements = createWordElements(wish);
+                    ripple3.innerHTML = '';
+                    ripple3.appendChild(wordElements);
                     hasGeneratedWish3 = true;
-                    ripple3.style.opacity = 1;
                 }
+            ripple3.style.opacity = 1;
             } else {
-                ripple3.style.opacity = 0;
                 if (gamma < 10) {
+                    const words = ripple3.getElementsByTagName('span');
+                    Array.from(words).reverse().forEach((word, index) => {
+                        setTimeout(() => {
+                            word.style.opacity = 0;
+                        }, index * 100);
+                    });
                     hasGeneratedWish3 = false;
                 }
             }
@@ -345,7 +383,7 @@ async function requestOrientationPermission() {
             // Fallback for errors
             enableOrientationFeatures();
         }
-    } else {
+} else {
         console.log('Non-iOS device detected, enabling features directly...');
         enableOrientationFeatures();
     }
