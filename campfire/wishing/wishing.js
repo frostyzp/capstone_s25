@@ -11,45 +11,60 @@ document.addEventListener('DOMContentLoaded', () => {
     let wishesRipple3 = [];
     
     // You can either auto-request when page loads
-    requestOrientationPermission();
+    // requestOrientationPermission();
 
-    // Get the submit button and text area
-    const submitButton = document.getElementById('submit-wish');
+    // Get the text area
     const wishInput = document.getElementById('wish-input');
-    submitButton.addEventListener('click', () => {
-        // Get the container
-        const container = document.getElementById('wish-input-container');
-        requestOrientationPermission();
 
-        // Get the content from the wish input fields
-        const wish1 = document.getElementById('wish-input').value;
-        const wish2 = document.getElementById('wish-input2').value;
-        const wish3 = document.getElementById('wish-input3').value;
+    // Detect swipe up gesture
+    let touchStartY = 0;
+    let touchEndY = 0;
 
-        // Update the ripple content with the wishes
-        wishesRipple1.push(wish1);
-        wishesRipple2.push(wish2);
-        wishesRipple3.push(wish3);
-        
-        document.getElementById('ripple-1').textContent = wish1;
-        document.getElementById('ripple-2').textContent = wish2;
-        document.getElementById('ripple-3').textContent = wish3;
+    const container = document.getElementById('wish-input-container');
 
-        // Clear any existing text
-        wishInput.value = '';
-        document.getElementById('wish-input2').value = '';
-        document.getElementById('wish-input3').value = '';
-
-        const instructions = document.querySelector('.instructions');
-        instructions.textContent = 'Tilt your vessel to and observe the ripples – each wish a rock, a skip'; // Change the text content
-        instructions.style.opacity = 1; // Make it visible
-        setTimeout(() => {
-            instructions.classList.add('fade-out'); // Add fade-out class after 5 seconds
-        }, 5000);
-        
-        // Add fade out class to container
-        container.classList.add('fade-out');
+    container.addEventListener('touchstart', (event) => {
+        touchStartY = event.changedTouches[0].screenY;
     });
+
+    container.addEventListener('touchend', (event) => {
+        touchEndY = event.changedTouches[0].screenY;
+        handleGesture();
+    });
+
+    function handleGesture() {
+        if (touchStartY - touchEndY > 50) { // Swipe up detected
+            requestOrientationPermission();
+
+            // Get the content from the wish input fields
+            const wish1 = document.getElementById('wish-input').value;
+            const wish2 = document.getElementById('wish-input2').value;
+            const wish3 = document.getElementById('wish-input3').value;
+
+            // Update the ripple content with the wishes
+            wishesRipple1.push(wish1);
+            wishesRipple2.push(wish2);
+            wishesRipple3.push(wish3);
+            
+            document.getElementById('ripple-1').textContent = wish1;
+            document.getElementById('ripple-2').textContent = wish2;
+            document.getElementById('ripple-3').textContent = wish3;
+
+            // Clear any existing text
+            wishInput.value = '';
+            document.getElementById('wish-input2').value = '';
+            document.getElementById('wish-input3').value = '';
+
+            const instructions = document.querySelector('.instructions');
+            instructions.textContent = 'Tilt your vessel to and observe the ripples – each wish a rock, a skip'; // Change the text content
+            instructions.style.opacity = 1; // Make it visible
+            setTimeout(() => {
+                instructions.classList.add('fade-out'); // Add fade-out class after 5 seconds
+            }, 5000);
+            
+            // Add fade out class to container
+            container.classList.add('fade-out');
+        }
+    }
 });
 
 // Generate wishes function
@@ -80,7 +95,7 @@ async function requestOrientationPermission() {
             if (permission === 'granted') {
                 enableOrientationFeatures();
             } else {
-                alert("to enter the wishing well, please allow device orientation");
+                alert("create ripples by tilting your vessel");
             }
         } catch (error) {
             console.error("Error requesting device orientation permission:", error);
