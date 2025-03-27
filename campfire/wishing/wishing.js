@@ -48,7 +48,17 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             console.log('Touchstart fired');
             debuggingButton.style.backgroundColor = 'green';
-            addWish('1');
+            const ripple1 = document.getElementById('ripple-1');
+
+            const wish = generateWish('1');
+            const wordElements = createWordElements(wish);
+            console.log('wordElements:', wordElements);
+            ripple1.innerHTML = ''; // Clear previous content
+            ripple1.appendChild(wordElements);
+            console.log('ripple1 words:', wordElements);
+
+            hasGeneratedWish1 = true;
+
         });
 
         // Make sure addWish function exists and works
@@ -178,7 +188,7 @@ function generateWish(rippleNumber) {
     const userInput = document.getElementById(`wish-input${rippleNumber === '1' ? '' : rippleNumber}`).value;
 
     // For rippleNumber 1, use the input for transformations
-    if (rippleNumber === '1') {
+    if (rippleNumber === '0') {
         const words = RiTa.tokenize(userInput);
         const tags = RiTa.pos(words);
         
@@ -294,6 +304,7 @@ if (window.DeviceOrientationEvent) {
                 if (!hasGeneratedWish1) {
                     const wish = generateWish('1');
                     const wordElements = createWordElements(wish);
+                    console.log('wordElements:', wordElements);
                     ripple1.innerHTML = ''; // Clear previous content
                     ripple1.appendChild(wordElements);
                     hasGeneratedWish1 = true;
