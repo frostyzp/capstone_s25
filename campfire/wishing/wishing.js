@@ -119,8 +119,9 @@ function transformWish(inputText, rippleNumber) {
         if (tags[i].startsWith('vb')) {  // If it's a verb
             transformed.push({
                 present: RiTa.conjugate(word, {tense: 'present'}),
-                future: 'will ' + RiTa.conjugate(word, {tense: 'present'}),
-                conditional: 'would ' + RiTa.conjugate(word, {tense: 'present'})
+                future: RiTa.conjugate(word, {tense: 'future'}),
+                conditional: RiTa.conjugate(word, {tense: 'conditional'}),
+                active: RiTa.conjugate(word, {tense: 'active'}) // Added active verb transformation
             });
         } else if (tags[i].startsWith('jj')) {  // If it's an adjective
             transformed.push({
@@ -235,45 +236,82 @@ function addWish(rippleNumber) {
 // Modify the orientation handler
 function enableOrientationFeatures() {
     if (window.DeviceOrientationEvent) {
+        // Add a test event to check if we're getting real values
+        let orientationTest = function(e) {
+            console.log('Orientation Test:', {
+                beta: e.beta,
+                gamma: e.gamma
+            });
+            window.removeEventListener('deviceorientation', orientationTest);
+        };
+        window.addEventListener('deviceorientation', orientationTest);
+
+        // Main orientation handler
         window.addEventListener('deviceorientation', function(event) {
-            const beta = event.beta;   // Rotation around the x-axis
-            const gamma = event.gamma; // Rotation around the y-axis
+            const beta = event.beta;   // Rotation around x-axis (-180 to 180)
+            const gamma = event.gamma; // Rotation around y-axis (-90 to 90)
 
-            // // Reset all ripples to hidden
-            // document.querySelectorAll('#ripple-1, #ripple-2, #ripple-3')
-            //        .forEach(ripple => ripple.style.opacity = 0);
+            // Debug log orientation values
+            console.log('Orientation:', {
+                beta: beta?.toFixed(2),
+                gamma: gamma?.toFixed(2)
+            });
 
-            // Generate new wishes based on device orientation
-            if (gamma < -30) {
-                document.body.style.backgroundColor = 'red';
+            // Only process if we have valid values
+            if (beta !== null && gamma !== null) {
+                // Get the ripple elements
+                const ripple1 = document.getElementById('ripple-1');
+                const ripple2 = document.getElementById('ripple-2');
+                const ripple3 = document.getElementById('ripple-3');
 
-                addWish('1');
-            } else if (beta > 30) {
-                addWish('2');
-            } else if (gamma > 30) {
-                addWish('3');
+                // Reset all ripples
+                ripple1.style.opacity = 0;
+                ripple2.style.opacity = 0;
+                ripple3.style.opacity = 0;
+
+                // Adjusted thresholds for more sensitive tilting
+                if (gamma < -20) { // Tilted left
+                    console.log('Tilted left');
+                    addWish('1');
+                } else if (beta > 20) { // Tilted forward
+                    console.log('Tilted forward');
+                    addWish('2');
+                } else if (gamma > 20) { // Tilted right
+                    console.log('Tilted right');
+                    addWish('3');
+                }
             }
-        });
+        }, true); // Added 'true' for useCapture to ensure event handling
+
     } else {
+        console.log("DeviceOrientationEvent is not supported");
         alert("Device orientation is not supported on your device.");
     }
 }
 
-// Request permission for device orientation
+// Modify the permission request to be more robust
 async function requestOrientationPermission() {
+    console.log('Requesting orientation permission...');
+    
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         try {
-            // This is needed for iOS 13+ devices
+            console.log('iOS device detected, requesting permission...');
             const permission = await DeviceOrientationEvent.requestPermission();
+            console.log('Permission response:', permission);
+            
             if (permission === 'granted') {
+                console.log('Permission granted, enabling features...');
                 enableOrientationFeatures();
             } else {
                 alert("hold your vessel gently, tilt and wait for the ripples to appear");
             }
         } catch (error) {
             console.error("Error requesting device orientation permission:", error);
+            // Fallback for errors
+            enableOrientationFeatures();
         }
     } else {
+        console.log('Non-iOS device detected, enabling features directly...');
         enableOrientationFeatures();
     }
 }
