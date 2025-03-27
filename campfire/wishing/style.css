@@ -1,0 +1,67 @@
+#ripple-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#ripple-1, #ripple-2, #ripple-3 {
+    text-align: center;
+    /* opacity: 1; */
+}
+
+.instructions {
+    opacity: 1;
+    text-align: center;
+    font-size: 16px;
+    margin: auto; /* Center vertically and horizontally */
+    position: absolute; /* Positioning for centering */
+    top: 50%; /* Move to the middle of the viewport */
+    left: 50%; /* Move to the middle of the viewport */
+    transform: translate(-50%, -50%); /* Adjust for element's own dimensions */
+}
+
+
+
+/* TEXT INPUT SHENANIGANS ... */
+#wish-input-container {
+    position: fixed;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 75%;
+    max-width: 500px;
+    text-align: center;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+#wish-input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    resize: none;
+    /* height: 100px; */
+}
+
+#submit-wish {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    /* background-color: #007bff; */
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#submit-wish:hover {
+    /* background-color: #0056b3; */
+}
+
+/* Add this class for the fade out effect */
+.fade-out {
+    opacity: 0 !important;
+    pointer-events: none;
+}
