@@ -3,15 +3,50 @@ const rita = document.createElement('script');
 rita.src = "https://unpkg.com/rita@3.1.3/dist/rita.min.js";
 document.head.appendChild(rita);
 
+let wishesRipple1 = [];
+let wishesRipple2 = [];
+let wishesRipple3 = [];
+
 // Add a button or trigger to request permission
 document.addEventListener('DOMContentLoaded', () => {
-    // Arrays to store wishes for each ripple
-    let wishesRipple1 = [];
-    let wishesRipple2 = [];
-    let wishesRipple3 = [];
+    console.log('DOM loaded'); // Debug log
     
+    const debuggingButton = document.getElementById('debugging');
+    console.log('Button element:', debuggingButton); // Debug log to check if button is found
+    
+    if (debuggingButton) {
+        // Add visual feedback
+        debuggingButton.style.backgroundColor = '#ccc';
+        
+        // Try all possible event listeners
+        debuggingButton.onclick = function() {
+            console.log('Direct onclick fired');
+            debuggingButton.style.backgroundColor = 'red'; // Visual feedback
+            addWish('1');
+        };
+
+        debuggingButton.addEventListener('mousedown', function() {
+            console.log('Mousedown fired');
+            debuggingButton.style.backgroundColor = 'blue';
+            addWish('1');
+        });
+
+        debuggingButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            console.log('Touchstart fired');
+            debuggingButton.style.backgroundColor = 'green';
+            addWish('1');
+        });
+
+        // Make sure addWish function exists and works
+        console.log('addWish function:', typeof addWish); // Debug check
+    } else {
+        console.error("Debugging button not found.");
+    }
+
     // Get the text area
     const wishInput = document.getElementById('wish-input');
+
 
     // Button to submit wishes
     const submitButton = document.getElementById('submit-wish');
@@ -125,12 +160,11 @@ function transformWish(inputText, rippleNumber) {
 
 // Modify the generateWish function
 function generateWish(rippleNumber) {
-    // First check if there's user input
+    // Parse the user's input from the appropriate input field
     const userInput = document.getElementById(`wish-input${rippleNumber === '1' ? '' : rippleNumber}`).value;
-    
-    // If there's valid user input, use it as the base for transformations
-    if (userInput && userInput !== 'i hope...' && userInput !== 'i wish...' && userInput !== 'i dream...') {
-        // Parse the user's input
+
+    // For rippleNumber 1, use the input for transformations
+    if (rippleNumber === '1') {
         const words = RiTa.tokenize(userInput);
         const tags = RiTa.pos(words);
         
@@ -146,78 +180,56 @@ function generateWish(rippleNumber) {
                 ];
                 return transforms[Math.floor(Math.random() * transforms.length)];
             } else if (tags[i].startsWith('jj')) {
-                // Maybe replace adjectives with similar ones
-                const similar = RiTa.similarTo(word, { pos: 'jj' });
-                return similar.length > 0 ? similar[Math.floor(Math.random() * similar.length)] : word;
+                // For adjectives, just get a new random adjective
+                return RiTa.randomWord({ pos: "jj" });
             }
             return word;
         });
         
         const transformedWish = transformedWords.join(' ');
+        console.log('Transformed wish:', transformedWish); // Debug log
         
         // Add to appropriate array
-        if (rippleNumber === '1') {
-            wishesRipple1.push(transformedWish);
-        } else if (rippleNumber === '2') {
-            wishesRipple2.push(transformedWish);
-        } else if (rippleNumber === '3') {
-            wishesRipple3.push(transformedWish);
-        }
-        
+        wishesRipple1.push(transformedWish);
         return transformedWish;
-    } 
-    // If no user input, fall back to generated wishes
-    else {
-        let rules;
-        if (rippleNumber === '1') {
-            rules = {
-                start: "$timeframe I $verb for $something",
-                timeframe: "today | tomorrow | someday",
-                verb: "hope | wish | dream | long",
-                something: "$adj $noun | $noun that is $adj",
-                adj: RiTa.randomWord({ pos: "jj" }),
-                noun: RiTa.randomWord({ pos: "nn" })
-            };
-        } else if (rippleNumber === '2') {
-            rules = {
-                start: "if only $subject would $verb $adj",
-                subject: "we | they | time | life",
-                verb: "become | grow | turn | remain",
-                adj: RiTa.randomWord({ pos: "jj" })
-            };
-        } else if (rippleNumber === '3') {
-            rules = {
-                start: "maybe $timeframe $subject will $verb",
-                timeframe: "tomorrow | next time | soon | eventually",
-                subject: "everything | nothing | anything",
-                verb: "change | transform | shift | evolve"
-            };
-        }
+    } else {
+        // For rippleNumber 2 and 3, generate a new wish
+        let rules = {
+            start: "$timeframe I $verb for $something",
+            timeframe: "today | tomorrow | someday",
+            verb: "hope | wish | dream | long",
+            something: "$adj $noun",
+            adj: RiTa.randomWord({ pos: "jj" }),
+            noun: RiTa.randomWord({ pos: "nn" })
+        };
 
         const generatedWish = RiTa.grammar(rules).expand();
         
         // Add to appropriate array
-        if (rippleNumber === '1') {
-            wishesRipple1.push(generatedWish);
-        } else if (rippleNumber === '2') {
+        if (rippleNumber === '2') {
             wishesRipple2.push(generatedWish);
         } else if (rippleNumber === '3') {
             wishesRipple3.push(generatedWish);
         }
-
+        
         return generatedWish;
     }
 }
 
 // Function to add new wish when device is tilted
 function addWish(rippleNumber) {
+    console.log('addWish called with:', rippleNumber);
     const wish = generateWish(rippleNumber);
-    const rippleDiv = document.getElementById(`ripple-${rippleNumber}`);
+    console.log('Generated wish:', wish);
     
-    // Update the ripple content
-    rippleDiv.textContent = wish;
-    rippleDiv.style.opacity = 1;
-    rippleDiv.style.transition = 'opacity 0.5s ease-in';
+    const rippleDiv = document.getElementById(`ripple-${rippleNumber}`);
+    if (rippleDiv) {
+        rippleDiv.textContent = wish;
+        rippleDiv.style.opacity = 1;
+        rippleDiv.style.transition = 'opacity 0.5s ease-in';
+    } else {
+        console.error(`Ripple ${rippleNumber} element not found`);
+    }
 }
 
 // Modify the orientation handler
