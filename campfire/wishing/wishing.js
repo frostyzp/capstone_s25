@@ -5,6 +5,8 @@ document.head.appendChild(rita);
 
 // Add a button or trigger to request permission
 document.addEventListener('DOMContentLoaded', () => {
+    requestOrientationPermission();
+
     // Arrays to store wishes for each ripple
     let wishesRipple1 = [];
     let wishesRipple2 = [];
