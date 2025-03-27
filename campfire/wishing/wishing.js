@@ -10,6 +10,12 @@ let wishesRipple3 = [];
 // Add these variables at the top of your file with other declarations
 let lastTriggerTime = 0;
 const cooldownPeriod = 2000; // 2 seconds cooldown
+let lastWish1 = '';
+let lastWish2 = '';
+let lastWish3 = '';
+let isWish1Active = false;
+let isWish2Active = false;
+let isWish3Active = false;
 
 // Add a button or trigger to request permission
 document.addEventListener('DOMContentLoaded', () => {
@@ -239,7 +245,7 @@ function addWish(rippleNumber) {
 
 // Modify the orientation handler
 function enableOrientationFeatures() {
-    if (window.DeviceOrientationEvent) {
+if (window.DeviceOrientationEvent) {
         // Add a test event to check if we're getting real values
         let orientationTest = function(e) {
             console.log('Orientation Test:', {
@@ -251,7 +257,7 @@ function enableOrientationFeatures() {
         window.addEventListener('deviceorientation', orientationTest);
 
         // Main orientation handler
-        window.addEventListener('deviceorientation', function(event) {
+    window.addEventListener('deviceorientation', function(event) {
             const beta = event.beta;   // Rotation around x-axis (-180 to 180)
             const gamma = event.gamma; // Rotation around y-axis (-90 to 90)
 
@@ -261,33 +267,68 @@ function enableOrientationFeatures() {
                 gamma: gamma?.toFixed(2)
             });
 
-            // Only process if we have valid values and enough time has passed
+        // Get the ripple elements
+        const ripple1 = document.getElementById('ripple-1');
+        const ripple2 = document.getElementById('ripple-2');
+        const ripple3 = document.getElementById('ripple-3');
+
+            // Check if device is in roughly neutral position
+            const isNeutral = Math.abs(gamma) < 20 && Math.abs(beta) < 20;
+            
+            if (isNeutral) {
+                // Reset all ripples and flags when device returns to neutral
+        ripple1.style.opacity = 0;
+        ripple2.style.opacity = 0;
+        ripple3.style.opacity = 0;
+                isWish1Active = false;
+                isWish2Active = false;
+                isWish3Active = false;
+                return;
+            }
+
+            // Only generate new wishes if enough time has passed
             const currentTime = Date.now();
             if (beta !== null && gamma !== null && currentTime - lastTriggerTime > cooldownPeriod) {
-                // Get the ripple elements
-                const ripple1 = document.getElementById('ripple-1');
-                const ripple2 = document.getElementById('ripple-2');
-                const ripple3 = document.getElementById('ripple-3');
-
-                // Reset all ripples
-                ripple1.style.opacity = 0;
-                ripple2.style.opacity = 0;
-                ripple3.style.opacity = 0;
-
-                // Adjusted thresholds for more sensitive tilting
-                if (gamma < -20) { // Tilted left
-                    console.log('Tilted left - triggering wish');
-                    addWish('1');
+                if (gamma < -20 && !isWish1Active) { // Tilted left
+                    console.log('Tilted left - generating new wish');
+                    lastWish1 = generateWish('1');
+                    isWish1Active = true;
+                    isWish2Active = false;
+                    isWish3Active = false;
                     lastTriggerTime = currentTime;
-                } else if (beta > 20) { // Tilted forward
-                    console.log('Tilted forward - triggering wish');
-                    addWish('2');
+                } else if (beta > 20 && !isWish2Active) { // Tilted forward
+                    console.log('Tilted forward - generating new wish');
+                    lastWish2 = generateWish('2');
+                    isWish1Active = false;
+                    isWish2Active = true;
+                    isWish3Active = false;
                     lastTriggerTime = currentTime;
-                } else if (gamma > 20) { // Tilted right
-                    console.log('Tilted right - triggering wish');
-                    addWish('3');
+                } else if (gamma > 20 && !isWish3Active) { // Tilted right
+                    console.log('Tilted right - generating new wish');
+                    lastWish3 = generateWish('3');
+                    isWish1Active = false;
+                    isWish2Active = false;
+                    isWish3Active = true;
                     lastTriggerTime = currentTime;
                 }
+            }
+
+            // Update display based on current tilt
+            if (gamma < -20) {
+                ripple1.textContent = lastWish1;
+            ripple1.style.opacity = 1;
+                ripple2.style.opacity = 0;
+                ripple3.style.opacity = 0;
+            } else if (beta > 20) {
+                ripple2.textContent = lastWish2;
+                ripple1.style.opacity = 0;
+            ripple2.style.opacity = 1;
+                ripple3.style.opacity = 0;
+            } else if (gamma > 20) {
+                ripple3.textContent = lastWish3;
+                ripple1.style.opacity = 0;
+                ripple2.style.opacity = 0;
+            ripple3.style.opacity = 1;
             }
         }, true);
 
@@ -318,7 +359,7 @@ async function requestOrientationPermission() {
             // Fallback for errors
             enableOrientationFeatures();
         }
-    } else {
+} else {
         console.log('Non-iOS device detected, enabling features directly...');
         enableOrientationFeatures();
     }
