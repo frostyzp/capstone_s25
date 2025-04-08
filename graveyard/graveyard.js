@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('canvas-container');
+    const graveyardCount = document.getElementsByClassName('graveyard-count')[0];
+    const grainedElement = document.getElementsByClassName('grained-element')[0];
     const asciiElements = [
         "I miss you everyday baby...",
         "Thank you for checking on me, everything will be alright. Have a great evening and see you tomorrow.",
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const asciiLandscape = [
         "{{}}",
         "{}",
-        "~Y~",
+        "w h i s p e r",
         "|",
         "^^^^^^",
         "              v .   ._, |_  .,\n           `-._\\/  .  \\ /    |/_\n               \\\\  _\\, y | \//\n         _\\_.___\\\\, \\/ -.\\||\n           `7-,--.`._||  / / ,\n           /'     `-. `./ / |/_.'\n                     |    |//\n                     |_    /\n                     |-   |\n                     |   =|\n                     |    |\n--------------------/ ,  . \\--",
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "*",
         "* *",
         "^^^^^^",
-        "{{}}",
+        "{e {c h o o h c } e}",
         "{}",
         "~Y~",
         "|",
@@ -44,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function createRandomDivs(count) {
         // Function to generate random ASCII art of specific length
         function generateASCIICover(content) {
-            const asciiChars = ['w', '|', 'o', '\\'];
+            const asciiChars = ['w', 'x', 'o', '\\'];
             let result = '';
             // Process the content character by character
             for (let i = 0; i < content.length; i++) {
@@ -333,7 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Create initial divs
-    createRandomDivs(40); // Reduced from 80
 
     // Observe all content divs
     document.querySelectorAll('.content-div, .content-div-2, .content-div-landscape').forEach(div => {
@@ -395,8 +396,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Create landscape elements
-    createLandscapeElements(250); // Reduced from 20
 
+    const enterText = document.getElementById('enter'); // Reference to the "Scroll to enter" text
 
+    // Click event listener for "Scroll to enter"
+    enterText.addEventListener('click', function() {
+        // Make the canvas container visible again
+        container.style.display = 'block'; // Change to 'block' or 'flex' as needed
+        container.style.visibility = 'visible'; // Ensure visibility is set to visible
+        console.log('Canvas container is now visible'); // Debugging log
 
+        graveyardCount.style.display = 'none';
+        grainedElement.style.display = 'block';
+        const style = document.createElement('style');
+        style.textContent = `
+            body {
+                background: radial-gradient(circle, rgba(2, 15, 4, 0.95), rgba(0, 0, 0, 1)); /* Update background only */
+            }
+        `;
+        document.head.appendChild(style);
+        createLandscapeElements(250); // Reduced from 20
+        createRandomDivs(45); // Reduced from 80
+
+    });
 });
