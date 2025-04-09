@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleGesture() {
         if (touchStartY - touchEndY > 50) { // Swipe up detected
             console.log('Swipe up detected');
-            document.body.style.backgroundColor = "red";
+            document.body.style.backgroundColor = "grey";
 
             const ripple1 = document.getElementById('ripple-1');
 
@@ -327,7 +327,6 @@ if (window.DeviceOrientationEvent) {
 
             // Handle left tilt
             if (gamma < -15) {
-                document.body.style.background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 0.8))';
                 if (!hasGeneratedWish1) {
                     const wish = generateWish('1');
                     const wordElements = createWordElements(wish);
@@ -376,8 +375,6 @@ if (window.DeviceOrientationEvent) {
 
             // Handle right tilt
             if (gamma > 15) {
-                document.body.style.background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 0.8))';
-
                 if (!hasGeneratedWish3) {
                     const wish = generateWish('1');
                     const wordElements = createWordElements(wish);
