@@ -1,5 +1,12 @@
 
+body {
+    background-image: url('background.png');
+    background-size: cover;
+    background-position: center;
+    background: url('water-animation.gif') no-repeat center center fixed;
+    animation: waterAnimation 10s infinite linear;
 
+}
 
 #ripple-container {
     position: fixed;
@@ -22,7 +29,7 @@
     padding: 1rem;
     margin: 0;
     /* transition: opacity 0.5s ease-out; */
-    filter: blur(0.5px);
+    /* filter: blur(0.5px); */
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
@@ -41,6 +48,8 @@
     z-index: 2;
     opacity: 1;
     font-size: 16px;
+    width: 75%;
+
 }
 
 /* TEXT INPUT SHENANIGANS ... */

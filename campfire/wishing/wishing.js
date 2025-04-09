@@ -19,6 +19,7 @@ let isWish3Active = false;
 let hasGeneratedWish1 = false;
 let hasGeneratedWish2 = false;
 let hasGeneratedWish3 = false;
+let fadeDelay = 400;
 
 // Add a button or trigger to request permission
 document.addEventListener('DOMContentLoaded', () => {
@@ -49,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Touchstart fired');
             debuggingButton.style.backgroundColor = 'green';
             const ripple1 = document.getElementById('ripple-1');
-
+            const ripple2 = document.getElementById('ripple-2');
             const wish = generateWish('1');
             const wordElements = createWordElements(wish);
             console.log('wordElements:', wordElements);
@@ -57,9 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ripple1.appendChild(wordElements);
             console.log('ripple1 words:', wordElements);
 
-            hasGeneratedWish1 = true;
 
-        });
+            hasGeneratedWish1 = true;        });
 
         // Make sure addWish function exists and works
         console.log('addWish function:', typeof addWish); // Debug check
@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Get the text area
     const wishInput = document.getElementById('wish-input');
-
+            // document.getElementById('wish-input2').value = '';
+            // document.getElementById('wish-input3').value = '';
 
     // Button to submit wishes
     const submitButton = document.getElementById('submit-wish');
@@ -91,8 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Clear any existing text
             wishInput.value = '';
-            // document.getElementById('wish-input2').value = '';
-            // document.getElementById('wish-input3').value = '';
+
 
             const instructions = document.querySelector('.instructions');
             instructions.textContent = 'Tilt your vessel to and observe the ripples – each wish a rock, a skip'; // Change the text content
@@ -112,6 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const container = document.getElementById('wish-input-container');
 
+
+
+    // HANDLE SWIPE UP GESTURES ------------------------------------------------------------------------------------------
     container.addEventListener('touchstart', (event) => {
         touchStartY = event.changedTouches[0].screenY;
     });
@@ -123,7 +126,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleGesture() {
         if (touchStartY - touchEndY > 50) { // Swipe up detected
-            
+            console.log('Swipe up detected');
+            document.body.style.backgroundColor = "red";
+
+            const ripple1 = document.getElementById('ripple-1');
+
+            const wish = generateWish('1');
+            const wordElements = createWordElements(wish);
+            console.log('wordElements:', wordElements);
+            ripple1.innerHTML = ''; // Clear previous content
+            ripple1.appendChild(wordElements);
+            console.log('ripple1 words:', wordElements);
+
+            hasGeneratedWish1 = true;
+            // Change the background color
         }
     }
 });
@@ -182,10 +198,10 @@ function transformWish(inputText, rippleNumber) {
     return inputText; // Default return if not ripple1
 }
 
-// Modify the generateWish function
+// THE GRAMMAR FUNCTION ------------------------------------------------------------------------------------------
 function generateWish(rippleNumber) {
     // Parse the user's input from the appropriate input field
-    const userInput = document.getElementById(`wish-input${rippleNumber === '1' ? '' : rippleNumber}`).value;
+    const userInput = rippleNumber === '1' ? document.getElementById('wish-input').value : '';
 
     // For rippleNumber 1, use the input for transformations
     if (rippleNumber === '0') {
@@ -264,20 +280,30 @@ function createWordElements(wish) {
     
     words.forEach((word, index) => {
         const span = document.createElement('span');
-        span.textContent = word + ' ';
+        span.innerHTML = word; // No line break here
         span.style.opacity = 0;
         span.style.transition = 'opacity 0.5s ease-in';
+        span.style.marginRight = '10px'; // Add space between spans
+        if (Math.random() < 0.3) {
+            span.style.fontStyle = 'italic';
+            span.style.display = 'inline-block'; // Allow spans to be inline-block for alignment
+            span.style.textAlign = Math.random() < 0.5 ? 'left' : 'right'; // Randomly align left or right
+            span.style.transform = `rotate(15deg) skew(15deg)`; // Tilt and rotate
+        } else {
+            span.style.transform = `rotate(-15deg) skew(-15deg)`; // Reset tilt and rotation
+        }
         // Delay each word's fade in
         setTimeout(() => {
             span.style.opacity = 1;
-        }, index * 200); // 200ms delay between each word
+        }, index * fadeDelay); // 200ms delay between each word
         container.appendChild(span);
     });
     
     return container;
 }
 
-// Modify the orientation handler's display logic
+
+// Modifying the tilt detection 
 function enableOrientationFeatures() {
 if (window.DeviceOrientationEvent) {
         // Add a test event to check if we're getting real values
@@ -300,7 +326,8 @@ if (window.DeviceOrientationEvent) {
         const ripple3 = document.getElementById('ripple-3');
 
             // Handle left tilt
-            if (gamma < -20) {
+            if (gamma < -15) {
+                document.body.style.background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 0.8))';
                 if (!hasGeneratedWish1) {
                     const wish = generateWish('1');
                     const wordElements = createWordElements(wish);
@@ -308,10 +335,12 @@ if (window.DeviceOrientationEvent) {
                     ripple1.innerHTML = ''; // Clear previous content
                     ripple1.appendChild(wordElements);
                     hasGeneratedWish1 = true;
+
+                    // Apply a slight gradient to the background body color
                 }
             ripple1.style.opacity = 1;
             } else {
-                if (gamma > -10) {
+                if (gamma > -5) {
                     // Fade out words in reverse order
                     const words = ripple1.getElementsByTagName('span');
                     Array.from(words).reverse().forEach((word, index) => {
@@ -324,9 +353,9 @@ if (window.DeviceOrientationEvent) {
             }
 
             // Handle forward tilt
-            if (beta > 20) {
+            if (beta > 15) {
                 if (!hasGeneratedWish2) {
-                    const wish = generateWish('2');
+                    const wish = generateWish('1');
                     const wordElements = createWordElements(wish);
                     ripple2.innerHTML = '';
                     ripple2.appendChild(wordElements);
@@ -334,7 +363,7 @@ if (window.DeviceOrientationEvent) {
                 }
             ripple2.style.opacity = 1;
             } else {
-                if (beta < 10) {
+                if (beta < 5) {
                     const words = ripple2.getElementsByTagName('span');
                     Array.from(words).reverse().forEach((word, index) => {
                         setTimeout(() => {
@@ -346,9 +375,11 @@ if (window.DeviceOrientationEvent) {
             }
 
             // Handle right tilt
-            if (gamma > 20) {
+            if (gamma > 15) {
+                document.body.style.background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 0.8))';
+
                 if (!hasGeneratedWish3) {
-                    const wish = generateWish('3');
+                    const wish = generateWish('1');
                     const wordElements = createWordElements(wish);
                     ripple3.innerHTML = '';
                     ripple3.appendChild(wordElements);
@@ -356,7 +387,7 @@ if (window.DeviceOrientationEvent) {
                 }
             ripple3.style.opacity = 1;
             } else {
-                if (gamma < 10) {
+                if (gamma < 5) {
                     const words = ripple3.getElementsByTagName('span');
                     Array.from(words).reverse().forEach((word, index) => {
                         setTimeout(() => {
@@ -387,7 +418,7 @@ async function requestOrientationPermission() {
                 console.log('Permission granted, enabling features...');
                 enableOrientationFeatures();
             } else {
-                alert("hold your vessel gently, tilt and wait for the ripples to appear");
+                alert("hold your vessel gently, tilt and watch the ripples appear");
             }
         } catch (error) {
             console.error("Error requesting device orientation permission:", error);

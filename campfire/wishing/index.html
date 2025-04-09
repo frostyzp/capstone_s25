@@ -14,10 +14,24 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
 <body>
+    <svg>
+        <filter id="wavy">
+        <feTurbulence id="turbulence" type="turbulence" numOctaves="1" 
+        result="NOISE"></feTurbulence>
+         <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="50">
+         </feDisplacementMap>
+        <animate xlink:href="#turbulence" attributeName="baseFrequency" dur="60s" keyTimes="0;0.5;1"
+      values="0.01 0.02;0.02 0.04;0.01 0.02" repeatCount="indefinite"></animate>
+       </filter>
+      </svg>
+
+
+
+      
     <div id="ripple-container">
-        <div id="ripple-1"> Ripple 1 </div>
-        <div id="ripple-2"> Ripple 2 </div>
-        <div id="ripple-3"> Ripple 3</div>
+        <div id="ripple-1">  </div>
+        <div id="ripple-2">  </div>
+        <div id="ripple-3"> </div>
     </div>
 
     <p class="instructions"> Write down your hopes, wishes, and dreams. Skip your rock across the universe. </p>
@@ -32,6 +46,7 @@
         <button id="debugging">debugging</button>
 
     </div>
+
 
 </body>
 
