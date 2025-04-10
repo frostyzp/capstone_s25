@@ -18,8 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "I love you, and I'm so proud of you"
     ];
     let existingDivPositions = [];
-    let openedWindows = [];
-
     const asciiLandscape = [
         "{{}}",
         "{}",
@@ -32,21 +30,25 @@ document.addEventListener('DOMContentLoaded', () => {
         "|",
         "*",
         "* *",
-        "^^^^^^",
-        "{e {c h o o h c } e}",
+        "{{}}\n{}\n~Y~\n|\n^^^^^^",
+        "{ { } }",
         "{}",
         "~Y~",
         "|",
         "^^^^^^",
         "*",
-        "* *"
+        "* *",
+        "{{}}\n{}\n~Y~\n|\n^^^^^^",
     ];
 
-    // Create random divs
+
+// install js libraries
+
+    // COVER FOR RANDOM DIVS
     function createRandomDivs(count) {
         // Function to generate random ASCII art of specific length
         function generateASCIICover(content) {
-            const asciiChars = ['w', 'x', 'o', '\\'];
+            const asciiChars = ['\\', 'x', '/', '\\'];
             let result = '';
             // Process the content character by character
             for (let i = 0; i < content.length; i++) {
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function formatTextContent(text) {
             const MAX_WIDTH = 15; // Characters per line
-            const HORIZONTAL_LINE = '-'.repeat(MAX_WIDTH + 2); // +2 for the vertical bars
+            const HORIZONTAL_LINE = '^'.repeat(MAX_WIDTH + 2); // +2 for the vertical bars
             
             // Split input text into initial lines
             const inputLines = text.split('\n');
@@ -162,10 +164,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Store the actual content and generate matching ASCII cover
             const content = asciiElements[Math.floor(Math.random() * asciiElements.length)];
             const formattedContent = formatTextContent(content);
-            const asciiCover = generateASCIICover(formattedContent);
+            
+            // Replace the last line with 'w' or 'v'
+            const lines = formattedContent.split('\n');
+            if (lines.length > 0) {
+                // Replace the last line with 'w' or 'v'
+                lines[lines.length - 1] = Math.random() < 0.5 ? 'wwwvvWW v vvww' : 'vwwWWvwvv v vvWw';
+            }
+            const adjustedFormattedContent = lines.join('\n'); // Join lines back
+            
+            const asciiCover = generateASCIICover(adjustedFormattedContent);
             
             // Create wrapper for each line
-            const contentLines = formattedContent.split('\n');
+            const contentLines = adjustedFormattedContent.split('\n');
             contentDiv.innerHTML = ''; // Clear existing content
             contentLines.forEach(line => {
                 const lineDiv = document.createElement('div');
@@ -175,62 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Store formatted content in dataset
-            contentDiv.dataset.content = formattedContent;
+            contentDiv.dataset.content = adjustedFormattedContent;
             contentDiv.dataset.asciiCover = asciiCover;
             contentDiv.dataset.revealedChars = '0';
             contentDiv.textContent = asciiCover;
             contentDiv.style.whiteSpace = 'pre'; // Preserve ASCII art formatting
-
-            // Touch handling with opacity
-            let touchStartX = 0;
-            let touchStartY = 0;
-
-            contentDiv.addEventListener('touchstart', function(e) {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            });
-
-            contentDiv.addEventListener('touchmove', function(e) {
-                e.preventDefault();
-                const touchEndX = e.touches[0].clientX;
-                const touchEndY = e.touches[0].clientY;
-                const deltaX = touchEndX - touchStartX;
-                const deltaY = touchEndY - touchStartY;
-                const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-                const content = this.dataset.content;
-                const asciiCover = this.dataset.asciiCover;
-                const currentRevealed = parseInt(this.dataset.revealedChars);
-                const newRevealed = Math.min(
-                    content.length,
-                    Math.floor(currentRevealed + (distance / 10)) // Reduced reveal speed
-                );
-
-                if (newRevealed > currentRevealed) {
-                    this.dataset.revealedChars = newRevealed.toString();
-                    
-                    // Calculate opacity based on reveal progress
-                    const progress = newRevealed / content.length;
-                    const newOpacity = 0.3 + (progress * 0.7);
-                    this.style.opacity = newOpacity.toString();
-
-                    // Gradually reveal text with typewriter effect
-                    const revealedText = content.substring(0, newRevealed);
-                    const remainingAscii = asciiCover.substring(newRevealed);
-                    
-                    // Clear existing content and start typewriter
-                    this.textContent = '';
-                    new Typewriter(this, {
-                        delay: 30, // Fast enough to feel responsive but still show animation
-                        cursor: ''
-                    })
-                    .typeString(revealedText + remainingAscii)
-                    .start();
-                }
-
-                touchStartX = touchEndX;
-                touchStartY = touchEndY;
-            });
 
             // For desktop, reveal based on mouse position with opacity
             contentDiv.addEventListener('mousemove', function(e) {
@@ -352,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
             landscapeDiv.className = 'content-div-landscape';
             
             // Simple random positioning
-            const xPos = Math.random() * (container.offsetWidth - 100);
+            const xPos = Math.random() * (container.offsetWidth - 200);
             const yPos = Math.random() * (container.offsetHeight - 50);
             
             landscapeDiv.style.left = `${xPos}px`;
@@ -366,6 +326,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Change color to bright green if content is "*" or "* *"
             if (content === '*' || content === '* *') {
                 landscapeDiv.style.color = 'lime'; // Bright green
+                landscapeDiv.style.animation = 'float 2s ease-in-out infinite'; // Add floating animation
+                wrapper.style.animation = 'float 2s ease-in-out infinite'; // Add floating animation
             }
 
             // Create perpendicular div with inverse skew
@@ -395,19 +357,35 @@ document.addEventListener('DOMContentLoaded', () => {
         } // Fixed bracket issue here
     }
 
-    // Create landscape elements
-
     const enterText = document.getElementById('enter'); // Reference to the "Scroll to enter" text
 
     // Click event listener for "Scroll to enter"
     enterText.addEventListener('click', function() {
         // Make the canvas container visible again
+        // Fade out graveyardCount over 2 seconds
         container.style.display = 'block'; // Change to 'block' or 'flex' as needed
         container.style.visibility = 'visible'; // Ensure visibility is set to visible
-        console.log('Canvas container is now visible'); // Debugging log
 
-        graveyardCount.style.display = 'none';
-        grainedElement.style.display = 'block';
+        graveyardCount.style.transition = 'opacity 2s ease-in-out'; // Reduced transition time
+        graveyardCount.style.opacity = '0';
+        console.log('graveyardCount is not visible'); // Debugging log
+
+        // Use requestAnimationFrame for smoother transitions
+        const fadeOut = () => {
+            graveyardCount.style.display = 'none';
+
+            grainedElement.style.opacity = '1';
+            grainedElement.style.visibility = 'visible';
+            grainedElement.style.display = 'block';
+            // Fade in grainedElement over 0.5 seconds
+            grainedElement.style.transition = 'opacity 0.5s ease-in-out';
+            grainedElement.style.opacity = '1';
+        };
+
+        setTimeout(() => {
+            requestAnimationFrame(fadeOut); // Use requestAnimationFrame for better performance
+        }, 2500); // Wait for the fade-out to complete before hiding
+
         const style = document.createElement('style');
         style.textContent = `
             body {
@@ -415,8 +393,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         `;
         document.head.appendChild(style);
-        createLandscapeElements(250); // Reduced from 20
+        createLandscapeElements(350); // Reduced from 20
         createRandomDivs(45); // Reduced from 80
 
     });
+
+    $(document).ready(function() {
+        // Initialize Textillate.js on the element you want to animate
+        $('.text-line').textillate({
+            in: { effect: 'fadeIn', delayScale: 1.5, delay: 50 },
+            out: { effect: 'fadeOut', delayScale: 1.5, delay: 50 },
+            loop: true // Set to true if you want the animation to loop
+        });
+    });
 });
+
+

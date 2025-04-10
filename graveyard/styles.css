@@ -18,6 +18,7 @@ body {
     position: relative;
     visibility: hidden;
     display: none;
+    transition: background-color 0.3s ease; /* Transition for this */
 
 }
 
@@ -79,9 +80,12 @@ body {
     background-image: url('background.png');
     background-repeat: repeat;
     visibility: hidden;
+
+
     display: none;
     /* overflow: hidden; */
 }
+
 
 .grained-element::before {
     background-image: url('background.png');
@@ -105,8 +109,30 @@ body {
     100% { transform: translate(0, 0); }
 }
 
+
+
+.bury_entry {
+    position: fixed; /* Fixed positioning to stay on viewport */
+    bottom: 0; /* Position at the bottom of the viewport */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for centering */
+    width: auto; /* Allow width to adjust based on content */
+    z-index: 3; /* Ensure it stays above other content */
+    padding: 2rem; /* Padding for spacing */
+    text-align: center; /* Center-align text */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) { /* Adjust the max-width as needed */
+    .bury_entry {
+        width: 100%; /* Full width on mobile */
+        padding: 1rem; /* Adjust padding for mobile */
+    }
+}
+
 .graveyard-count {
     background-color: black;
+    background-image: url('/rock_bg.png');
     position: fixed;
     color: white;
     top: 0;
@@ -118,11 +144,13 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1; /* Ensure it stays above other content */
+    transition: opacity 0.5s ease-in-out;
 }
 
 .background-image {
-    background-image: url('tombstone.png');
-    background-size: contain;
+    background-image: url('/rock_plain_bg.png');
+    opacity: 0.02;
+    background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     position: absolute;

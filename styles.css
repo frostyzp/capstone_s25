@@ -1,5 +1,5 @@
 body {
-    background-color: white;
+    background-color: black;
     transition: background-color 0.3s ease;
     height: 3000px;
     padding-top: 10rem;
@@ -7,6 +7,62 @@ body {
 
 }
 
+.main-text {
+    color: white;
+    font-size: 1rem;
+    margin-top: 10rem;
+}
+
+.main-text {
+    position: relative; /* Position relative to allow absolute positioning of children */
+    width: 200px; /* Adjust width as needed */
+    height: 200px; /* Adjust height as needed */
+    margin: auto; /* Center the container */
+}
+
+.main-text h1 {
+    position: absolute; /* Position absolutely within the container */
+    width: 100%; /* Full width to center text */
+    text-align: center; /* Center text */
+    animation: circularMotion 25s infinite linear; /* Apply animation */
+}
+
+/* Keyframes for circular motion */
+@keyframes circularMotion {
+    0% {
+        transform: rotate(0deg) translate(100px) rotate(0deg); /* Start position */
+    }
+    25% {
+        transform: rotate(90deg) translate(100px) rotate(-90deg); /* Move to the right */
+    }
+    50% {
+        transform: rotate(180deg) translate(100px) rotate(-180deg); /* Move down */
+    }
+    75% {
+        transform: rotate(270deg) translate(100px) rotate(-270deg); /* Move to the left */
+    }
+    100% {
+        transform: rotate(360deg) translate(100px) rotate(-360deg); /* Complete the circle */
+    }
+}
+
+/* Delay the animation for each h1 element */
+.main-text h1:nth-child(1) {
+    animation-delay: 0s; /* No delay for the first element */
+}
+
+.main-text h1:nth-child(2) {
+    animation-delay: 0s; /* Delay for the second element */
+}
+
+.main-text h1:nth-child(3) {
+    animation-delay: 0s; /* Delay for the third element */
+}
+
+
+
+
+/* --------------------------------------------------------------------------- */
 .oracle_answer {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
