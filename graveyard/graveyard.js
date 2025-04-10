@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('canvas-container');
     const graveyardCount = document.getElementsByClassName('graveyard-count')[0];
     const grainedElement = document.getElementsByClassName('grained-element')[0];
+    const buryEntry = document.getElementById('bury_entry');
+    const graveyardMain = document.getElementsByClassName('graveyardMain')[0];
     const asciiElements = [
         "I miss you everyday baby...",
         "Thank you for checking on me, everything will be alright. Have a great evening and see you tomorrow.",
@@ -358,17 +360,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const enterText = document.getElementById('enter'); // Reference to the "Scroll to enter" text
+    const buryText = document.getElementById('enter'); // Reference to the "Scroll to enter" text
 
     // Click event listener for "Scroll to enter"
     enterText.addEventListener('click', function() {
         // Make the canvas container visible again
         // Fade out graveyardCount over 2 seconds
+        graveyardMain.style.transition = 'opacity 1s ease-in-out'; // Reduced transition time
+        graveyardMain.style.opacity = '0';
+
+        container.style.transition = 'opacity 1s ease-in-out'; // Reduced transition time
         container.style.display = 'block'; // Change to 'block' or 'flex' as needed
         container.style.visibility = 'visible'; // Ensure visibility is set to visible
+
 
         graveyardCount.style.transition = 'opacity 2s ease-in-out'; // Reduced transition time
         graveyardCount.style.opacity = '0';
         console.log('graveyardCount is not visible'); // Debugging log
+
+        buryEntry.style.display = 'block'; 
 
         // Use requestAnimationFrame for smoother transitions
         const fadeOut = () => {
@@ -395,6 +405,34 @@ document.addEventListener('DOMContentLoaded', () => {
         document.head.appendChild(style);
         createLandscapeElements(350); // Reduced from 20
         createRandomDivs(45); // Reduced from 80
+
+    });
+
+
+    // BURY ENTRY MODAL - CONTRIBUTE TO THE GRAVEYARD ------------------------------------------------------------
+    buryEntry.addEventListener('click', function() {
+
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '50%';
+    modal.style.left = '50%';
+    modal.style.transform = 'translate(-50%, -50%)';
+    modal.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+    modal.style.border = '2px solid #000';
+    modal.style.padding = '20px';
+    modal.style.zIndex = '1000';
+    modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+    modal.innerText = 'Contribute to the graveyard.';
+
+    const closeButton = document.createElement('button');
+    closeButton.innerText = 'Close';
+    closeButton.style.marginTop = '10px';
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    modal.appendChild(closeButton);
+    document.body.appendChild(modal);        
 
     });
 

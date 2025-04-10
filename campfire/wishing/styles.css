@@ -1,14 +1,20 @@
+@font-face {
+    font-family: 'VictorMono';
+    src: url('/Users/arinp/Documents/GitHub/capstone_s25/VictorMono-Regular.woff2') format('woff2');
+}
 
 body {
-    background-image: url('background.png');
+    font-family: 'VictorMono', 'Courier New', Courier, monospace;
+    /* background-image: url('background.png'); */
     background-size: cover;
     background-position: center;
-    background: url('water-animation.gif') no-repeat center center fixed;
-    animation: waterAnimation 10s infinite linear;
-
+    /* background: url('water-animation.gif') no-repeat center center fixed; */
+    /* animation: waterAnimation 10s infinite linear; */
 }
 
 #ripple-container {
+    font-family: 'VictorMono', 'Courier New', Courier, monospace;
+
     position: fixed;
     top: 0;
     left: 50%;
@@ -50,7 +56,6 @@ body {
     font-size: 16px;
     width: 75%;
     color: white;
-
 }
 
 /* TEXT INPUT SHENANIGANS ... */
@@ -105,6 +110,26 @@ body {
 #skippingRock {
     display: none;
     color: white;
+    cursor: grab;
+    position: relative;
+    user-select: none;
+    transition: transform 0.2s ease, filter 0.3s ease;
+    z-index: 10;
+}
+
+#skippingRock:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+}
+
+#skippingRock:active {
+    cursor: grabbing;
+}
+
+/* Create a subtle animation for when it's being dragged, 
+   added by playhtml when element is being moved */
+[data-can-move="active"] {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) !important;
 }
 
 .instructionsMain {
@@ -113,4 +138,9 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+}
+
+button {
+    font-family: 'VictorMono', 'Courier New', Courier, monospace;
+    background-color: transparent;
 }

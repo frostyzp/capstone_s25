@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded'); // Debug log
     
+    // Initialize variables
+    let hasGeneratedWish1 = false;
+    
     const debuggingButton = document.getElementById('debugging');
     console.log('Button element:', debuggingButton); // Debug log to check if button is found
     
@@ -46,6 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get the text area
     const wishInput = document.getElementById('wish-input');
 
+    // Initialize the skipping rock as hidden initially
+    const skippingRock = document.getElementById('skippingRock');
+    if (skippingRock) {
+        // We'll show this after the wish is submitted
+        skippingRock.style.display = 'none';
+    }
+
     // SUBMIT BUTTON ------------------------------------------------------------------------------------------------
     const submitButton = document.getElementById('submit-wish');
     submitButton.addEventListener('click', () => {
@@ -67,8 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.style.transition = 'background-color 1.5s ease-in-out';
             document.body.style.color = 'white';
 
-
-
             // The textarea for input is hidden as per the instructions
             document.getElementById('wish-input').style.display = 'none';
 
@@ -81,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // instructions
             const instructions = document.querySelector('.instructions');
-            instructions.textContent = 'Skip your rock into the universe. Tilt your vessel to see the ripples.';
+            instructions.textContent = 'Skip your rock into the universe. Drag your rock to cast your wish.';
             instructions.style.opacity = 1; // Make it visible
             setTimeout(() => {
                 instructions.classList.add('fade-out'); // Add fade-out class after 5 seconds
@@ -92,6 +100,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Listen for when the rock is moved using playhtml
+    document.addEventListener('move', (e) => {
+        console.log('Move event detected:', e.detail);
+        
+        // If the rock is moved beyond a certain point, trigger the ripple effect
+        if (e.detail && e.detail.element && e.detail.element.id === 'skippingRock') {
+            const element = e.detail.element;
+            const rockPosition = element.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            // If the rock is moved more than halfway up the screen, consider it "skipped"
+            if (rockPosition.top < viewportHeight / 2) {
+                const ripple1 = document.getElementById('ripple-1');
+                if (!hasGeneratedWish1) {
+                    const wish = generateWish('1');
+                    const wordElements = createWordElements(wish);
+                    console.log('wordElements:', wordElements);
+                    ripple1.innerHTML = ''; // Clear previous content
+                    ripple1.appendChild(wordElements);
+                    hasGeneratedWish1 = true;
+                    
+                    // Provide visual feedback that the wish has been cast
+                    element.style.opacity = 0.5;
+                    setTimeout(() => {
+                        element.style.opacity = 1;
+                    }, 1000);
+                }
+                ripple1.style.opacity = 1;
+            }
+        }
+    });
 
 function enableOrientationFeatures() {
     if (window.DeviceOrientationEvent) {

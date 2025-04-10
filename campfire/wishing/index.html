@@ -7,14 +7,30 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
-    <script src="wishing.js"></script>
-    <script src="buttons.js"></script>
+    
+    <!-- Import map for PlayHTML -->
+    <script type="importmap">
+    {
+      "imports": {
+        "playhtml": "https://unpkg.com/playhtml/dist/playhtml.js"
+      }
+    }
+    </script>
+    
+    <!-- Initialize PlayHTML -->
+    <script type="module">
+      import * as playhtml from 'playhtml';
+      playhtml.init();
+    </script>
+    
+    <script src="wishing.js" defer></script>
+    <script src="buttons.js" defer></script>
     <!-- jQuery CDN
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
         integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 
-<body>
+<body data-playhtml>
     <svg>
         <filter id="wavy">
         <feTurbulence id="turbulence" type="turbulence" numOctaves="1" 
@@ -26,6 +42,26 @@
        </filter>
       </svg>
 
+
+      <!-- <div class="graveyard-count">
+        <div class="background-image"></div>
+        <p class="graveyardMain">|^------------^|</p>
+
+        <p class="graveyardMain">|^----------------------^|</p>
+        <p class="graveyardMain">|^--------------------------^|</p>
+        <p class="graveyardMain">|           R I P           |</p>
+        <p class="graveyardMain">|                           |</p>
+        <p class="graveyardMain">|         graveyard         |</p>
+        <p class="graveyardMain">|          of the           |</p>
+        <p class="graveyardMain">|        unanswered         |</p>
+        <p class="graveyardMain">|        ----------         |</p>
+        <p class="graveyardMain">|--tap to reveal gravestones--|</p>
+        <p class="graveyardMain">|//\//\//\//\//\//\//\//\//\//\|</p>
+        <p class="graveyardMain">|//\//\//\//\//\//\//\//\//\//\|</p>
+        <br>        <br>
+ -->
+
+    </div>
 
       
     <div id="ripple-container">
@@ -44,17 +80,29 @@
         <div id="arrow"> ^ <br>
         |<br>
         |</div>
-        <button id="submit-wish">i'm ready to skip my stone</button>
+        <style>
+            #arrow {
+                animation: jumpArrow 3s steps(2) infinite;
+            }
+
+            @keyframes jumpArrow {
+                0% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
+                100% {
+                    transform: translateY(0);
+                }
+            }
+        </style>
+        <button id="submit-wish">[ hold onto wish ]</button>
         <!-- <button id="debugging">debugging</button> -->
-        <pre id="skippingRock">
+        <pre id="skippingRock" data-can-move>
           _.-'~~`~~'-._
        .-~`            `~-. 
      .'                    `.
-    /                        \
-   |                          |
-   |                          |
-    \                        /
-     `.                    .'
        `~-.____________.-~`
         </pre>
 

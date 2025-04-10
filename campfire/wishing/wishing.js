@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const ripple1 = document.getElementById('ripple-1');
 
-            const wish = generateWish();
+            const wish = generateWish(1);
             const wordElements = createWordElements(wish);
             
             console.log('wordElements:', wordElements);
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // THE GRAMMAR FUNCTION ------------------------------------------------------------------------------------------
-function generateWish() {
+function generateWish(rippleNum) {
     const userInput = document.getElementById('wish-input').value;
     const words = RiTa.tokenize(userInput);
     const tags = RiTa.pos(words);
