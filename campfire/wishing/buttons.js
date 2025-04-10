@@ -67,6 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.style.transition = 'background-color 1.5s ease-in-out';
             document.body.style.color = 'white';
 
+
+
             // The textarea for input is hidden as per the instructions
             document.getElementById('wish-input').style.display = 'none';
 
@@ -134,6 +136,11 @@ function enableOrientationFeatures() {
                         });
                         hasGeneratedWish1 = false;
                     }
+                }
+                
+                // Call the infinite poem function with the tilt values
+                if (typeof handleDeviceTilt === 'function') {
+                    handleDeviceTilt(gamma, beta);
                 }
             }, true);
         } else {
