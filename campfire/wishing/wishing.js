@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // THE GRAMMAR FUNCTION ------------------------------------------------------------------------------------------
-function generateWish(rippleNum) {
+function generateWish() {
     const userInput = document.getElementById('wish-input').value;
     const words = RiTa.tokenize(userInput);
     const tags = RiTa.pos(words);
@@ -61,10 +61,12 @@ function generateWish(rippleNum) {
                 'will ' + RiTa.conjugate(word, {tense: 'present'}),
                 'would ' + RiTa.conjugate(word, {tense: 'present'})
             ];
-            return transforms[Math.floor(Math.random() * transforms.length)];
+            return transforms[Math.floor(Math.random() * transforms.length)]; //pick random number between 0 and the array length
         } else if (tags[i].startsWith('jj')) {
-            // For adjectives, just get a new random adjective
-            return RiTa.randomWord({ pos: "jj" });
+            // For adjectives, find a similar-sounding adjective
+            const similarAdjectives = [RiTa.randomWord({ pos: "jj" })]; // Just add a random adjective
+
+            return similarAdjectives.length > 0 ? similarAdjectives[Math.floor(Math.random() * similarAdjectives.length)] : RiTa.randomWord({ pos: "jj" });
         }
         return word;
     });
@@ -130,76 +132,64 @@ function createWordElements(wish) {
     // RIPPLE WORDS APPEARING FROM BOTTOM TO TOP -------------------------------------------------------------------------
     words.forEach((word, index) => {
         const wordGroup = document.createElement('div');
-        wordGroup.style.position = 'relative';
-        wordGroup.style.marginBottom = '20%'; // Space between stacked words
-        wordGroup.style.display = 'block';
-        wordGroup.style.textAlign = 'center';
-        wordGroup.style.width = '100%';
+        wordGroup.className = 'word-group';
         
         // Create main word span
         const span = document.createElement('span');
         span.innerHTML = word;
-        span.style.opacity = 0;
-        span.style.display = 'inline-block';
         span.className = 'main-word';
-        span.style.position = 'relative';
-        span.style.zIndex = '5'; // Keep main word on top
+        span.style.opacity = 0;
         
-        if (Math.random() < 0.3) {
+        if (Math.random() < 0.5) {
             span.style.fontStyle = 'italic';
             span.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
         }
         
         // Add related nouns if this is a noun
-        if (tags[index] && tags[index].startsWith('nn')) {
+        function addRelatedNouns(word, depth) {
+            if (depth <= 0) return; // Base case to stop recursion
+
             const relatedNouns = getRelatedNouns(word);
             
             // Add related nouns around the main word
             relatedNouns.forEach((relatedNoun, relatedIndex) => {
                 const relatedSpan = document.createElement('span');
                 relatedSpan.innerHTML = relatedNoun;
+                relatedSpan.className = 'related-word';
                 relatedSpan.style.opacity = 0;
-                relatedSpan.style.position = 'absolute';
-                relatedSpan.style.fontSize = '0.7em';
-                relatedSpan.style.color = 'rgba(255, 255, 255, 0.7)';
                 
                 // Position the related noun around the main word
                 const angle = (relatedIndex / relatedNouns.length) * Math.PI * 2;
-                const distance = 60 + Math.random() * 40; // Random distance from center
+                const distance = (60 + Math.random() * 40) * depth; // Random distance from center, incremented by depth
                 const x = Math.cos(angle) * distance;
                 const y = Math.sin(angle) * distance;
                 
                 relatedSpan.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random() * 20 - 10}deg)`;
                 
-                // Fade in and out with slight delay compared to main word
+                // Fade in with slight delay compared to main word
                 setTimeout(() => {
-                    relatedSpan.style.transition = 'opacity 0.8s ease-in, filter 0.8s ease-in';
-                    relatedSpan.style.opacity = 0.7;
-                    relatedSpan.style.filter = 'blur(1px)';
+                    relatedSpan.style.transition = 'opacity 2s ease-in, filter 2s ease-in';
+                    relatedSpan.style.opacity = 1;
                 }, index * 500 + 150 + relatedIndex * 100);
                 
-                setTimeout(() => {
-                    relatedSpan.style.opacity = 0;
-                    relatedSpan.style.filter = 'blur(5px)';
-                }, (index + 1) * 500 + 100 + relatedIndex * 50);
-                
                 wordGroup.appendChild(relatedSpan);
+                
+                // Recursive call to add further related nouns
+                addRelatedNouns(relatedNoun, depth - 1);
             });
+        }
+
+        if (tags[index] && tags[index].startsWith('nn')) {
+            addRelatedNouns(word, 2); // Change 2 to the desired depth of recursion
         }
         
         // Add main word animation
         setTimeout(() => {
-            span.style.transition = 'opacity 0.5s ease-in, filter 0.5s ease-in, font-size 0.5s ease-in';
+            span.style.transition = 'opacity 0.8s ease-in, filter 0.8s ease-in, font-size 0.8s ease-in';
             span.style.opacity = 1;
             span.style.filter = 'blur(0px)';
             span.style.fontSize = '1.1em';
-        }, index * 500);
-
-        // Increase blur and fade out after the transition
-        setTimeout(() => {
-            span.style.filter = 'blur(5px)';
-            span.style.opacity = 0;
-        }, (index + 1) * 500);
+        }, index * 800);
         
         wordGroup.appendChild(span);
         container.appendChild(wordGroup);

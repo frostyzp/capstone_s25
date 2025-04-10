@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         graveyardCount.style.opacity = '0';
         console.log('graveyardCount is not visible'); // Debugging log
 
-        buryEntry.style.display = 'block'; 
+        // buryEntry.style.display = 'block'; 
 
         // Use requestAnimationFrame for smoother transitions
         const fadeOut = () => {

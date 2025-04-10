@@ -29,6 +29,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
         integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+    <style>
+      .page {
+        transition: opacity 0.8s ease-in-out;
+      }
+      .page.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .page.visible {
+        opacity: 1;
+      }
+    </style>
+</head>
 
 <body data-playhtml>
     <svg>
@@ -43,71 +56,76 @@
       </svg>
 
 
-      <!-- <div class="graveyard-count">
+      <div class="landingPage page visible">
         <div class="background-image"></div>
-        <p class="graveyardMain">|^------------^|</p>
+        _.-'~~`~~'-._
+        .-~` skip  ping  `~-. 
+      .'    st   o ne           `.
+        `~-.____________.-~`
+        _.-'~~`~~'-._
+        .-~` skip  ping  `~-. 
+      .'    st   o ne           `.
+        `~-.____________.-~`
+        <br>
+        _.-'~~`~~'-._
+        .-~` skip  ping  `~-. 
+      .'    st   <br>o ne           `.
+        `~-.____________.-~`
+        <br>        
 
-        <p class="graveyardMain">|^----------------------^|</p>
-        <p class="graveyardMain">|^--------------------------^|</p>
-        <p class="graveyardMain">|           R I P           |</p>
-        <p class="graveyardMain">|                           |</p>
-        <p class="graveyardMain">|         graveyard         |</p>
-        <p class="graveyardMain">|          of the           |</p>
-        <p class="graveyardMain">|        unanswered         |</p>
-        <p class="graveyardMain">|        ----------         |</p>
-        <p class="graveyardMain">|--tap to reveal gravestones--|</p>
-        <p class="graveyardMain">|//\//\//\//\//\//\//\//\//\//\|</p>
-        <p class="graveyardMain">|//\//\//\//\//\//\//\//\//\//\|</p>
-        <br>        <br>
- -->
+        <button id="landingPageButton">[ enter the river ]</button>
 
     </div>
 
+
+    <!--  ########################################################################################################### -->
+
+    <div class="secondPage page hidden" id="second-page">
+        <div id="ripple-container">
+            <div id="ripple-1">  </div>
+            <!-- <div id="ripple-2">  </div> -->
+            <!-- <div id="ripple-3"> </div> -->
+        </div>
+    
+        <!-- <p class="instructionsMain"> Write down your hopes, wishes, and dreams. </p> -->
+        <div class="instructions"> <br> Skip your rock into the universe. Tilt your vessel to see the ripples. </div>
+        <!-- Add this new container at the bottom -->
+        <div id="wish-input-container">
+            <textarea id="wish-input" placeholder="describe a space you dream about living in"></textarea>
+            <!-- <textarea id="wish-input2" placeholder="i wish..."></textarea>
+            <textarea id="wish-input3" placeholder="i dream..."></textarea> -->
+            <div id="arrow"> ^ <br>
+            |<br>
+            |</div>
+            <button id="submit-wish">[ hold onto wish ]</button>
+            <!-- <button id="debugging">debugging</button> -->
+            <pre id="skippingRock" data-can-move>
+              _.-'~~`~~'-._
+           .-~` skip  ping  `~-. 
+         .'    st   o ne           `.
+           `~-.____________.-~`
+            </pre>
+    
+        </div>
+    </div>
+
+    <script>
+      // Function to switch pages
+      function switchToPage(pageClass) {
+        document.querySelectorAll('.page').forEach(page => {
+          page.classList.add('hidden');
+          page.classList.remove('visible');
+        });
+        
+        document.querySelector('.' + pageClass).classList.remove('hidden');
+        document.querySelector('.' + pageClass).classList.add('visible');
+      }
       
-    <div id="ripple-container">
-        <div id="ripple-1">  </div>
-        <div id="ripple-2">  </div>
-        <div id="ripple-3"> </div>
-    </div>
-
-    <!-- <p class="instructionsMain"> Write down your hopes, wishes, and dreams. </p> -->
-    <div class="instructions"> <br> Skip your rock into the universe. Tilt your vessel to see the ripples. </div>
-    <!-- Add this new container at the bottom -->
-    <div id="wish-input-container">
-        <textarea id="wish-input" placeholder="write your wildest dreams and hopes"></textarea>
-        <!-- <textarea id="wish-input2" placeholder="i wish..."></textarea>
-        <textarea id="wish-input3" placeholder="i dream..."></textarea> -->
-        <div id="arrow"> ^ <br>
-        |<br>
-        |</div>
-        <style>
-            #arrow {
-                animation: jumpArrow 3s steps(2) infinite;
-            }
-
-            @keyframes jumpArrow {
-                0% {
-                    transform: translateY(0);
-                }
-                50% {
-                    transform: translateY(-10px);
-                }
-                100% {
-                    transform: translateY(0);
-                }
-            }
-        </style>
-        <button id="submit-wish">[ hold onto wish ]</button>
-        <!-- <button id="debugging">debugging</button> -->
-        <pre id="skippingRock" data-can-move>
-          _.-'~~`~~'-._
-       .-~`            `~-. 
-     .'                    `.
-       `~-.____________.-~`
-        </pre>
-
-    </div>
-
+      // Add event listener to transition to second page with the button
+      document.getElementById('landingPageButton').addEventListener('click', function() {
+        switchToPage('secondPage');
+      });
+    </script>
 
 </body>
 

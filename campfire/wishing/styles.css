@@ -3,22 +3,74 @@
     src: url('/Users/arinp/Documents/GitHub/capstone_s25/VictorMono-Regular.woff2') format('woff2');
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+}
+
 body {
     font-family: 'VictorMono', 'Courier New', Courier, monospace;
     /* background-image: url('background.png'); */
-    background-size: cover;
-    background-position: center;
+    /* background-size: cover; */
+    /* background-position: center; */
     /* background: url('water-animation.gif') no-repeat center center fixed; */
     /* animation: waterAnimation 10s infinite linear; */
 }
 
+/* ----- PAGE TRANSITION SYSTEM ----- */
+.page {
+    transition: opacity 0.8s ease-in-out;
+}
+
+.page.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.page.visible {
+    opacity: 1;
+}
+
+/* ----- LANDING PAGE STYLES ----- */
+.landingPage {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height for vertical alignment */
+}
+
+.background-image {
+    background-image: url('background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* height: 100vh; */
+    width: 100%;
+    z-index: -1;
+}
+
+#landingPageButton {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+/* ----- RIPPLE CONTAINER STYLES ----- */
 #ripple-container {
     font-family: 'VictorMono', 'Courier New', Courier, monospace;
-
     position: fixed;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
+    padding-bottom: 15vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -32,7 +84,6 @@ body {
     text-align: center;
     opacity: 1;
     width: 100%;
-    padding: 1rem;
     margin: 0;
     /* transition: opacity 0.5s ease-out; */
     /* filter: blur(0.5px); */
@@ -44,6 +95,28 @@ body {
     transition: opacity 0.5s ease-in-out;
 }
 
+/* ----- WORD STYLING (FROM WISHING.JS) ----- */
+.main-word {
+    position: relative;
+    z-index: 5;
+    display: inline-block;
+}
+
+.word-group {
+    position: relative;
+    margin-bottom: 10%;
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+
+.related-word {
+    position: absolute;
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ----- INSTRUCTION TEXT ----- */
 .instructions {
     position: fixed;
     top: 50%;
@@ -58,8 +131,17 @@ body {
     color: white;
 }
 
-/* TEXT INPUT SHENANIGANS ... */
+.instructionsMain {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+/* ----- INPUT CONTAINER STYLES ----- */
 #wish-input-container {
+    background-color: transparent;
     position: fixed;
     bottom: 10%;
     left: 50%;
@@ -73,14 +155,27 @@ body {
 }
 
 #wish-input, #wish-input2, #wish-input3 {
-    width: 100%;
-    padding: 15px;
+    font-family: 'VictorMono', 'Courier New', Courier, monospace;
+    background-color: transparent;
+    width: calc(100% - 15px); /* Adjust width to account for padding */
+    height: 100px;
+    padding: 15px; /* Add padding */
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px dashed #ccc;
     border-radius: 5px;
     font-size: 16px;
     resize: none;
-    /* height: 100px; */
+}
+
+#wish-input:focus {
+    outline: none;
+}
+
+/* ----- BUTTON STYLES ----- */
+button {
+    font-family: 'VictorMono', 'Courier New', Courier, monospace;
+    background-color: transparent;
+    margin: 2rem;
 }
 
 #submit-wish {
@@ -96,17 +191,26 @@ body {
     /* background-color: #0056b3; */
 }
 
-/* Add this class for the fade out effect */
-.fade-out {
-    opacity: 0 !important;
-    pointer-events: none;
-}
-
+/* ----- ARROW ANIMATION ----- */
 #arrow {
     display: none;
     color: white;
+    animation: jumpArrow 3s steps(2) infinite;
 }
 
+@keyframes jumpArrow {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* ----- SKIPPING ROCK STYLES ----- */
 #skippingRock {
     display: none;
     color: white;
@@ -132,15 +236,10 @@ body {
     filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) !important;
 }
 
-.instructionsMain {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+/* ----- UTILITY CLASSES ----- */
+.fade-out {
+    opacity: 0 !important;
+    pointer-events: none;
 }
 
-button {
-    font-family: 'VictorMono', 'Courier New', Courier, monospace;
-    background-color: transparent;
-}
+

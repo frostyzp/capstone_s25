@@ -160,7 +160,12 @@ function enableOrientationFeatures() {
                         ripple1.innerHTML = ''; // Clear previous content
                         ripple1.appendChild(wordElements);
                         hasGeneratedWish1 = true;
-    
+
+
+
+                        // Add related nouns to the wish + recursive call
+                        addRelatedNouns(word, 2); // Change 2 to the desired depth of recursion
+
                         // Apply a slight gradient to the background body color
                         document.body.style.background = 'linear-gradient(to right, grey, black)';
 
@@ -220,3 +225,20 @@ function enableOrientationFeatures() {
 });
     
     
+
+ // Function to switch pages
+ function switchToPage(pageClass) {
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.add('hidden');
+      page.classList.remove('visible');
+    });
+    
+    document.querySelector('.' + pageClass).classList.remove('hidden');
+    document.querySelector('.' + pageClass).classList.add('visible');
+  }
+  
+  // Add event listener to transition to second page
+  document.getElementById('landingPageButton').addEventListener('click', function() {
+    switchToPage('secondPage');
+  });
+  
