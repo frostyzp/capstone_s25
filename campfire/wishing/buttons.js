@@ -123,6 +123,9 @@ function enableOrientationFeatures() {
                         hasGeneratedWish1 = true;
     
                         // Apply a slight gradient to the background body color
+                        document.body.style.background = 'linear-gradient(to right, grey, black)';
+
+
                     }
                 ripple1.style.opacity = 1;
                 } else {
