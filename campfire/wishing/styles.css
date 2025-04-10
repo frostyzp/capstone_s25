@@ -49,6 +49,7 @@ body {
     opacity: 1;
     font-size: 16px;
     width: 75%;
+    color: white;
 
 }
 
@@ -94,4 +95,14 @@ body {
 .fade-out {
     opacity: 0 !important;
     pointer-events: none;
+}
+
+#arrow {
+    display: none;
+    color: white;
+}
+
+#skippingRock {
+    display: none;
+    color: white;
 }

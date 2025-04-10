@@ -51,26 +51,44 @@ document.addEventListener('DOMContentLoaded', () => {
     submitButton.addEventListener('click', () => {
         requestOrientationPermission().then(() => {
             // Get the content from the wish input fields
-            const wish1 = document.getElementById('wish-input').value;
-
-            // Update the ripple content with the wishes
-            wishesRipple1.push(wish1);
             
-            document.getElementById('ripple-1').textContent = wish1;
+            let wish1 = document.getElementById('wish-input').value;
+            if (!wish1.startsWith("I wish for ")) {
+                wish1 = "I wish for " + wish1;
+                console.log('wish1:', wish1);
+            }
+            // Update the ripple content with the wishes
+            // wishesRipple1.push(wish1);
+    
+            // document.getElementById('ripple-1').textContent = wish1;
 
+            // change bg color
+            document.body.style.backgroundColor = 'black';
+            document.body.style.transition = 'background-color 1.5s ease-in-out';
+            document.body.style.color = 'white';
 
+            // The textarea for input is hidden as per the instructions
+            document.getElementById('wish-input').style.display = 'none';
+
+            //hide the submit button
+            document.getElementById('submit-wish').style.display = 'none';
+
+            // rock appears at the bottom of the screen
+            document.getElementById('arrow').style.display = 'block';
+            document.getElementById('skippingRock').style.display = 'block';
+
+            // instructions
             const instructions = document.querySelector('.instructions');
-            instructions.textContent = 'Tilt your vessel to and observe the ripples – each wish a rock, a skip'; // Change the text content
+            instructions.textContent = 'Skip your rock into the universe. Tilt your vessel to see the ripples.';
             instructions.style.opacity = 1; // Make it visible
             setTimeout(() => {
                 instructions.classList.add('fade-out'); // Add fade-out class after 5 seconds
             }, 5000);
             
             // Add fade out class to container
-            container.classList.add('fade-out');
+            // container.classList.add('fade-out');
         });
     });
-// Modifying the tilt detection 
 
 
 function enableOrientationFeatures() {
