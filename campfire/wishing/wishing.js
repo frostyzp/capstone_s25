@@ -32,169 +32,361 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const ripple1 = document.getElementById('ripple-1');
 
-            const wish = generateWish(1);
-            const wordElements = createWordElements(wish);
+            const userInput = document.getElementById('wish-input').value;
+            const poemLines = generateSimplePoem(userInput);
             
-            console.log('wordElements:', wordElements);
             ripple1.innerHTML = ''; // Clear previous content
-            ripple1.appendChild(wordElements);
-            console.log('ripple1 words:', wordElements);
-
+            
+            // Set up the container for absolute positioning
+            ripple1.style.position = 'relative';
+            ripple1.style.height = '100%';
+            
+            // Calculate line height and position for stacking
+            const lineHeight = 50; // Height estimate for each line in pixels
+            const startPosition = 20; // Percentage from bottom
+            
+            // Create ripple effect for each line of the poem, in reversed order to stack properly
+            poemLines.forEach((line, index) => {
+                setTimeout(() => {
+                    // Create a simple paragraph element for each line
+                    const p = document.createElement('p');
+                    p.className = 'poem-line';
+                    p.textContent = line;
+                    p.style.opacity = 0;
+                    p.style.transition = 'opacity 2s ease-in';
+                    
+                    // Position each line absolutely, stacking from bottom up
+                    p.style.position = 'absolute';
+                    p.style.bottom = `${startPosition + (index * 10)}%`; // Position 10% higher for each line
+                    p.style.left = '0';
+                    p.style.right = '0';
+                    p.style.margin = '0 auto'; // Center horizontally
+                    p.style.zIndex = poemLines.length - index; // Stack newer lines behind older ones
+                    
+                    // Add to container
+                    ripple1.appendChild(p);
+                    
+                    // Fade in after a brief delay
+                    setTimeout(() => {
+                        p.style.opacity = 1;
+                    }, 100);
+                    
+                }, index * 1000); // Stagger the appearance of each line
+            });
+            
             hasGeneratedWish1 = true;
         }
     }
 });
 
-// THE GRAMMAR FUNCTION ------------------------------------------------------------------------------------------
-function generateWish() {
-    const userInput = document.getElementById('wish-input').value;
+// Simple poem generator using RiTa grammar directly
+function generateSimplePoem(userInput) {
+    // Process user input
     const words = RiTa.tokenize(userInput);
     const tags = RiTa.pos(words);
     
-    // Find verbs and adjectives to potentially transform
-    const transformedWords = words.map((word, i) => {
-        if (tags[i].startsWith('vb')) {
-            // Randomly transform verbs
-            const transforms = [
-                RiTa.conjugate(word, {tense: 'present'}),
-                RiTa.conjugate(word, {tense: 'past'}),
-                'will ' + RiTa.conjugate(word, {tense: 'present'}),
-                'would ' + RiTa.conjugate(word, {tense: 'present'})
-            ];
-            return transforms[Math.floor(Math.random() * transforms.length)]; //pick random number between 0 and the array length
-        } else if (tags[i].startsWith('jj')) {
-            // For adjectives, find a similar-sounding adjective
-            const similarAdjectives = [RiTa.randomWord({ pos: "jj" })]; // Just add a random adjective
-
-            return similarAdjectives.length > 0 ? similarAdjectives[Math.floor(Math.random() * similarAdjectives.length)] : RiTa.randomWord({ pos: "jj" });
-        }
-        return word;
-    });
+    // Extract nouns, adjectives, verbs
+    let nouns = [];
+    let adjectives = [];
+    let verbs = [];
     
-    const transformedWish = transformedWords.join(' ');
-    console.log('Transformed wish:', transformedWish);
-    
-    // Add to array
-    wishesRipple1.push(transformedWish);
-    return transformedWish;
-}
-
-// Function to find related nouns using RiTa ----------------------------------------------------------------------------
-function getRelatedNouns(noun, count = 3) {
-    // Use RiTa's features to get related words
-    let related = [];
-    
-    try {
-        // Try to get similar words first
-        const similar = RiTa.similar(noun, {limit: count*2});
-        if (similar && similar.length > 0) {
-            // Filter for only nouns
-            for (let word of similar) {
-                if (RiTa.isNoun(word) && related.length < count) {
-                    related.push(word);
-                }
-            }
-        }
-        
-        // If we don't have enough, try to get some random nouns
-        if (related.length < count) {
-            const needed = count - related.length;
-            for (let i = 0; i < needed; i++) {
-                const randomNoun = RiTa.randomWord({ pos: "nn" });
-                related.push(randomNoun);
-            }
-        }
-    } catch (e) {
-        console.log('Error getting related nouns:', e);
-        // Fallback: just generate random nouns
-        for (let i = 0; i < count; i++) {
-            related.push(RiTa.randomWord({ pos: "nn" }));
-        }
+    for (let i = 0; i < words.length; i++) {
+        if (tags[i].startsWith('nn')) nouns.push(words[i]);
+        if (tags[i].startsWith('jj')) adjectives.push(words[i]);
+        if (tags[i].startsWith('vb')) verbs.push(words[i]);
     }
     
-    return related;
+    // Add defaults if none found
+    if (nouns.length === 0) nouns = ["place", "space", "home", RiTa.randomWord({ pos: "nn" })];
+    if (adjectives.length === 0) adjectives = ["peaceful", "calm", "beautiful", RiTa.randomWord({ pos: "jj" })];
+    if (verbs.length === 0) verbs = ["rest", "breathe", "live", RiTa.randomWord({ pos: "vb" })];
+
+    try {
+        // Helper function to get random elements
+        function getRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+        
+        // Define the grammar components
+        const userNouns = nouns.length > 0 ? nouns : ["place", "space", "home"];
+        const userAdjs = adjectives.length > 0 ? adjectives : ["peaceful", "calm", "beautiful"];
+        const userVerbs = verbs.length > 0 ? verbs : ["rest", "breathe", "live"];
+        
+        // Create arrays for different phrase types
+        const startVerbs = ["dream of", "hope for", "desire", "daydream of", "wonder about", 
+                          "imagine", "yearn for", "envision", "long for", "wish for"];
+                          
+        const compare = ["more", "less", "smaller", "greater", "clearer", "brighter", "darker", 
+                        "warmer", "cozier", "quieter", "safer", "freer", "calmer", "softer", 
+                        "wilder", "gentler", "lovelier", "spacier", "airier", "livelier"];
+                        
+        const spaces = ["rooms", "gardens", "havens", "sanctuaries", "retreats", "corners", "nooks", 
+                       "shelters", "dwellings", "homes", "abodes", "refuges", "hideaways", 
+                       "domains", "realms"].concat(userNouns);
+                       
+        const feelings = ["peace", "comfort", "safety", "belonging", "freedom", "solitude", 
+                         "connection", "harmony", "warmth", "tranquility", "serenity", "joy", 
+                         "wonder", "contentment"];
+                         
+        const colors = ["blue", "green", "golden", "amber", "silver", "rose", "violet", "turquoise", 
+                       "emerald", "russet", "ivory", "azure", "crimson", "ochre", "indigo", "lavender"];
+                       
+        const materials = ["wood", "stone", "glass", "fabric", "water", "light", "metal", "clay", 
+                          "paper", "cotton", "silk", "wool", "velvet", "linen", "leather"];
+                          
+        const elements = ["air", "water", "earth", "fire", "wind", "rain", "sunlight", "moonlight", 
+                         "stars", "clouds", "mist", "fog", "shadows", "reflections"];
+                         
+        const timewords = ["morning", "evening", "dusk", "dawn", "twilight", "midnight", "daybreak", 
+                          "sunset", "seasons", "moments", "eternities", "instants", "hours", "days", "years"];
+                          
+        const dets = ["another", "some", "that", "this", "every", "each", "any"];
+        
+        // Grammar-based generation functions
+        
+        // Generate user-inspired phrases
+        function expandUserInspired() {
+            const choices = [
+                expandUserPhrase(),
+                expandUserPhrase() + ", " + expandPhrase(),
+                expandUserPhrase() + " where " + expandClause()
+            ];
+            return getRandom(choices);
+        }
+        
+        function expandUserPhrase() {
+            const choices = [
+                userInput,
+                "a " + getRandom(userAdjs) + " " + getRandom(userNouns),
+                getRandom(userAdjs) + " " + getRandom(userNouns),
+                getRandom(compare) + " than " + getRandom(userAdjs) + " " + getRandom(userNouns),
+                "a " + getRandom(userNouns) + " " + RiTa.randomWord({ pos: "in" }) + " " + getRandom(feelings)
+            ];
+            return getRandom(choices);
+        }
+        
+        function expandPhrase() {
+            const choices = [
+                getRandom(userAdjs) + " " + expandNounPhrase(),
+                getRandom(compare) + " " + RiTa.randomWord({ pos: "nn" }),
+                "a " + getRandom(userAdjs) + " home",
+                "a place where " + expandClause(),
+                expandLiving(),
+                getRandom(userAdjs) + " " + getRandom(spaces),
+                getRandom(userAdjs) + " " + getRandom(feelings),
+                getRandom(userAdjs) + " " + expandNounPhrase(),
+                expandNounPhrase() + " with " + getRandom(userNouns),
+                getRandom(spaces) + " where all can " + getRandom(userVerbs)
+            ];
+            return getRandom(choices);
+        }
+        
+        function expandNounPhrase() {
+            const choices = [
+                RiTa.randomWord({ pos: "nns" }),
+                RiTa.randomWord({ pos: "nn" }),
+                expandNounSingle(),
+                getRandom(userNouns) + " " + RiTa.randomWord({ pos: "in" }) + " " + 
+                getRandom(userAdjs) + " " + RiTa.randomWord({ pos: "nn" }),
+                getRandom(userAdjs) + " " + getRandom(userNouns)
+            ];
+            return getRandom(choices);
+        }
+        
+        function expandNounSingle() {
+            const choices = [
+                "a " + RiTa.randomWord({ pos: "nn" }),
+                "a " + getRandom(userAdjs) + " " + RiTa.randomWord({ pos: "nn" }),
+                "a " + RiTa.randomWord({ pos: "nn" }) + " " + RiTa.randomWord({ pos: "in" }) + " " + 
+                getRandom(feelings),
+                "a " + RiTa.randomWord({ pos: "nn" }) + " where " + expandClause(),
+                "a " + getRandom(spaces) + " " + RiTa.randomWord({ pos: "in" }) + " " + 
+                getRandom(userAdjs) + " " + RiTa.randomWord({ pos: "nns" }),
+                "a " + getRandom(userAdjs) + " " + RiTa.randomWord({ pos: "nn" }),
+                "a " + RiTa.randomWord({ pos: "nn" }) + " like " + getRandom(userNouns)
+            ];
+            return getRandom(choices);
+        }
+        
+        function expandLiving() {
+            const choices = [
+                "living " + RiTa.randomWord({ pos: "rb" }),
+                "living " + RiTa.randomWord({ pos: "in" }) + " " + getRandom(spaces),
+                "living " + RiTa.randomWord({ pos: "in" }) + " a " + 
+                getRandom(userAdjs) + " world",
+                "living where " + expandClause(),
+                "living with " + getRandom(userAdjs) + " " + getRandom(feelings)
+            ];
+            return getRandom(choices);
+        }
+        
+        function expandClause() {
+            const choices = [
+                "the " + RiTa.randomWord({ pos: "nns" }) + " are " + getRandom(userAdjs),
+                "time moves " + RiTa.randomWord({ pos: "jjr" }),
+                "there is " + getRandom(userAdjs) + " " + RiTa.randomWord({ pos: "nn" }),
+                "light " + RiTa.randomWord({ pos: "vbz" }) + " through " + 
+                getRandom(userAdjs) + " glass",
+                "the " + RiTa.randomWord({ pos: "nns" }) + " " + 
+                RiTa.randomWord({ pos: "vb" }) + " " + RiTa.randomWord({ pos: "in" }) + " one",
+                RiTa.randomWord({ pos: "nn" }) + " becomes sanctuary",
+                getRandom(userAdjs) + " " + RiTa.randomWord({ pos: "nns" }) + " surround the space"
+            ];
+            return getRandom(choices);
+        }
+        
+        // Standard sentence structures
+        function expandS1() {
+            return getRandom(dets) + " " + 
+                   getRandom(userAdjs) + " " + 
+                   getRandom(userNouns) + " for " + 
+                   "one to " + RiTa.randomWord({ pos: "vb" }) + " " + 
+                   RiTa.randomWord({ pos: "in" });
+        }
+        
+        function expandS2() {
+            return "a place where " + 
+                   RiTa.randomWord({ pos: "nns" }) + " " + 
+                   RiTa.randomWord({ pos: "vb" }) + " like " + 
+                   getRandom(userAdjs) + " " + 
+                   RiTa.randomWord({ pos: "nn" });
+        }
+        
+        function expandS3() {
+            return "the " + 
+                   getRandom(userAdjs) + " " + 
+                   getRandom(spaces) + " where " + 
+                   expandClause();
+        }
+        
+        function expandS4() {
+            return getRandom(dets) + " " +
+                  RiTa.randomWord({ pos: "nn" }) + " filled with " +
+                  getRandom(userAdjs) + " " +
+                  RiTa.randomWord({ pos: "nns" }) + " and " + 
+                  RiTa.randomWord({ pos: "jj" }) + " " +
+                  RiTa.randomWord({ pos: "nns" });
+        }
+        
+        function expandS5() {
+            return getRandom(userAdjs) + " light falling " +
+                   RiTa.randomWord({ pos: "in" }) + " " +
+                   getRandom(userAdjs) + " " +
+                   RiTa.randomWord({ pos: "nns" });
+        }
+        
+        function expandS6() {
+            return "the " + getRandom(feelings) + " of " +
+                   RiTa.randomWord({ pos: "vbg" }) + " " +
+                   RiTa.randomWord({ pos: "rb" }) + " " +
+                   RiTa.randomWord({ pos: "in" }) + " " +
+                   "the " +
+                   getRandom(userAdjs) + " " +
+                   RiTa.randomWord({ pos: "nn" });
+        }
+        
+        function expandUserS1() {
+            return getRandom(dets) + " " +
+                   getRandom(userAdjs) + " " +
+                   RiTa.randomWord({ pos: "nn" }) + " where " +
+                   "one can " +
+                   getRandom(userVerbs) + " " +
+                   RiTa.randomWord({ pos: "in" }) + " dreams";
+        }
+        
+        function expandUserS2() {
+            return "the " +
+                   getRandom(userNouns) + ", " +
+                   getRandom(userAdjs) + " and " +
+                   RiTa.randomWord({ pos: "jj" }) + ", " +
+                   RiTa.randomWord({ pos: "in" }) + " the " +
+                   getRandom(userAdjs) + " " +
+                   RiTa.randomWord({ pos: "nn" });
+        }
+        
+        function expandStart() {
+            return getRandom(startVerbs) + " " + expandUserInspired();
+        }
+        
+        // Special combined templates
+        function expandColors() {
+            return getRandom(colors) + " " + getRandom(feelings) + " in " + getRandom(spaces);
+        }
+        
+        function expandElements() {
+            return getRandom(elements) + " moving through " + getRandom(userAdjs) + " " + getRandom(timewords);
+        }
+        
+        function expandMaterials() {
+            return getRandom(materials) + " shaped into " + expandNounPhrase();
+        }
+        
+        function expandComparison() {
+            return getRandom(compare) + " than " + getRandom(timewords) + ", " + expandLiving();
+        }
+        
+        // Generate the poem lines
+        const lines = [];
+        
+        // First generate the starting line
+        lines.push(expandStart());
+        
+        // Create an array of sentence generators and shuffle them
+        const sentenceGenerators = [
+            expandS1, expandS2, expandS3, expandS4, expandS5, expandS6,
+            expandUserS1, expandUserS2, expandColors, expandElements, 
+            expandMaterials, expandComparison
+        ];
+        
+        // Helper function to shuffle array
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        // Shuffle and pick generators to use
+        const shuffledGenerators = shuffleArray(sentenceGenerators);
+        
+        // Generate 4 more lines
+        for (let i = 0; i < 8; i++) {
+            const generatorIndex = i % shuffledGenerators.length;
+            lines.push(shuffledGenerators[generatorIndex]());
+        }
+        
+        // Format the lines properly
+        const formattedLines = lines.map(line => {
+            // Add period if needed
+            if (!line.endsWith(".") && !line.endsWith("?") && !line.endsWith("!")) {
+                line += ".";
+            }
+            // Capitalize first letter
+            return line.charAt(0).toUpperCase() + line.slice(1);
+        });
+        
+        return formattedLines;
+    } catch (error) {
+        console.error("Error generating poem:", error);
+        return fallbackPoemGeneration(userInput, nouns, adjectives, verbs);
+    }
 }
 
-// HELPER FUNCTION TO CREATE WORD ELEMENTS WITH FADE EFFECT ---------------------------------------------------------------
-function createWordElements(wish) {
-    const words = wish.split(' ');
-    const container = document.createElement('div');
-    container.style.opacity = 1;
-    container.style.display = 'flex';
-    container.style.flexDirection = 'column-reverse'; // Stack elements from bottom to top
-    container.style.alignItems = 'center';
-    container.style.height = '100%';
-    container.style.position = 'relative';
-
-    // Parse words to identify nouns
-    const tags = RiTa.pos(words);
-
-    // RIPPLE WORDS APPEARING FROM BOTTOM TO TOP -------------------------------------------------------------------------
-    words.forEach((word, index) => {
-        const wordGroup = document.createElement('div');
-        wordGroup.className = 'word-group';
-        
-        // Create main word span
-        const span = document.createElement('span');
-        span.innerHTML = word;
-        span.className = 'main-word';
-        span.style.opacity = 0;
-        
-        if (Math.random() < 0.5) {
-            span.style.fontStyle = 'italic';
-            span.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
-        }
-        
-        // Add related nouns if this is a noun
-        function addRelatedNouns(word, depth) {
-            if (depth <= 0) return; // Base case to stop recursion
-
-            const relatedNouns = getRelatedNouns(word);
-            
-            // Add related nouns around the main word
-            relatedNouns.forEach((relatedNoun, relatedIndex) => {
-                const relatedSpan = document.createElement('span');
-                relatedSpan.innerHTML = relatedNoun;
-                relatedSpan.className = 'related-word';
-                relatedSpan.style.opacity = 0;
-                
-                // Position the related noun around the main word
-                const angle = (relatedIndex / relatedNouns.length) * Math.PI * 2;
-                const distance = (60 + Math.random() * 40) * depth; // Random distance from center, incremented by depth
-                const x = Math.cos(angle) * distance;
-                const y = Math.sin(angle) * distance;
-                
-                relatedSpan.style.transform = `translate(${x}px, ${y}px) rotate(${Math.random() * 20 - 10}deg)`;
-                
-                // Fade in with slight delay compared to main word
-                setTimeout(() => {
-                    relatedSpan.style.transition = 'opacity 2s ease-in, filter 2s ease-in';
-                    relatedSpan.style.opacity = 1;
-                }, index * 500 + 150 + relatedIndex * 100);
-                
-                wordGroup.appendChild(relatedSpan);
-                
-                // Recursive call to add further related nouns
-                addRelatedNouns(relatedNoun, depth - 1);
-            });
-        }
-
-        if (tags[index] && tags[index].startsWith('nn')) {
-            addRelatedNouns(word, 2); // Change 2 to the desired depth of recursion
-        }
-        
-        // Add main word animation
-        setTimeout(() => {
-            span.style.transition = 'opacity 0.8s ease-in, filter 0.8s ease-in, font-size 0.8s ease-in';
-            span.style.opacity = 1;
-            span.style.filter = 'blur(0px)';
-            span.style.fontSize = '1.1em';
-        }, index * 800);
-        
-        wordGroup.appendChild(span);
-        container.appendChild(wordGroup);
-    });
+// Fallback poem generation if all else fails
+function fallbackPoemGeneration(userInput, nouns, adjectives, verbs) {
+    // Helper for fallback
+    const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
     
-    return container;
+    const lines = [];
+    
+    lines.push("Dream of " + userInput + ".");
+    lines.push("A " + getRandom(adjectives) + " " + getRandom(nouns) + " waiting to be found.");
+    lines.push("Becoming " + getRandom(verbs) + " in the " + getRandom(adjectives) + " light.");
+    lines.push("Where " + getRandom(nouns) + " meets " + getRandom(adjectives) + " dreams.");
+    lines.push("The space transforms into sanctuary.");
+    
+    return lines;
 }
 
