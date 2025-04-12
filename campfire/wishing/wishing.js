@@ -8,6 +8,72 @@ let wishesRipple1 = [];
 // Add these variables at the top of your file with other declarations
 let hasGeneratedWish1 = false;
 
+// Add color array at the top with other declarations
+const brightColors = [
+    'rgb(255, 192, 203)', // pink
+    'rgb(255, 255, 255)', // white
+    'rgb(255, 255, 0)'    // yellow
+];
+
+function getRandomColor() {
+    return brightColors[Math.floor(Math.random() * brightColors.length)];
+}
+
+function createAsciiRipple(x, y, color) {
+    const container = document.getElementById('ripple-container');
+    if (!container) return;
+
+    // Create ASCII ripple container
+    const asciiContainer = document.createElement('div');
+    asciiContainer.className = 'ascii-ripple';
+    asciiContainer.style.cssText = `
+        position: fixed;
+        left: ${x}px;
+        top: ${y}px;
+        transform: translate(-50%, -50%);
+        font-family: 'VictorMono', monospace;
+        font-size: 12px;
+        color: ${color};
+        white-space: pre;
+        text-align: center;
+        opacity: 0;
+        z-index: 2;
+        pointer-events: none;
+        transition: opacity 0.3s ease-in;
+    `;
+    container.appendChild(asciiContainer);
+
+    // ASCII ripple patterns - wave-like patterns
+    const patterns = [
+        '   ~   \n~.   ~\n     ~',
+        '   /.  ~.  \\\n/. ~.    ~  \\\n\\.   ~.      /\n  ~  ~~ ~'
+    ];
+
+    let currentPattern = 0;
+    const animateRipple = () => {
+        if (currentPattern >= patterns.length) {
+            asciiContainer.remove();
+            return;
+        }
+        
+        asciiContainer.textContent = patterns[currentPattern];
+        // Force a reflow to ensure the transition works
+        void asciiContainer.offsetWidth;
+        asciiContainer.style.opacity = '0.4';
+        
+        setTimeout(() => {
+            asciiContainer.style.opacity = '0';
+            setTimeout(() => {
+                currentPattern++;
+                animateRipple();
+            }, 150);
+        }, 500);
+    };
+
+    // Start the animation
+    animateRipple();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded');
     let storedUserInput = '';
@@ -21,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let velocityY = 0;
     let touchStartY = 0;
     let touchEndY = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
     let touchStartTime = 0;
 
     // Add click handler for submit button
@@ -40,14 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Adding touch event listeners to third page');
         thirdPage.addEventListener('touchstart', (event) => {
             console.log('Touch start detected on third page');
+            touchStartX = event.touches[0].clientX;
             touchStartY = event.touches[0].clientY;
             touchStartTime = Date.now();
-            console.log('Touch start Y:', touchStartY);
+            console.log('Touch start position:', touchStartX, touchStartY);
         });
 
         thirdPage.addEventListener('touchmove', (event) => {
+            touchEndX = event.touches[0].clientX;
             touchEndY = event.touches[0].clientY;
-            console.log('Touch move Y:', touchEndY);
+            console.log('Touch move position:', touchEndX, touchEndY);
         });
 
         thirdPage.addEventListener('touchend', (event) => {
@@ -60,7 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Swipe details:', {
                 distance: swipeDistance,
                 duration: swipeDuration,
-                velocity: swipeVelocity
+                velocity: swipeVelocity,
+                endPosition: { x: touchEndX, y: touchEndY }
             });
             
             handleGesture(swipeDistance, swipeVelocity);
@@ -85,10 +156,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             console.log('Text starting position:', startPosition);
             
+            // Create ASCII ripple at touch end position
+            // createAsciiRipple(touchEndX, touchEndY);
+            
             // Start the text animation with custom position
             createRipplingText(lines.slice(0, 7), startPosition);
             initializeTextScene(lines);
-            
+
             hasGeneratedWish1 = true;
         } else {
             console.log('Not a swipe up gesture');
@@ -241,29 +315,47 @@ function createRipplingText(lines, startPosition = 20) {
         const lineElement = document.createElement('div');
         lineElement.textContent = line;
         
+        // Get a random color for this line
+        const lineColor = getRandomColor();
+        
         // Calculate opacity, size, and width based on line index
         const opacity = 1 - (lineIndex * 0.15); // Each line is 15% more transparent
         const fontSize = 16 - (lineIndex * 1.5); // Each line is 1.5px smaller
         const width = 80 - (lineIndex * 8); // Each line is 8% narrower
         
+        // Calculate line position
+        const bottomPosition = startPosition + lineIndex * 4;
+        
+        // Randomly choose left or right alignment with varying offsets
+        const isLeft = Math.random() < 0.5;
+        const randomOffset = Math.random() * 20; // Random offset between 0 and 20%
+        const leftPosition = isLeft ? randomOffset : (100 - randomOffset - width);
+        
         lineElement.style.cssText = `
             position: absolute;
-            left: 50%;
-            bottom: ${startPosition + lineIndex * 4}%;
-            transform: translateX(-50%);
-            text-align: center;
+            left: ${leftPosition}%;
+            bottom: ${bottomPosition}%;
+            text-align: ${isLeft ? 'left' : 'right'};
             width: ${width}%;
             opacity: 0;
             font-family: 'VictorMono', monospace;
             font-size: ${fontSize}px;
-            color: white;
+            color: ${lineColor};
             transition: opacity 1s ease-out, width 1s ease;
             z-index: 3;
         `;
         
         textContainer.appendChild(lineElement);
         
-        // Fade in the line
+        // Get the line's position for the ripple
+        const lineRect = lineElement.getBoundingClientRect();
+        const rippleX = lineRect.left + lineRect.width / 2;
+        const rippleY = lineRect.top + lineRect.height / 2;
+        
+        // Create ripple at line position with the same color
+        createAsciiRipple(rippleX, rippleY, lineColor);
+        
+        // Fade in the line with increased delay
         setTimeout(() => {
             lineElement.style.opacity = opacity;
             console.log('Fading in line:', line);
@@ -278,13 +370,13 @@ function createRipplingText(lines, startPosition = 20) {
                     lineElement.remove();
                 }, 5000);
             }, 5000);
-        }, lineIndex * 200);
+        }, lineIndex * 400);
         
         // Return a promise that resolves after the line has appeared
         return new Promise(resolve => {
             setTimeout(() => {
                 resolve();
-            }, lineIndex * 200 + 200);
+            }, lineIndex * 400 + 400);
         });
     }
 
@@ -337,7 +429,7 @@ function createTextOverlay(lines, generator) {
             text-align: center;
             max-width: 80%;
             transition: opacity 0.5s ease;
-            pointer-events: none;
+            pointer-events: none; 
             white-space: nowrap;
         `;
         
