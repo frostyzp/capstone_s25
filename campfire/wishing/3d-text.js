@@ -1,6 +1,7 @@
 let scene, camera, renderer;
 let textMeshes = [];
 const textSpacing = 200; // Spacing between text lines in the Z axis
+let touchStartY = 0;
 
 function init3DScene() {
     // Create scene
@@ -12,8 +13,9 @@ function init3DScene() {
     camera.position.z = 500;
     camera.position.y = 0;
 
-    // Create renderer
+    // Create renderer with pixel ratio for better mobile display
     renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('ripple-container').appendChild(renderer.domElement);
 
@@ -28,8 +30,34 @@ function init3DScene() {
     // Handle window resize
     window.addEventListener('resize', onWindowResize, false);
 
-    // Add scroll listener
+    // Add both mouse and touch event listeners
     window.addEventListener('wheel', onScroll, false);
+    window.addEventListener('touchstart', onTouchStart, false);
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd, false);
+}
+
+function onTouchStart(event) {
+    event.preventDefault();
+    touchStartY = event.touches[0].pageY;
+}
+
+function onTouchMove(event) {
+    event.preventDefault();
+    if (!touchStartY) return;
+    
+    const touchY = event.touches[0].pageY;
+    const deltaY = touchStartY - touchY;
+    touchStartY = touchY;
+    
+    // Move camera based on touch
+    camera.position.z += deltaY * 1.5;
+    // Limit how far back the camera can go
+    camera.position.z = Math.max(100, Math.min(camera.position.z, textMeshes.length * textSpacing + 500));
+}
+
+function onTouchEnd(event) {
+    touchStartY = null;
 }
 
 function onWindowResize() {
@@ -51,10 +79,10 @@ function createTextMesh(text, index) {
     loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
         const geometry = new THREE.TextGeometry(text, {
             font: font,
-            size: 18,
+            size: window.innerWidth < 600 ? 15 : 20, // Smaller text on mobile
             height: 2,
             curveSegments: 12,
-            bevelEnabled: false,
+            bevelEnabled: true,
             bevelThickness: 0.5,
             bevelSize: 0.3,
             bevelOffset: 0,
