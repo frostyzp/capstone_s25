@@ -75,9 +75,9 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center,
-        rgb(255, 207, 158) 0%,
-        rgba(0, 0, 0, 0.9) 10%,
+    background: linear-gradient(to bottom,
+        rgb(0, 0, 0) 0%,
+        rgb(0, 0, 255) 50%,
         rgb(0, 0, 0) 100%
     );
     z-index: 1;

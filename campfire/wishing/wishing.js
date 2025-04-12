@@ -9,6 +9,7 @@ let wishesRipple1 = [];
 let hasGeneratedWish1 = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM Content Loaded');
     let storedUserInput = '';
     let isDragging = false;
     let startX = 0;
@@ -18,35 +19,92 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastTimeStamp;
     let lastY;
     let velocityY = 0;
+    let touchStartY = 0;
+    let touchEndY = 0;
+    let touchStartTime = 0;
 
     // Add click handler for submit button
-    document.getElementById('submit-wish').addEventListener('click', () => {
-        storedUserInput = document.getElementById('wish-input').value;
-        switchToPage('thirdPage');
-    });
+    const submitButton = document.getElementById('submit-wish');
+    if (submitButton) {
+        submitButton.addEventListener('click', () => {
+            storedUserInput = document.getElementById('wish-input').value;
+            switchToPage('thirdPage');
+        });
+    } else {
+        console.error('Submit button not found');
+    }
 
+    // Add swipe gesture detection for the third page
+    const thirdPage = document.getElementById('third-page');
+    if (thirdPage) {
+        console.log('Adding touch event listeners to third page');
+        thirdPage.addEventListener('touchstart', (event) => {
+            console.log('Touch start detected on third page');
+            touchStartY = event.touches[0].clientY;
+            touchStartTime = Date.now();
+            console.log('Touch start Y:', touchStartY);
+        });
+
+        thirdPage.addEventListener('touchmove', (event) => {
+            touchEndY = event.touches[0].clientY;
+            console.log('Touch move Y:', touchEndY);
+        });
+
+        thirdPage.addEventListener('touchend', (event) => {
+            console.log('Touch end detected on third page');
+            const touchEndTime = Date.now();
+            const swipeDuration = touchEndTime - touchStartTime;
+            const swipeDistance = touchStartY - touchEndY;
+            const swipeVelocity = swipeDistance / swipeDuration; // pixels per millisecond
+            
+            console.log('Swipe details:', {
+                distance: swipeDistance,
+                duration: swipeDuration,
+                velocity: swipeVelocity
+            });
+            
+            handleGesture(swipeDistance, swipeVelocity);
+        });
+    } else {
+        console.error('Third page not found');
+    }
+
+    function handleGesture(swipeDistance, swipeVelocity) {
+        console.log('Checking gesture:', swipeDistance, swipeVelocity);
+        
+        if (swipeDistance > 50) { // Swipe up detected
+            console.log('Swipe up detected on third page');
+            const { lines } = generateSimplePoem(storedUserInput);
+            console.log('Generated lines:', lines);
+            
+            // Calculate starting position based on velocity and distance
+            const basePosition = 5; // Base starting position (5% from bottom)
+            const velocityFactor = Math.min(Math.max(swipeVelocity * 500, -10), 20); // Scale velocity down
+            const distanceFactor = Math.min(swipeDistance / 20, 20); // Scale distance down
+            const startPosition = basePosition + velocityFactor + distanceFactor;
+            
+            console.log('Text starting position:', startPosition);
+            
+            // Start the text animation with custom position
+            createRipplingText(lines.slice(0, 7), startPosition);
+            initializeTextScene(lines);
+            
+            hasGeneratedWish1 = true;
+        } else {
+            console.log('Not a swipe up gesture');
+        }
+    }
+
+    // Restore rock functionality
     const rock = document.getElementById('skippingRock');
-    if (!rock) return;
+    if (rock) {
+        rock.addEventListener('mousedown', startDragging);
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDragging);
 
-    function handleRockThrow() {
-        const { lines } = generateSimplePoem(storedUserInput || "a peaceful wish");
-        createRipplingText(lines.slice(0, 5));
-        initializeTextScene(lines);
-        
-        // Make rock disappear with fade out
-        rock.style.transition = 'all 0.5s ease-out';
-        rock.style.opacity = '0';
-        rock.style.transform = 'translateY(-10vh) scale(0.5)';
-        
-        // Reset rock after animation
-        setTimeout(() => {
-            rock.style.transition = 'opacity 0.3s ease';
-            rock.style.transform = 'none';
-            rock.style.top = 'auto';
-            rock.style.bottom = '5%';
-            rock.style.left = '45%';
-            rock.style.opacity = '1';
-        }, 1000);
+        rock.addEventListener('touchstart', startDragging);
+        document.addEventListener('touchmove', onDrag, { passive: false });
+        document.addEventListener('touchend', stopDragging);
     }
 
     function startDragging(e) {
@@ -96,19 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Check if velocity is high enough for a "fling"
         if (velocityY < -1.5) { // Negative velocity means upward movement
-            handleRockThrow();
+            // handleRockThrow();
         }
     }
-
-    // Mouse events
-    rock.addEventListener('mousedown', startDragging);
-    document.addEventListener('mousemove', onDrag);
-    document.addEventListener('mouseup', stopDragging);
-
-    // Touch events
-    rock.addEventListener('touchstart', startDragging);
-    document.addEventListener('touchmove', onDrag, { passive: false });
-    document.addEventListener('touchend', stopDragging);
 
     // Add CSS for dragging state
     const style = document.createElement('style');
@@ -155,144 +203,96 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-
-    // Detect swipe up gesture
-    let touchStartY = 0;
-    let touchEndY = 0;
-
-    const container = document.getElementById('wish-input-container');
-
-    // HANDLE SWIPE UP GESTURES ------------------------------------------------------------------------------------------
-    container.addEventListener('touchstart', (event) => {
-        touchStartY = event.changedTouches[0].screenY;
-    });
-
-    container.addEventListener('touchend', (event) => {
-        touchEndY = event.changedTouches[0].screenY;
-        handleGesture();
-    });
-
-    // SWIPE UP DETECTED ------------------------------------------------------------------------------------------------
-    function handleGesture() {
-        if (touchStartY - touchEndY > 50) { // Swipe up detected
-            console.log('Swipe up detected');
-
-            const userInput = document.getElementById('wish-input').value;
-            const { lines } = generateSimplePoem(userInput);
-            
-            // Switch to third page first
-            switchToPage('thirdPage');
-            
-            // Then start the text animation
-            createRipplingText(lines.slice(0, 5));
-            
-            hasGeneratedWish1 = true;
-        }
-    }
 });
 
-function createRipplingText(lines) {
+function createRipplingText(lines, startPosition = 20) {
     console.log('Creating rippling text with lines:', lines);
     const container = document.getElementById('ripple-container');
     if (!container) {
         console.error('Ripple container not found');
         return;
     }
-    container.innerHTML = '';
     
-    // Create container for text
-    const textContainer = document.createElement('div');
-    textContainer.style.cssText = `
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        pointer-events: none;
-    `;
-    container.appendChild(textContainer);
-
-    // Function to split text into words
-    function splitIntoWords(text) {
-        return text.split(/\s+/);
-    }
-
-    // Function to create and animate a single word
-    function createWordElement(word, index, totalWords) {
-        const wordElement = document.createElement('span');
-        
-        wordElement.textContent = word + ' ';
-        wordElement.style.cssText = `
-            display: inline-block;
-            opacity: 0;
-            font-family: 'VictorMono', monospace;
-            font-size: ${14 + Math.random() * 2}px;
-            color: white;
-            transition: all 3s ease-out;
-            filter: blur(${Math.random() * 0.5}px);
-            transform: translateY(${Math.random() * 10 - 5}px) scale(1.1);
+    // Make sure container is visible
+    container.style.display = 'block';
+    container.style.opacity = '1';
+    container.style.zIndex = '1';
+    
+    // Create container for text if it doesn't exist
+    let textContainer = container.querySelector('.text-container');
+    if (!textContainer) {
+        textContainer = document.createElement('div');
+        textContainer.className = 'text-container';
+        textContainer.style.cssText = `
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            z-index: 2;
         `;
-        
-        // Calculate delay based on word position
-        const delay = index * 100; // 100ms delay between each word
-        
-        setTimeout(() => {
-            wordElement.style.opacity = '1';
-        }, delay);
-
-        return wordElement;
+        container.appendChild(textContainer);
     }
 
     // Function to animate a line of text
     async function animateLine(line, lineIndex) {
+        console.log('Animating line:', line);
         const lineElement = document.createElement('div');
+        lineElement.textContent = line;
+        
+        // Calculate opacity, size, and width based on line index
+        const opacity = 1 - (lineIndex * 0.15); // Each line is 15% more transparent
+        const fontSize = 16 - (lineIndex * 1.5); // Each line is 1.5px smaller
+        const width = 80 - (lineIndex * 8); // Each line is 8% narrower
+        
         lineElement.style.cssText = `
             position: absolute;
             left: 50%;
-            bottom: ${20 + lineIndex * 8}%;
+            bottom: ${startPosition + lineIndex * 4}%;
             transform: translateX(-50%);
             text-align: center;
-            width: 80%;
-            white-space: nowrap;
+            width: ${width}%;
+            opacity: 0;
+            font-family: 'VictorMono', monospace;
+            font-size: ${fontSize}px;
+            color: white;
+            transition: opacity 1s ease-out, width 1s ease;
+            z-index: 3;
         `;
-        
-        const words = splitIntoWords(line);
-        const wordElements = [];
-        
-        // Create word elements first
-        for (let i = 0; i < words.length; i++) {
-            const wordElement = createWordElement(words[i], i, words.length);
-            wordElements.push(wordElement);
-            lineElement.appendChild(wordElement);
-        }
         
         textContainer.appendChild(lineElement);
         
-        // Return a promise that resolves after all words have appeared
+        // Fade in the line
+        setTimeout(() => {
+            lineElement.style.opacity = opacity;
+            console.log('Fading in line:', line);
+            
+            // Fade out after hold time
+            setTimeout(() => {
+                lineElement.style.transition = 'opacity 5s ease-out';
+                lineElement.style.opacity = '0';
+                
+                // Remove element after fade out
+                setTimeout(() => {
+                    lineElement.remove();
+                }, 5000);
+            }, 5000);
+        }, lineIndex * 200);
+        
+        // Return a promise that resolves after the line has appeared
         return new Promise(resolve => {
-            const totalDelay = words.length * 100 + 500; // Total animation time plus buffer
             setTimeout(() => {
                 resolve();
-            }, totalDelay);
-            
-            // Set up fade out
-            setTimeout(() => {
-                wordElements.forEach((element, i) => {
-                    setTimeout(() => {
-                        element.style.opacity = '0';
-                        element.style.transform = 'translateY(-10px)';
-                    }, i * 100);
-                });
-            }, 2500);
+            }, lineIndex * 200 + 200);
         });
     }
 
     // Animate all lines sequentially
     async function animateLines() {
-        console.log('Starting line animation');
-        for (let i = 0; i < lines.length && i < 5; i++) {
+        console.log('Starting line animation with lines:', lines);
+        for (let i = 0; i < lines.length && i < 7; i++) {
             await animateLine(lines[i], i);
-            await new Promise(resolve => setTimeout(resolve, 300));
         }
     }
 
