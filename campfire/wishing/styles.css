@@ -23,6 +23,11 @@ body {
 
 /* ----- PAGE TRANSITION SYSTEM ----- */
 .page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     transition: opacity 0.8s ease-in-out;
 }
 
@@ -65,19 +70,28 @@ body {
 
 /* ----- RIPPLE CONTAINER STYLES ----- */
 #ripple-container {
-    font-family: 'VictorMono', 'Courier New', Courier, monospace;
     position: fixed;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    padding-bottom: 15vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    left: 0;
     width: 100%;
-    height: 100vh;
-    gap: 2rem;
+    height: 100%;
+    background-color: #000;
+}
+
+#ripple-1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 #ripple-1, #ripple-2, #ripple-3 {
@@ -167,30 +181,28 @@ body {
 
 /* ----- INPUT CONTAINER STYLES ----- */
 #wish-input-container {
-    background-color: transparent;
     position: fixed;
     bottom: 10%;
     left: 50%;
     transform: translateX(-50%);
-    width: 75%;
-    max-width: 500px;
+    width: auto;
+    max-width: 12rem;
     text-align: center;
-    opacity: 1;
-    transition: opacity 0.5s ease-out;
-    z-index: 1;
+    z-index: 1000;
 }
 
 #wish-input, #wish-input2, #wish-input3 {
     font-family: 'VictorMono', 'Courier New', Courier, monospace;
     background-color: transparent;
-    width: calc(100% - 15px); /* Adjust width to account for padding */
-    height: 100px;
-    padding: 15px; /* Add padding */
+    width: 10rem;
+    height: 10rem;
+    padding: 15px;
     margin-bottom: 10px;
     border: 1px dashed #ccc;
     border-radius: 5px;
     font-size: 16px;
     resize: none;
+    color: white;
 }
 
 #wish-input:focus {
@@ -267,5 +279,44 @@ button {
     opacity: 0 !important;
     pointer-events: none;
 }
+
+/* ----- INPUT PAGE STYLES ----- */
+#input-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ----- 3D VISUALIZATION PAGE STYLES ----- */
+#ripple-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+
+#ripple-1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Keep existing styles for other elements */
 
 

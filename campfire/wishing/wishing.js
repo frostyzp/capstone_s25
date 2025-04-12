@@ -30,49 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (touchStartY - touchEndY > 50) { // Swipe up detected
             console.log('Swipe up detected');
 
-            const ripple1 = document.getElementById('ripple-1');
-
             const userInput = document.getElementById('wish-input').value;
             const poemLines = generateSimplePoem(userInput);
             
-            ripple1.innerHTML = ''; // Clear previous content
+            // Switch to the third page
+            switchToPage('thirdPage');
             
-            // Set up the container for absolute positioning
-            ripple1.style.position = 'relative';
-            ripple1.style.height = '100%';
-            
-            // Calculate line height and position for stacking
-            const lineHeight = 50; // Height estimate for each line in pixels
-            const startPosition = 20; // Percentage from bottom
-            
-            // Create ripple effect for each line of the poem, in reversed order to stack properly
-            poemLines.forEach((line, index) => {
-                setTimeout(() => {
-                    // Create a simple paragraph element for each line
-                    const p = document.createElement('p');
-                    p.className = 'poem-line';
-                    p.textContent = line;
-                    p.style.opacity = 0;
-                    p.style.transition = 'opacity 2s ease-in';
-                    
-                    // Position each line absolutely, stacking from bottom up
-                    p.style.position = 'absolute';
-                    p.style.bottom = `${startPosition + (index * 10)}%`; // Position 10% higher for each line
-                    p.style.left = '0';
-                    p.style.right = '0';
-                    p.style.margin = '0 auto'; // Center horizontally
-                    p.style.zIndex = poemLines.length - index; // Stack newer lines behind older ones
-                    
-                    // Add to container
-                    ripple1.appendChild(p);
-                    
-                    // Fade in after a brief delay
-                    setTimeout(() => {
-                        p.style.opacity = 1;
-                    }, 100);
-                    
-                }, index * 1000); // Stagger the appearance of each line
-            });
+            // Initialize 3D text scene with the generated poem lines
+            initializeTextScene(poemLines);
             
             hasGeneratedWish1 = true;
         }
