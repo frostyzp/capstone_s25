@@ -31,13 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Swipe up detected');
 
             const userInput = document.getElementById('wish-input').value;
-            const poemLines = generateSimplePoem(userInput);
+            const { lines, generator } = generateSimplePoem(userInput);
             
             // Switch to the third page
             switchToPage('thirdPage');
             
-            // Initialize 3D text scene with the generated poem lines
-            initializeTextScene(poemLines);
+            // Initialize 3D text scene with the generated poem lines and generator
+            initializeTextScene(lines, generator);
             
             hasGeneratedWish1 = true;
         }
@@ -290,52 +290,44 @@ function generateSimplePoem(userInput) {
             return getRandom(compare) + " than " + getRandom(timewords) + ", " + expandLiving();
         }
         
-        // Generate the poem lines
+        // Create a generator object that can produce new lines
+        const poemGenerator = {
+            sentenceGenerators: [
+                expandS1, expandS2, expandS3, expandS4, expandS5, expandS6,
+                expandUserS1, expandUserS2, expandColors, expandElements, 
+                expandMaterials, expandComparison
+            ],
+            
+            generateNextLine() {
+                // Pick a random generator
+                const generator = this.sentenceGenerators[Math.floor(Math.random() * this.sentenceGenerators.length)];
+                let line = generator();
+                
+                // Format the line
+                if (!line.endsWith(".") && !line.endsWith("?") && !line.endsWith("!")) {
+                    line += ".";
+                }
+                return line.charAt(0).toUpperCase() + line.slice(1);
+            }
+        };
+
         const lines = [];
         
         // First generate the starting line
         lines.push(expandStart());
         
-        // Create an array of sentence generators and shuffle them
-        const sentenceGenerators = [
-            expandS1, expandS2, expandS3, expandS4, expandS5, expandS6,
-            expandUserS1, expandUserS2, expandColors, expandElements, 
-            expandMaterials, expandComparison
-        ];
-        
-        // Helper function to shuffle array
-        function shuffleArray(array) {
-            const shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        }
-        
-        // Shuffle and pick generators to use
-        const shuffledGenerators = shuffleArray(sentenceGenerators);
-        
-        // Generate 4 more lines
+        // Generate initial set of lines
         for (let i = 0; i < 8; i++) {
-            const generatorIndex = i % shuffledGenerators.length;
-            lines.push(shuffledGenerators[generatorIndex]());
+            lines.push(poemGenerator.generateNextLine());
         }
         
-        // Format the lines properly
-        const formattedLines = lines.map(line => {
-            // Add period if needed
-            if (!line.endsWith(".") && !line.endsWith("?") && !line.endsWith("!")) {
-                line += ".";
-            }
-            // Capitalize first letter
-            return line.charAt(0).toUpperCase() + line.slice(1);
-        });
-        
-        return formattedLines;
+        return { lines, generator: poemGenerator };
     } catch (error) {
         console.error("Error generating poem:", error);
-        return fallbackPoemGeneration(userInput, nouns, adjectives, verbs);
+        return { 
+            lines: fallbackPoemGeneration(userInput, nouns, adjectives, verbs),
+            generator: null 
+        };
     }
 }
 

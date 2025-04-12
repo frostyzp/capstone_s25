@@ -2,6 +2,8 @@ let scene, camera, renderer;
 let textMeshes = [];
 const textSpacing = 200; // Spacing between text lines in the Z axis
 let touchStartY = 0;
+let lastGeneratedIndex = 0;
+let poemGenerator = null; // Store reference to the poem generator
 
 function init3DScene() {
     try {
@@ -64,8 +66,9 @@ function onTouchMove(event) {
     const deltaY = touchStartY - touchY;
     touchStartY = touchY;
     
-    // Move camera based on touch, no limits
+    // Move camera based on touch
     camera.position.z += deltaY * 1.5;
+    checkAndGenerateNewLines();
 }
 
 function onTouchEnd(event) {
@@ -79,8 +82,9 @@ function onWindowResize() {
 }
 
 function onScroll(event) {
-    // Move camera based on scroll, no limits
+    // Move camera based on scroll
     camera.position.z += event.deltaY * 0.5;
+    checkAndGenerateNewLines();
 }
 
 function createTextMesh(text, index) {
@@ -88,29 +92,29 @@ function createTextMesh(text, index) {
     
     loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
         // Calculate maximum width based on window size
-        const maxWidth = Math.min(window.innerWidth * 0.8, 800); // 80% of window width or 800px max
+        const maxWidth = Math.min(window.innerWidth * 0.8, 800);
         
-        // Create text geometry with responsive size
+        // Standardize text size
+        const textSize = window.innerWidth < 600 ? 15 : 20;
+        
+        // Create text geometry with standardized size
         const geometry = new THREE.TextGeometry(text, {
             font: font,
-            size: window.innerWidth < 600 ? 10 : 15, // Smaller text size
-            height: 1, // Thinner depth
+            size: textSize,
+            height: 0.5,
             curveSegments: 12,
             bevelEnabled: false
         });
 
-        // Create material with fade effect
         const material = new THREE.MeshPhongMaterial({ 
             color: 0xffffff,
             emissive: 0x666666,
-            shininess: 100,
-            transparent: true,
-            opacity: 0 // Start invisible for fade in
+            shininess: 100
         });
 
         const textMesh = new THREE.Mesh(geometry, material);
         
-        // Center the text horizontally and constrain width
+        // Center the text horizontally
         geometry.computeBoundingBox();
         const textWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
         const scale = textWidth > maxWidth ? maxWidth / textWidth : 1;
@@ -119,66 +123,42 @@ function createTextMesh(text, index) {
         const centerOffset = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x) * scale;
         textMesh.position.x = centerOffset;
         
-        // Position vertically based on screen height
-        const verticalOffset = window.innerHeight * 0.4; // Start text 40% from top
-        textMesh.position.y = verticalOffset - (index * 50); // Stack text with 50 units spacing
+        // Fixed Y position for all text
+        textMesh.position.y = -(window.innerHeight * 0.2);
         
-        // Position in Z axis with larger spacing
-        textMesh.position.z = -index * 300;
+        // Position in Z axis with consistent spacing
+        const zSpacing = 100;
+        textMesh.position.z = -index * zSpacing;
         
-        // Add to scene
         scene.add(textMesh);
         textMeshes.push(textMesh);
-
-        // Fade in animation
-        fadeIn(material);
     });
-}
-
-// Fade in animation function
-function fadeIn(material) {
-    const fadeInDuration = 2000; // 2 seconds
-    const startTime = Date.now();
-
-    function animate() {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / fadeInDuration, 1);
-        
-        material.opacity = progress;
-        
-        if (progress < 1) {
-            requestAnimationFrame(animate);
-        }
-    }
-    
-    animate();
 }
 
 function animate() {
     requestAnimationFrame(animate);
-    
-    // Add subtle animations to all text meshes
-    textMeshes.forEach((mesh, index) => {
-        if (mesh) {
-            // Gentle floating motion
-            mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.05;
-            
-            // Subtle rotation
-            mesh.rotation.y = Math.sin(Date.now() * 0.0005) * 0.1;
-            
-            // Fade based on camera distance
-            const distance = Math.abs(camera.position.z + mesh.position.z);
-            const opacity = Math.max(0, Math.min(1, 1 - (distance - 500) / 1000));
-            mesh.material.opacity = opacity;
-        }
-    });
-    
     renderer.render(scene, camera);
 }
 
+function checkAndGenerateNewLines() {
+    if (!poemGenerator) return;
+    
+    // Calculate how far we've scrolled relative to the last generated text
+    const zSpacing = 100;
+    const lastTextPosition = -(lastGeneratedIndex - 1) * zSpacing;
+    const distanceToLast = camera.position.z - lastTextPosition;
+    
+    // Generate only one new line when close to the last text
+    if (distanceToLast > -200) {
+        console.log('Generating new line...');
+        const newLine = poemGenerator.generateNextLine();
+        createTextMesh(newLine, lastGeneratedIndex++);
+    }
+}
+
 // Function to be called when rock is skipped
-function initializeTextScene(poemLines) {
-    console.log('Starting text scene initialization with', poemLines.length, 'lines');
+function initializeTextScene(poemLines, generator) {
+    console.log('Starting text scene initialization');
     
     try {
         if (!window.THREE) {
@@ -187,8 +167,15 @@ function initializeTextScene(poemLines) {
         
         init3DScene();
         
-        // Create text meshes for each line
-        poemLines.forEach((line, index) => {
+        // Store the generator for later use
+        poemGenerator = generator;
+        
+        // Only create first 3 lines initially
+        const initialLines = poemLines.slice(0, 3);
+        lastGeneratedIndex = initialLines.length;
+        
+        // Create text meshes for initial lines
+        initialLines.forEach((line, index) => {
             console.log('Creating text mesh for line:', index);
             createTextMesh(line, index);
         });
