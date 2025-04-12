@@ -1,24 +1,23 @@
 let scene, camera, renderer;
 let textMeshes = [];
-const textSpacing = 200; // Spacing between text lines in the Z axis
+const MAX_VISIBLE_LINES = 10;
+const Z_SPACING = 200;
 let touchStartY = 0;
 let lastGeneratedIndex = 0;
-let poemGenerator = null; // Store reference to the poem generator
+let poemGenerator = null;
+let allGeneratedLines = [];
 
 function init3DScene() {
     try {
         console.log('Initializing 3D scene...');
         
-        // Create scene
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0x000000);
 
-        // Create camera
         camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
         camera.position.z = 500;
         camera.position.y = 0;
 
-        // Create renderer with pixel ratio for better mobile display
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
@@ -28,9 +27,7 @@ function init3DScene() {
             throw new Error('Ripple container not found');
         }
         container.appendChild(renderer.domElement);
-        console.log('Canvas added to container');
 
-        // Add lights
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
         
@@ -38,10 +35,7 @@ function init3DScene() {
         directionalLight.position.set(0, 0, 1);
         scene.add(directionalLight);
 
-        // Handle window resize
         window.addEventListener('resize', onWindowResize, false);
-
-        // Add both mouse and touch event listeners
         window.addEventListener('wheel', onScroll, false);
         window.addEventListener('touchstart', onTouchStart, false);
         window.addEventListener('touchmove', onTouchMove, { passive: false });
@@ -66,9 +60,8 @@ function onTouchMove(event) {
     const deltaY = touchStartY - touchY;
     touchStartY = touchY;
     
-    // Move camera based on touch
     camera.position.z += deltaY * 1.5;
-    checkAndGenerateNewLines();
+    checkAndUpdateVisibility();
 }
 
 function onTouchEnd(event) {
@@ -82,22 +75,17 @@ function onWindowResize() {
 }
 
 function onScroll(event) {
-    // Move camera based on scroll
     camera.position.z += event.deltaY * 0.5;
-    checkAndGenerateNewLines();
+    checkAndUpdateVisibility();
 }
 
 function createTextMesh(text, index) {
     const loader = new THREE.FontLoader();
     
     loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
-        // Calculate maximum width based on window size
         const maxWidth = Math.min(window.innerWidth * 0.8, 800);
-        
-        // Standardize text size
         const textSize = window.innerWidth < 600 ? 15 : 20;
         
-        // Create text geometry with standardized size
         const geometry = new THREE.TextGeometry(text, {
             font: font,
             size: textSize,
@@ -114,7 +102,6 @@ function createTextMesh(text, index) {
 
         const textMesh = new THREE.Mesh(geometry, material);
         
-        // Center the text horizontally
         geometry.computeBoundingBox();
         const textWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
         const scale = textWidth > maxWidth ? maxWidth / textWidth : 1;
@@ -123,37 +110,64 @@ function createTextMesh(text, index) {
         const centerOffset = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x) * scale;
         textMesh.position.x = centerOffset;
         
-        // Fixed Y position for all text
         textMesh.position.y = -(window.innerHeight * 0.2);
-        
-        // Position in Z axis with consistent spacing
-        const zSpacing = 100;
-        textMesh.position.z = -index * zSpacing;
+        textMesh.position.z = -index * Z_SPACING;
         
         scene.add(textMesh);
-        textMeshes.push(textMesh);
+        textMeshes.push({
+            mesh: textMesh,
+            geometry: geometry,
+            material: material,
+            index: index,
+            text: text
+        });
+        
+        updateVisibleMeshes();
     });
+}
+
+function updateVisibleMeshes() {
+    if (textMeshes.length > MAX_VISIBLE_LINES) {
+        // Sort meshes by distance from camera
+        textMeshes.sort((a, b) => {
+            const distA = Math.abs(camera.position.z - a.mesh.position.z);
+            const distB = Math.abs(camera.position.z - b.mesh.position.z);
+            return distA - distB;
+        });
+        
+        // Remove meshes that are too far
+        while (textMeshes.length > MAX_VISIBLE_LINES) {
+            const oldMesh = textMeshes.pop();
+            scene.remove(oldMesh.mesh);
+            oldMesh.geometry.dispose();
+            oldMesh.material.dispose();
+        }
+    }
+}
+
+function checkAndUpdateVisibility() {
+    // Find the camera's current position in terms of line indices
+    const currentIndex = Math.round(camera.position.z / Z_SPACING);
+    
+    // Generate meshes for lines that should be visible but aren't
+    const startIndex = currentIndex - Math.floor(MAX_VISIBLE_LINES / 2);
+    const endIndex = currentIndex + Math.floor(MAX_VISIBLE_LINES / 2);
+    
+    for (let i = startIndex; i <= endIndex; i++) {
+        if (i >= 0 && i < allGeneratedLines.length) {
+            const exists = textMeshes.some(mesh => mesh.index === i);
+            if (!exists) {
+                createTextMesh(allGeneratedLines[i], i);
+            }
+        }
+    }
+    
+    updateVisibleMeshes();
 }
 
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
-}
-
-function checkAndGenerateNewLines() {
-    if (!poemGenerator) return;
-    
-    // Calculate how far we've scrolled relative to the last generated text
-    const zSpacing = 100;
-    const lastTextPosition = -(lastGeneratedIndex - 1) * zSpacing;
-    const distanceToLast = camera.position.z - lastTextPosition;
-    
-    // Generate only one new line when close to the last text
-    if (distanceToLast > -200) {
-        console.log('Generating new line...');
-        const newLine = poemGenerator.generateNextLine();
-        createTextMesh(newLine, lastGeneratedIndex++);
-    }
 }
 
 // Function to be called when rock is skipped
@@ -167,20 +181,22 @@ function initializeTextScene(poemLines, generator) {
         
         init3DScene();
         
-        // Store the generator for later use
+        // Store the generator and generate initial set of lines
         poemGenerator = generator;
+        allGeneratedLines = [...poemLines];
         
-        // Only create first 3 lines initially
-        const initialLines = poemLines.slice(0, 3);
-        lastGeneratedIndex = initialLines.length;
+        // Generate additional lines
+        for (let i = 0; i < 20; i++) {
+            allGeneratedLines.push(poemGenerator.generateNextLine());
+        }
         
-        // Create text meshes for initial lines
+        // Create initial visible meshes
+        const initialLines = allGeneratedLines.slice(0, MAX_VISIBLE_LINES);
         initialLines.forEach((line, index) => {
             console.log('Creating text mesh for line:', index);
             createTextMesh(line, index);
         });
         
-        // Start animation loop
         animate();
         console.log('Text scene initialization complete');
     } catch (error) {

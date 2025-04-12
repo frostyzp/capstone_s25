@@ -48,63 +48,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Get the text area
     const wishInput = document.getElementById('wish-input');
+    if (!wishInput) {
+        console.error('Wish input not found');
+        return;
+    }
 
-    // Initialize the skipping rock as hidden initially
+    // Initialize the skipping rock and arrow as hidden initially
     const skippingRock = document.getElementById('skippingRock');
+    const arrow = document.getElementById('arrow');
+    
     if (skippingRock) {
-        // We'll show this after the wish is submitted
         skippingRock.style.display = 'none';
+    }
+    if (arrow) {
+        arrow.style.display = 'none';
     }
 
     // SUBMIT BUTTON ------------------------------------------------------------------------------------------------
     const submitButton = document.getElementById('submit-wish');
-    submitButton.addEventListener('click', () => {
-        requestOrientationPermission().then(() => {
-            // Get the content from the wish input fields
-            
-            let wish1 = document.getElementById('wish-input').value;
-            if (!wish1.startsWith("I wish for ")) {
-                wish1 = "I wish for " + wish1;
-                console.log('wish1:', wish1);
-            }
-            // Update the ripple content with the wishes
-            // wishesRipple1.push(wish1);
-    
-            // document.getElementById('ripple-1').textContent = wish1;
+    if (submitButton) {
+        submitButton.addEventListener('click', () => {
+            requestOrientationPermission().then(() => {
+                // Get the content from the wish input fields
+                let wish1 = document.getElementById('wish-input').value;
+                if (!wish1.startsWith("I wish for ")) {
+                    wish1 = "I wish for " + wish1;
+                }
+                
+                // Switch to third page
+                switchToPage('thirdPage');
+                
+                // Show rock and arrow in third page
+                if (skippingRock) {
+                    skippingRock.style.display = 'block';
+                }
+                if (arrow) {
+                    arrow.style.display = 'block';
+                }
 
-            // change bg color
-            document.body.style.backgroundColor = 'black';
-            document.body.style.transition = 'background-color 1.5s ease-in-out';
-            document.body.style.color = 'white';
+                // Hide input and submit button
+                document.getElementById('wish-input').style.display = 'none';
+                document.getElementById('submit-wish').style.display = 'none';
 
-            // The textarea for input is hidden as per the instructions
-            document.getElementById('wish-input').style.display = 'none';
-
-            //hide the submit button
-            document.getElementById('submit-wish').style.display = 'none';
-
-            // rock appears at the bottom of the screen
-            document.getElementById('arrow').style.display = 'block';
-            document.getElementById('skippingRock').style.display = 'block';
-
-            // instructions
-            const instructions = document.querySelector('.instructions');
-            instructions.textContent = 'Skip your rock into the universe. Drag your rock to cast your wish.';
-            instructions.style.opacity = 1; // Make it visible
-            setTimeout(() => {
-                instructions.classList.add('fade-out'); // Add fade-out class after 5 seconds
-            }, 5000);
-            
-            // Add fade out class to container
-            // container.classList.add('fade-out');
+                // Update instructions
+                const instructions = document.querySelector('.instructions');
+                if (instructions) {
+                    instructions.textContent = 'Skip your rock into the universe. Drag your rock to cast your wish.';
+                    instructions.style.opacity = 1;
+                    setTimeout(() => {
+                        instructions.classList.add('fade-out');
+                    }, 5000);
+                }
+            });
         });
-    });
+    }
 
     // Listen for when the rock is moved using playhtml
     document.addEventListener('move', (e) => {
         console.log('Move event detected:', e.detail);
         
-        // If the rock is moved beyond a certain point, trigger the ripple effect
         if (e.detail && e.detail.element && e.detail.element.id === 'skippingRock') {
             const element = e.detail.element;
             const rockPosition = element.getBoundingClientRect();
@@ -116,12 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!hasGeneratedWish1) {
                     const wish = generateWish('1');
                     const wordElements = createWordElements(wish);
-                    console.log('wordElements:', wordElements);
-                    ripple1.innerHTML = ''; // Clear previous content
+                    ripple1.innerHTML = '';
                     ripple1.appendChild(wordElements);
                     hasGeneratedWish1 = true;
                     
-                    // Provide visual feedback that the wish has been cast
+                    // Provide visual feedback
                     element.style.opacity = 0.5;
                     setTimeout(() => {
                         element.style.opacity = 1;

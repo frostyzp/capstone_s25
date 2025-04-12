@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>on washing, hoping</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>wandering wondering dreaming</title>
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
@@ -22,12 +23,6 @@
       import * as playhtml from 'playhtml';
       playhtml.init();
     </script>
-
-    <!-- Three.js dependencies -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
-    <script src="https://unpkg.com/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
-    
     <!-- Rita.js for poem generation -->
     <script src="https://unpkg.com/rita@3.1.3/dist/rita.min.js"></script>
     
@@ -89,29 +84,46 @@
 
     <div class="secondPage page hidden" id="second-page">
         <div id="input-container">
-            <div class="instructions"> <br> Skip your rock into the universe. Tilt your vessel to see the ripples. </div>
             <div id="wish-input-container">
                 <textarea id="wish-input" placeholder="describe a space you dream about living in"></textarea>
-                <div id="arrow"> ^ <br>
-                |<br>
-                |</div>
-                <button id="submit-wish">[ hold onto wish ]</button>
-                <pre id="skippingRock" data-can-move>
-                  _.-'~~`~~'-._
-               .-~` skipping  `~-. 
-             .'    rocks           `.
-               `~-.____________.-~`
-                </pre>
+                <button id="submit-wish">[ skip your rock ]</button>
             </div>
         </div>
     </div>
 
-    <!-- Third page for 3D visualization -->
+    <!-- Third page for poem -->
     <div class="thirdPage page hidden" id="third-page">
         <div id="ripple-container">
             <div id="ripple-1"></div>
         </div>
+        <div class="landscape left">
+           \\ |||| <br>
+             || \\ || \ <br>
+             | \\ \\  <br>
+             |||  <br>
+              |||  <br>
+               |||wwVV w ^^ ^^^   <br>
+        </div>
+        <div class="landscape right">
+            %%  + <br>
+             &^^ grass +<br>
+             rocks ~~ ``<br>
+        </div>
+        <div id="arrow"> ^ <br> |<br> |</div>
+        <pre id="skippingRock" data-can-move>
+          _.-'~~`~~'-._
+       .-~` wishing  `~-. 
+     .'    rock.         `.
+       `~-.____________.-~`
+        </pre>
     </div>
+
+
+
+    
+
+
+
 
     <script>
       // Function to switch pages
