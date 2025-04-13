@@ -243,3 +243,75 @@ function enableOrientationFeatures() {
     switchToPage('secondPage');
   });
   
+
+  const gridContainer = document.createElement('div'); // Changed to 'div' for proper element creation
+  gridContainer.style.display = 'grid';
+  gridContainer.style.gridTemplateColumns = 'repeat(5, 1fr)'; // 5 columns
+  gridContainer.style.gridTemplateRows = 'repeat(10, 1fr)'; // 10 rows
+  gridContainer.style.width = '100%';
+  gridContainer.style.height = '100%';
+  gridContainer.style.position = 'relative';
+  gridContainer.style.fontFamily = 'monospace'; // Use monospace for ASCII style
+  gridContainer.style.whiteSpace = 'pre'; // Preserve whitespace for ASCII art
+  gridContainer.style.zIndex = '-3'; // Change color as needed
+  gridContainer.style.opacity = '0.2'; // Change color as needed
+  gridContainer.style.paddingBottom = '100px'; // Change color as needed
+  gridContainer.style.animation = 'background_ascii_animation 3s steps(2) infinite'; // Fixed animation property
+
+  // Keyframes should be defined in a style tag or CSS file, not inline
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes background_ascii_animation {
+      0% {
+        opacity: 0.2;
+        transform: perspective(500px) rotateX(60deg) translateX(0); // Added perspective and rotation here
+      }
+      50% {
+        opacity: 0.1;
+        transform: perspective(500px) rotateX(59deg) translateX(1px); // Added perspective and rotation here
+      }
+      100% {
+        opacity: 0.2;
+        transform: perspective(500px) rotateX(60deg) translateX(0); // Added perspective and rotation here
+      }
+    }
+  `;
+  document.head.appendChild(style); // Append the style to the document head
+
+  for (let i = 0; i < 100; i++) { // 100 cells for a 10x10 grid
+      const cell = document.createElement('div');
+      cell.style.textAlign = 'center';
+      cell.style.fontSize = '0.6rem';
+      cell.style.color = 'white'; // Change color as needed
+      cell.textContent = (i % 2 === 0) ? '///////' : '^- ^- ^--^'; // Alternating pattern
+      gridContainer.appendChild(cell);
+  }
+
+  document.getElementById('ripple-container').appendChild(gridContainer);
+
+
+  // Wait for DOM to be fully loaded
+  $(document).ready(function() {
+    console.log('Initializing textillate...');
+    
+    // Initialize textillate for skipping rock
+    $('.skippingRock').textillate({
+      initialDelay: 0,
+      autoStart: true,
+      in: {
+        effect: 'rotateIn',
+        delay: 20,
+        shuffle: true,
+        sync: false
+      },
+      out: {
+        effect: 'fadeOut',
+        delay: 20,
+        shuffle: true
+      },
+      loop: true,
+      callback: function() {
+        console.log('Textillate animation completed');
+      }
+    });
+  });

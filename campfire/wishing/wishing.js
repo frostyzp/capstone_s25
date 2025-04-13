@@ -10,7 +10,7 @@ let hasGeneratedWish1 = false;
 
 // Add color array at the top with other declarations
 const brightColors = [
-    'rgb(255, 192, 203)', // pink
+    'rgb(216, 132, 252)', // pink
     'rgb(255, 255, 255)', // white
     'rgb(255, 255, 0)'    // yellow
 ];
@@ -23,17 +23,13 @@ function createAsciiRipple(x, y, color) {
     const container = document.getElementById('ripple-container');
     if (!container) return;
 
-    // Add random vertical variation
-    const verticalOffset = (Math.random() * 4 - 2) * 16; // Random value between -2rem and +2rem (in pixels)
-    const adjustedY = y + verticalOffset;
-
     // Create ASCII ripple container
     const asciiContainer = document.createElement('div');
     asciiContainer.className = 'ascii-ripple';
     asciiContainer.style.cssText = `
         position: fixed;
         left: ${x}px;
-        top: ${adjustedY}px;
+        top: ${y}px;
         transform: translate(-50%, -50%);
         font-family: 'VictorMono', monospace;
         font-size: 12px;
@@ -166,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Start the text animation with custom position
             createRipplingText(lines.slice(0, 7), startPosition);
-            initializeTextScene(lines);
+            // initializeTextScene(lines);
 
             hasGeneratedWish1 = true;
         } else {
@@ -318,6 +314,7 @@ function createRipplingText(lines, startPosition = 20) {
     async function animateLine(line, lineIndex) {
         console.log('Animating line:', line);
         const lineElement = document.createElement('div');
+        lineElement.className = 'lineElement'; // Add class for textillate
         lineElement.textContent = line;
         
         // Get a random color for this line
@@ -360,12 +357,24 @@ function createRipplingText(lines, startPosition = 20) {
         // Create ripple at line position with the same color
         createAsciiRipple(rippleX, rippleY, lineColor);
 
-        document.addEventListener('touchstart', (event) => {
-            const touch = event.touches[0];
-            createAsciiRipple(touch.clientX, touch.clientY, 'white');
-        });
+        // Apply textillate effect after a short delay to ensure the element is in the DOM
+        setTimeout(() => {
+            $(lineElement).textillate({
+                in: {
+                    effect: 'fadeInUp',
+                    delay: 15,
+                    // sequence: true,
+                    shuffle: true,
+                    sync: false
+                },
+                out: {
+                    effect: 'fadeOutDown',
+                    delay: 50,
+                    shuffle: true
+                }
+            });
+        }, 50);
 
-        
         // Fade in the line with increased delay
         setTimeout(() => {
             lineElement.style.opacity = opacity;
@@ -373,15 +382,22 @@ function createRipplingText(lines, startPosition = 20) {
             
             // Fade out after hold time
             setTimeout(() => {
-                lineElement.style.transition = 'opacity 5s ease-out';
+                lineElement.style.transition = 'opacity 10s ease-out';
                 lineElement.style.opacity = '0';
                 
                 // Remove element after fade out
                 setTimeout(() => {
                     lineElement.remove();
-                }, 5000);
-            }, 5000);
+                }, 10000);
+            }, 10000);
         }, lineIndex * 400);
+
+
+        document.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            createAsciiRipple(touch.clientX, touch.clientY, 'white');
+        });
+
         
         // Return a promise that resolves after the line has appeared
         return new Promise(resolve => {
