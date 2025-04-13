@@ -23,13 +23,17 @@ function createAsciiRipple(x, y, color) {
     const container = document.getElementById('ripple-container');
     if (!container) return;
 
+    // Add random vertical variation
+    const verticalOffset = (Math.random() * 4 - 2) * 16; // Random value between -2rem and +2rem (in pixels)
+    const adjustedY = y + verticalOffset;
+
     // Create ASCII ripple container
     const asciiContainer = document.createElement('div');
     asciiContainer.className = 'ascii-ripple';
     asciiContainer.style.cssText = `
         position: fixed;
         left: ${x}px;
-        top: ${y}px;
+        top: ${adjustedY}px;
         transform: translate(-50%, -50%);
         font-family: 'VictorMono', monospace;
         font-size: 12px;
@@ -57,6 +61,7 @@ function createAsciiRipple(x, y, color) {
         }
         
         asciiContainer.textContent = patterns[currentPattern];
+        asciiContainer.style.transform = 'perspective(500px) rotateX(60deg)';
         // Force a reflow to ensure the transition works
         void asciiContainer.offsetWidth;
         asciiContainer.style.opacity = '0.4';
@@ -354,6 +359,12 @@ function createRipplingText(lines, startPosition = 20) {
         
         // Create ripple at line position with the same color
         createAsciiRipple(rippleX, rippleY, lineColor);
+
+        document.addEventListener('touchstart', (event) => {
+            const touch = event.touches[0];
+            createAsciiRipple(touch.clientX, touch.clientY, 'white');
+        });
+
         
         // Fade in the line with increased delay
         setTimeout(() => {
