@@ -1,5 +1,3 @@
-
-
 function generateSimplePoem(userInput) {
     // Process user input
     const words = RiTa.tokenize(userInput);
@@ -27,10 +25,23 @@ function generateSimplePoem(userInput) {
             return arr[Math.floor(Math.random() * arr.length)];
         }
     
+        // Define the grammar components
+        const defaultNouns = ["place", "space", "home", "room", "garden", "haven", "sanctuary", "retreat", "corner", "nook", "shelter", "dwelling", "abode", "refuge", "hideaway", "domain", "realm"];
+        const userAdjs = adjectives.length > 0 ? adjectives : ["peaceful", "calm", "beautiful"];
+        const userVerbs = verbs.length > 0 ? verbs : ["rest", "breathe", "live"];
+        
+        // Helper function to get random elements with user input priority
+        function getRandomWithPriority(arr, userArr) {
+            // If user input is available, use it directly
+            if (userArr && userArr.length > 0) {
+                return userArr[Math.floor(Math.random() * userArr.length)];
+            }
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
         
         // Create arrays for different phrase types
-        const startVerbs = ["dream of", "hope for", "daydream of", "wonder about", 
-                          "imagine", "yearn for", "long for", "wish for"];
+        const startVerbs = ["dream of", "hope for", "desire", "daydream of", "wonder about", 
+                          "imagine", "yearn for", "envision", "long for", "wish for"];
                           
         const compare = ["more", "less", "smaller", "greater", "clearer", "brighter", "darker", 
                         "warmer", "cozier", "quieter", "safer", "freer", "calmer", "softer", 
@@ -38,7 +49,7 @@ function generateSimplePoem(userInput) {
                         
         const spaces = ["rooms", "gardens", "havens", "sanctuaries", "retreats", "corners", "nooks", 
                        "shelters", "dwellings", "homes", "abodes", "refuges", "hideaways", 
-                       "domains", "realms"].concat(userNouns);
+                       "domains", "realms"].concat(defaultNouns);
                        
         const feelings = ["peace", "comfort", "safety", "belonging", "freedom", "solitude", 
                          "connection", "harmony", "warmth", "tranquility", "serenity", "joy", 
@@ -69,23 +80,26 @@ function generateSimplePoem(userInput) {
         function expandUserPhrase() {
             const choices = [
                 userInput,
-                "a " + getRandom(userAdjs) + " " + getRandom(userNouns),
-                getRandom(userAdjs) + " " + getRandom(userNouns),
-                getRandom(compare) + " than " + getRandom(userAdjs) + " " + getRandom(userNouns),
-                "a " + getRandom(userNouns) + " " + RiTa.randomWord({ pos: "in" }) + " " + getRandom(feelings)
+                "a " + getRandomWithPriority(userAdjs, adjectives) + " " + getRandomWithPriority(defaultNouns, nouns),
+                getRandomWithPriority(userAdjs, adjectives) + " " + getRandomWithPriority(defaultNouns, nouns),
+                getRandom(compare) + " than " + getRandomWithPriority(userAdjs, adjectives) + " " + getRandomWithPriority(defaultNouns, nouns),
+                "a " + getRandomWithPriority(defaultNouns, nouns) + " " + RiTa.randomWord({ pos: "in" }) + " " + getRandom(feelings)
             ];
             return getRandom(choices);
         }
         
         function expandPhrase() {
             const choices = [
-                getRandom(userAdjs) + " " + expandNounPhrase(),
+                getRandomWithPriority(userAdjs, adjectives) + " " + expandNounPhrase(),
                 getRandom(compare) + " " + RiTa.randomWord({ pos: "nn" }),
+                "a " + getRandomWithPriority(userAdjs, adjectives) + " home",
+                "a place where " + expandClause(),
                 expandLiving(),
-                getRandom(userAdjs) + " " + getRandom(spaces),
-                getRandom(userAdjs) + " " + getRandom(feelings),
-                getRandom(userAdjs) + " " + expandNounPhrase(),
-                expandNounPhrase() + " with " + getRandom(userNouns),
+                getRandomWithPriority(userAdjs, adjectives) + " " + getRandom(spaces),
+                getRandomWithPriority(userAdjs, adjectives) + " " + getRandom(feelings),
+                getRandomWithPriority(userAdjs, adjectives) + " " + expandNounPhrase(),
+                expandNounPhrase() + " with " + getRandomWithPriority(defaultNouns, nouns),
+                getRandom(spaces) + " where all can " + getRandomWithPriority(userVerbs, verbs)
             ];
             return getRandom(choices);
         }
@@ -95,7 +109,7 @@ function generateSimplePoem(userInput) {
                 RiTa.randomWord({ pos: "nns" }),
                 RiTa.randomWord({ pos: "nn" }),
                 expandNounSingle(),
-                getRandom(userAdjs) + " " + getRandom(userNouns)
+                getRandom(userAdjs) + " " + getRandom(nouns)
             ];
             return getRandom(choices);
         }
@@ -109,7 +123,7 @@ function generateSimplePoem(userInput) {
                 "a " + getRandom(spaces) + " " + RiTa.randomWord({ pos: "in" }) + " " + 
                 getRandom(userAdjs) + " " + RiTa.randomWord({ pos: "nns" }),
                 "a " + getRandom(userAdjs) + " " + RiTa.randomWord({ pos: "nn" }),
-                "a " + RiTa.randomWord({ pos: "nn" }) + " like " + getRandom(userNouns)
+                "a " + RiTa.randomWord({ pos: "nn" }) + " like " + getRandom(nouns)
             ];
             return getRandom(choices);
         }
@@ -129,7 +143,7 @@ function generateSimplePoem(userInput) {
         function expandS1() {
             return getRandom(dets) + " " + 
                    getRandom(userAdjs) + " " + 
-                   getRandom(userNouns) + " for " + 
+                   getRandom(nouns) + " for " + 
                    "one to " + RiTa.randomWord({ pos: "vb" }) + " " + 
                    RiTa.randomWord({ pos: "in" });
         }
@@ -185,7 +199,7 @@ function generateSimplePoem(userInput) {
         
         function expandUserS2() {
             return "the " +
-                   getRandom(userNouns) + ", " +
+                   getRandom(nouns) + ", " +
                    getRandom(userAdjs) + " and " +
                    RiTa.randomWord({ pos: "jj" }) + ", " 
         }
@@ -256,7 +270,7 @@ function fallbackPoemGeneration(userInput, nouns, adjectives, verbs) {
     
     const lines = [];
     
-    lines.push("Dream of " + userInput + ".");
+    lines.push("Dream of " + userInput);
     lines.push("A " + getRandom(adjectives) + " " + getRandom(nouns) + " waiting to be found.");
     lines.push("Becoming " + getRandom(verbs) + " in the " + getRandom(adjectives) + " light.");
     lines.push("Where " + getRandom(nouns) + " meets " + getRandom(adjectives) + " dreams.");
