@@ -45,7 +45,7 @@ function generateSimplePoem(userInput) {
                           
         const compare = ["more", "less", "smaller", "greater", "clearer", "brighter", "darker", 
                         "warmer", "cozier", "quieter", "safer", "freer", "calmer", "softer", 
-                        "wilder", "gentler", "lovelier", "spacier", "airier", "livelier"];
+                        "wilder", "gentler", "spacier", "airier", "livelier"];
                         
         const spaces = ["rooms", "gardens", "havens", "sanctuaries", "retreats", "corners", "nooks", 
                        "shelters", "dwellings", "homes", "abodes", "refuges", "hideaways", 

@@ -4,12 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="oracle_styles.css">
-    <script src="js/oracle_interactions.js"></script>
+    <script src="../js/oracle_interactions.js" type="text/javascript"></script>
 
     <title>Oracle</title>
 </head>
 <body>
-    <div class="intro-text"> What fortunes do you seek and wonder about today? </div>
+    <div class="instruction-text">Choose a stone to guide your reading</div>
+    
+    <div class="stones-container">
+        <div class="stone" id="smoky-quartz">
+            <div class="stone-inner"></div>
+        </div>
+        <div class="stone" id="clear-quartz">
+            <div class="stone-inner"></div>
+        </div>
+        <div class="stone" id="amethyst">
+            <div class="stone-inner"></div>
+        </div>
+    </div>
+
+    <div class="text-cloud">
+        <!-- Text fragments will be dynamically added here -->
+    </div>
     
     <div class="content hidden">  
         <div class="oracleBody">
