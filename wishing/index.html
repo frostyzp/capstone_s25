@@ -55,7 +55,39 @@
 
       <div class="landingPage page visible">
         <div class="background-image"></div>
-        <p class="skippingRock">
+        <div class="ascii-rocks">
+            <!-- <div class="rockPrevEntry rock-1">
+                _.-'~~`~~'-._ <br>
+                .-~` rock  `~-.  <br>
+              .'    one           `. <br>
+                `~-.____________.-~` <br>
+            </div>
+            <div class="rockPrevEntry rock-2">
+                _.-'~~`~~'-._ <br>
+                .-~` rock  `~-.  <br>
+              .'    two           `. <br>
+                `~-.____________.-~` <br>
+            </div>
+            <div class="rockPrevEntry rock-3">
+                _.-'~~`~~'-._ <br>
+                .-~` rock  `~-.  <br>
+              .'    three         `. <br>
+                `~-.____________.-~` <br>
+            </div>
+            <div class="rockPrevEntry rock-3">
+              _.-'~~`~~'-._ <br>
+              .-~` rock  `~-.  <br>
+            .'    three         `. <br>
+              `~-.____________.-~` <br>
+          </div>
+          <div class="rockPrevEntry rock-3">
+            _.-'~~`~~'-._ <br>
+            .-~` rock  `~-.  <br>
+          .'    three         `. <br>
+            `~-.____________.-~` <br>
+        </div> -->
+        </div>
+        <!-- <p class="skippingRock">
         _.-'~~`~~'-._
         .-~` skip  ping  `~-. 
       .'    st   o ne           `.
@@ -69,9 +101,13 @@
         .-~` skip  ping  `~-. 
       .'    st   <br>o ne           `.
         `~-.____________.-~`
-        </p>
+        </p> -->
 
-        <button id="landingPageButton">[ make your wishing rock ]</button>
+        <p class="skippingRock"> Make a wish to the universe and skip a stone.
+
+        </p>
+         
+        <button id="landingPageButton">( find a rock to skip )</button>
     </div>
 
 
@@ -79,7 +115,45 @@
 
     <div class="secondPage page hidden" id="second-page">
       <div id="previous wishes">
-
+        <p> previous wishes </p>
+      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+        <div class="rockPrevEntry">
+          _.-'~~`~~'-._ <br>
+          .-~` rock  `~-.  <br>
+        .'    one         `. <br>
+          `~-.____________.-~` <br>
+        </div>
+        <div class="rockPrevEntry">
+          _.-'~~`~~'-._ <br>
+          .-~` rock  `~-.  <br>
+        .'    two         `. <br>
+          `~-.____________.-~` <br>
+        </div>
+        <div class="rockPrevEntry">
+          _.-'~~`~~'-._ <br>
+          .-~` rock  `~-.  <br>
+        .'    three         `. <br>
+          `~-.____________.-~` <br>
+        </div>
+        <div class="rockPrevEntry">
+          _.-'~~`~~'-._ <br>
+          .-~` rock  `~-.  <br>
+        .'    four         `. <br>
+          `~-.____________.-~` <br>
+        </div>
+        <div class="rockPrevEntry">
+          _.-'~~`~~'-._ <br>
+          .-~` rock  `~-.  <br>
+        .'    five         `. <br>
+          `~-.____________.-~` <br>
+        </div>
+        <div class="rockPrevEntry">
+          _.-'~~`~~'-._ <br>
+          .-~` rock  `~-.  <br>
+        .'    six         `. <br>
+          `~-.____________.-~` <br>
+        </div>
+      </div>
       </div>
 
 
@@ -89,7 +163,7 @@
                 
                 <textarea id="wish-input" placeholder="describe a space you dream about living in"></textarea>
 
-                <button id="submit-wish">[ skip your rock ]</button>
+                <button id="submit-wish">( go to the wishing pond )</button>
             </div>
         </div>
     </div>
@@ -102,7 +176,8 @@
           </div>
             <div id="ripple-1"></div>
 
-            <p style="position: absolute; bottom: 10px; width: 100%; text-align: center; color: white"> Skip your rocks into the universe </p>
+            <p style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; color: white; z-index: 4;"> Skip your rocks into the universe </p>
+            <p> ( )</p>
 
         </div>
         <div class="landscape left">

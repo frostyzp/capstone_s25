@@ -89,6 +89,12 @@ window.addEventListener("deviceorientation", (event) => {
 
     if (!fragments || !selectedStone) return;
 
+    // Calculate background color based on tilt
+    const maxTilt = 45; // Maximum tilt angle for full color effect
+    const tiltPercentage = Math.min(Math.abs(gamma) / maxTilt, 1); // Normalize to 0-1
+    const blueIntensity = Math.floor(tiltPercentage * 20); // Range 0-20 for subtle blue
+    document.body.style.backgroundColor = `rgb(0, 0, ${blueIntensity})`;
+
     // Handle text fragment highlighting
     fragments.forEach(fragment => {
         // First unhighlight all fragments

@@ -146,6 +146,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (swipeDistance > 50) { // Swipe up detected
             console.log('Swipe up detected on third page');
+            
+            // Trigger haptic feedback if supported
+            if ('vibrate' in navigator) {
+                // Vibrate for 100ms
+                navigator.vibrate(100);
+            }
+            
             const { lines } = generateSimplePoem(storedUserInput);
             console.log('Generated lines:', lines);
             
@@ -157,12 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             console.log('Text starting position:', startPosition);
             
-            // Create ASCII ripple at touch end position
-            // createAsciiRipple(touchEndX, touchEndY);
-            
             // Start the text animation with custom position
             createRipplingText(lines.slice(0, 7), startPosition);
-            // initializeTextScene(lines);
 
             hasGeneratedWish1 = true;
         } else {
@@ -343,8 +346,9 @@ function createRipplingText(lines, startPosition = 20) {
             font-family: 'VictorMono', monospace;
             font-size: ${fontSize}px;
             color: ${lineColor};
-            transition: opacity 1s ease-out, width 1s ease;
+            transition: opacity 1s ease-out, width 1s ease, filter 10s linear;
             z-index: 3;
+            filter: blur(0px);
         `;
         
         textContainer.appendChild(lineElement);
@@ -378,6 +382,11 @@ function createRipplingText(lines, startPosition = 20) {
         setTimeout(() => {
             lineElement.style.opacity = opacity;
             console.log('Fading in line:', line);
+            
+            // Start blur animation
+            setTimeout(() => {
+                lineElement.style.filter = 'blur(3px)';
+            }, 50);
             
             // Fade out after 12 seconds
             setTimeout(() => {
