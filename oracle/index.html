@@ -9,18 +9,9 @@
     <title>Oracle</title>
 </head>
 <body>
-    <div class="instruction-text">Choose a stone to guide your reading</div>
     
-    <div class="stones-container">
-        <div class="stone" id="smoky-quartz">
-            <div class="stone-inner"></div>
-        </div>
-        <div class="stone" id="clear-quartz">
-            <div class="stone-inner"></div>
-        </div>
-        <div class="stone" id="amethyst">
-            <div class="stone-inner"></div>
-        </div>
+    <div class="markers-container">
+        <!-- Markers will be dynamically added here -->
     </div>
 
     <div class="text-cloud">
@@ -32,16 +23,18 @@
             <p class="oracleTextp"> 
                 (´･ω･`) <br>
             </p>    
+            <div class="instruction-text">Select a symbol to begin your reading</div>
+
             <br> 
             <!-- <p class="oracleTextp"> ––––––––––––––––––––––––– <br></p> -->
             
-            <div class="oracle_wrapper"> 
+            <div class="oracle_wrapper hidden"> 
                 <div class="oracle_answer">Ask a yes/no question.
                     After you do so, tilt your phone towards the ground to recieve your answer.</div>
             </div>
         </div>
     </div>
     
-    <button id="permission-button" onclick="requestPermission()"> Enter </button>
+    <!-- <button id="permission-button" onclick="requestPermission()"> Enter </button> -->
 </body>
 </html>

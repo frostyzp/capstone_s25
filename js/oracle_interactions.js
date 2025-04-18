@@ -139,44 +139,33 @@ window.addEventListener("deviceorientation", (event) => {
 
 // Make requestPermission globally accessible
 window.requestPermission = function() {
-    if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-        DeviceMotionEvent.requestPermission().then(response => {
-            if (response === "granted") {
-                alert("Navigate through the site gently with care.");
-                document.querySelector("#permission-button").remove();
-                showContent();
-            }
-        }).catch(error => {
-            console.error(error);
-            // Show content anyway if permission fails
-            showContent();
-        });
-    } else {
-        // For non-iOS devices or desktop browsers
-        document.querySelector("#permission-button").style.display = 'none';
-        showContent();
-    }
-
-    // Also request device orientation permission if needed
-    if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-        DeviceOrientationEvent.requestPermission().then(response => {
-            if (response === "granted") {
-                // Permission granted for device orientation
-            }
-        }).catch(console.error);
-    }
+    return new Promise((resolve, reject) => {
+        if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+            DeviceMotionEvent.requestPermission().then(response => {
+                if (response === "granted") {
+                    if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+                        return DeviceOrientationEvent.requestPermission();
+                    }
+                    return Promise.resolve("granted");
+                }
+                return Promise.reject("Motion permission denied");
+            }).then(response => {
+                if (response === "granted") {
+                    resolve();
+                } else {
+                    reject("Orientation permission denied");
+                }
+            }).catch(reject);
+        } else {
+            // For non-iOS devices or desktop browsers
+            resolve();
+        }
+    });
 }
 
 function showContent() {
     // Add console log for debugging
     console.log('showContent called');
-    
-    // Remove intro text and button
-    const introText = document.querySelector('.intro-text');
-    const permissionButton = document.querySelector('#permission-button');
-    
-    if (introText) introText.style.display = 'none';
-    if (permissionButton) permissionButton.style.display = 'none';
     
     // Show main content
     const content = document.querySelector('.content');
@@ -316,10 +305,10 @@ class TextFragment {
         this.baseX = baseX;
         this.baseY = baseY;
         this.time = Math.random() * 1000;
-        this.speed = (0.7 + Math.random() * 3) * 0.5;
+        this.speed = (0.7 + Math.random() * 3) * 0.3; // Reduced speed for gentler movement
         this.opacityRange = {
             min: 0.1 + Math.random() * 0.15,
-            max: 0.4 + Math.random() * 0.3
+            max: 0.3 + Math.random() * 0.2
         };
         this.size = 16 + Math.random() * 12;
         this.skew = -20 + Math.random() * 40;
@@ -334,8 +323,9 @@ class TextFragment {
     update(deltaTime) {
         this.time += deltaTime * this.speed;
         
-        const noiseX = perlin.noise2D(this.time * 0.001, 0) * 180;
-        const noiseY = perlin.noise2D(0, this.time * 0.001) * 180;
+        // Reduced movement range for more contained motion
+        const noiseX = perlin.noise2D(this.time * 0.001, 0) * 20; // Reduced from 180 to 20
+        const noiseY = perlin.noise2D(0, this.time * 0.001) * 20; // Reduced from 180 to 20
         
         const x = Math.max(0, Math.min(100, this.baseX + noiseX));
         const y = Math.max(0, Math.min(100, this.baseY + noiseY));
@@ -359,7 +349,7 @@ class TextFragment {
         const element = this.element;
         this.highlightTimeout = setTimeout(() => {
             element.classList.remove('highlighted', 'smoky-quartz', 'clear-quartz', 'amethyst');
-        }, 700); // 0.7 seconds delay
+        }, 5000); // Increased from 0.7s to 5s
     }
 }
 
@@ -433,8 +423,13 @@ function createFragment(word, type, messageId) {
     fragment.className = 'text-fragment';
     fragment.textContent = word;
     
-    const baseX = Math.random() * 90;
-    const baseY = Math.random() * 90;
+    // Calculate position on a circle with some noise
+    const angle = Math.random() * Math.PI * 2; // Random angle between 0 and 2π
+    const radius = 25 + Math.random() * 10; // Circle radius between 30-40% of screen
+    
+    // Calculate base position on circle
+    const baseX = 50 + Math.cos(angle) * radius; // Center at 50%
+    const baseY = 50 + Math.sin(angle) * radius; // Center at 50%
     
     const textFragment = new TextFragment(fragment, baseX, baseY, type, messageId);
     document.querySelector('.text-cloud').appendChild(fragment);
@@ -496,15 +491,15 @@ window.addEventListener("deviceorientation", (event) => {
         
         // Only highlight if fragment belongs to current message
         if (fragment.messageId === currentMessageId) {
-            if (gamma < -30 && fragment.type === 'first') {
+            if (gamma < -15 && fragment.type === 'first') {
                 fragment.highlight(selectedStone);
             }
             // Right tilt: highlight second part
-            else if (gamma > 30 && fragment.type === 'second') {
+            else if (gamma > 15 && fragment.type === 'second') {
                 fragment.highlight(selectedStone);
             }
             // Down tilt: highlight reflections
-            else if (beta > 30 && fragment.type === 'reflection') {
+            else if (beta > 15 && fragment.type === 'reflection') {
                 fragment.highlight(selectedStone);
             }
         }
@@ -527,6 +522,89 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!document.querySelector("#permission-button")) {
         showContent();
     }
+});
+
+const markers = ['(｡•́︿•̀｡)', '(◕‿◕✿)', '(╯°□°）╯︵ ┻━┻', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', '(ง •̀_•́)ง', '(ノಠ益ಠ)ノ彡┻━┻', '(づ｡◕‿‿◕｡)づ', '(っ◔◡◔)っ ♥', '(ﾉ´ヮ`)ﾉ*: ･ﾟ', '(◕ᴗ◕✿)', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ', '(◕‿◕)'];
+
+// Initialize markers in a circle
+function initializeMarkers() {
+    const markersContainer = document.querySelector('.markers-container');
+    if (!markersContainer) return;
+    
+    // Clear existing markers
+    markersContainer.innerHTML = '';
+    
+    markers.forEach((symbol, index) => {
+        const marker = document.createElement('div');
+        marker.className = 'marker';
+        marker.textContent = symbol;
+        
+        // Calculate position on circle
+        const angle = (index / markers.length) * Math.PI * 2;
+        const radius = 120;
+        
+        const x = Math.cos(angle) * radius + 150;
+        const y = Math.sin(angle) * radius + 150;
+        
+        marker.style.left = `${x - 20}px`;
+        marker.style.top = `${y - 20}px`;
+        
+        // Add click handler that first requests permission
+        marker.addEventListener('click', () => {
+            requestPermission().then(() => {
+                handleMarkerSelection(index);
+            }).catch((error) => {
+                console.error('Permission error:', error);
+                // Proceed anyway if permission fails
+                handleMarkerSelection(index);
+            });
+        });
+        
+        markersContainer.appendChild(marker);
+    });
+}
+
+// Update selection handler
+function handleMarkerSelection(index) {
+    const markersContainer = document.querySelector('.markers-container');
+    const markers = document.querySelectorAll('.marker');
+    const instructionText = document.querySelector('.instruction-text');
+    
+    markers.forEach((marker, i) => {
+        if (i === index) {
+            marker.classList.add('selected');
+        } else {
+            marker.classList.remove('selected');
+        }
+    });
+    
+    // Fade out markers and instruction
+    if (markersContainer) {
+        markersContainer.style.opacity = '0';
+        setTimeout(() => {
+            markersContainer.style.display = 'none';
+        }, 500);
+    }
+    if (instructionText) {
+        instructionText.style.opacity = '0';
+        setTimeout(() => {
+            instructionText.style.display = 'none';
+        }, 500);
+    }
+    
+    // Initialize text cloud after marker selection
+    setTimeout(() => {
+        const result = initializeTextCloud();
+        fragments = result.fragments;
+        currentMessageId = result.currentMessageId;
+    }, 600);
+}
+
+// Update DOM loaded event listener
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    initializeMarkers();
+    showContent();
 });
 
 
