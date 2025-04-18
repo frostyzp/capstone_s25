@@ -193,23 +193,33 @@ body {
 
 .marker {
     position: absolute;
-    width: 40px;
-    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    color: #808080;  /* Changed from #5977c9 to medium grey */
-    font-size: 24px;
+    color: #808080;
     transition: all 0.3s ease;
-    text-shadow: 0 0 10px rgba(128, 128, 128, 0.3);  /* Changed from blue to grey */
+    text-shadow: 0 0 10px rgba(128, 128, 128, 0.3);
+    will-change: transform;
+}
+
+.marker.outer {
+    /* width: 50px; */
+    height: 50px;
+    font-size: 1.2rem;
+}
+
+.marker.inner {
+    /* width: 40px; */
+    height: 40px;
+    font-size: 1rem;
 }
 
 .marker:hover {
     color: #ffffff;
     text-shadow: 0 0 10px rgba(128, 128, 128, 0.9),
                  0 0 20px rgba(128, 128, 128, 0.7),
-                 0 0 30px rgba(128, 128, 128, 0.5);  /* Changed from blue to grey */
+                 0 0 30px rgba(128, 128, 128, 0.5);
     transform: scale(1.2);
 }
 
@@ -217,7 +227,7 @@ body {
     color: #ffffff;
     text-shadow: 0 0 10px rgba(128, 128, 128, 0.9),
                  0 0 20px rgba(128, 128, 128, 0.7),
-                 0 0 30px rgba(128, 128, 128, 0.5);  /* Changed from blue to grey */
+                 0 0 30px rgba(128, 128, 128, 0.5);
     animation: pulseGlow 2s ease-in-out infinite;
 }
 
@@ -225,12 +235,12 @@ body {
     0%, 100% {
         text-shadow: 0 0 10px rgba(128, 128, 128, 0.9),
                      0 0 20px rgba(128, 128, 128, 0.7),
-                     0 0 30px rgba(128, 128, 128, 0.5);  /* Changed from blue to grey */
+                     0 0 30px rgba(128, 128, 128, 0.5);
     }
     50% {
         text-shadow: 0 0 15px rgba(128, 128, 128, 1),
                      0 0 25px rgba(128, 128, 128, 0.8),
-                     0 0 35px rgba(128, 128, 128, 0.6);  /* Changed from blue to grey */
+                     0 0 35px rgba(128, 128, 128, 0.6);
     }
 }
 
@@ -279,18 +289,19 @@ body {
 
 .text-fragment.highlighted {
     opacity: 1 !important;
-    color: #fcfdff;
-    /* text-shadow: 0 0 10px rgba(89, 119, 201, 0.8),
-                 0 0 20px rgba(89, 119, 201, 0.5),
-                 0 0 30px rgba(89, 119, 201, 0.3); */
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+                 0 0 20px rgba(255, 255, 255, 0.6),
+                 0 0 30px rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease-out;
 }
 
 .text-fragment.highlighted.smoky-quartz {
-    color: #a0a0a0;
-    text-shadow: 0 0 10px rgba(74, 74, 74, 0.9),
-                 0 0 20px rgba(74, 74, 74, 0.7),
-                 0 0 30px rgba(74, 74, 74, 0.5),
-                 0 0 40px rgba(74, 74, 74, 0.3);
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(128, 128, 128, 0.9),
+                 0 0 20px rgba(128, 128, 128, 0.7),
+                 0 0 30px rgba(128, 128, 128, 0.5),
+                 0 0 40px rgba(128, 128, 128, 0.3);
 }
 
 .text-fragment.highlighted.clear-quartz {
@@ -302,9 +313,9 @@ body {
 }
 
 .text-fragment.highlighted.amethyst {
-    color: #b67edb;
-    text-shadow: 0 0 10px rgba(155, 77, 202, 0.9),
-                 0 0 20px rgba(155, 77, 202, 0.7),
-                 0 0 30px rgba(155, 77, 202, 0.5),
-                 0 0 40px rgba(155, 77, 202, 0.3);
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(128, 0, 128, 0.9),
+                 0 0 20px rgba(128, 0, 128, 0.7),
+                 0 0 30px rgba(128, 0, 128, 0.5),
+                 0 0 40px rgba(128, 0, 128, 0.3);
 }

@@ -43,7 +43,10 @@ let isInteraction = false;
 
 function getEightBallMessage() {
     const randomIndex = Math.floor(Math.random() * eightBallMessages.length);
-    document.querySelector('.oracle_answer').textContent = eightBallMessages[randomIndex];
+    const oracleAnswer = document.querySelector('.oracle_answer');
+    if (oracleAnswer) {
+        oracleAnswer.textContent = eightBallMessages[randomIndex];
+    }
 }
 
 // BOILER PLATE STUFF TO PREVENT SCROLL
@@ -83,57 +86,57 @@ document.addEventListener("click", function() {
 window.addEventListener("deviceorientation", (event) => {
     const beta = event.beta;  // Front-back tilt (-90 to 90)
     const gamma = event.gamma; // Left-right tilt (-90 to 90)
-    // const scrollSpeed = 3; // Adjust as needed
 
-        // Map beta angle to a scrolling speed range
-    function mapRange(value, inMin, inMax, outMin, outMax) {
-        return Math.min(outMax, Math.max(outMin, (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin));
-    }
-            
-    let scrollSpeed = mapRange(Math.abs(beta), 0, 90, 0, 20); // Scroll faster when tilting more
-    
-    if (beta > 30) {
+    if (!fragments || !selectedStone) return;
 
-    } else if (beta < -10) {
-
-    } else if (Math.abs(gamma) > 45) {
-        const tiltX = gamma/3; // Adjust the divisor to control tilt intensity
-        const oracleBody = document.querySelector('.oracleBody');
-
-        if (oracleBody) {
-            oracleBody.style.transform = `rotateY(-${tiltX}deg)`;
+    // Handle text fragment highlighting
+    fragments.forEach(fragment => {
+        // First unhighlight all fragments
+        fragment.unhighlight();
+        
+        // Then highlight based on tilt
+        if (fragment.messageId === currentMessageId) {
+            if (gamma < -15 && fragment.type === 'first') {
+                fragment.highlight(selectedStone);
+            }
+            else if (gamma > 15 && fragment.type === 'second') {
+                fragment.highlight(selectedStone);
+            }
+            else if (beta > 15 && fragment.type === 'reflection') {
+                fragment.highlight(selectedStone);
+            }
         }
+    });
 
-        if (!hasTiltTriggered) {
-            // document.body.style.backgroundColor = "black"; // Tilted left or right
-            hasTiltTriggered = true;
-
-            setTimeout(() => {
-                const oracleDiv = document.querySelector('.oracle_answer');
-        
-                // Add fade-out effect
-                oracleDiv.classList.remove("fade-in");
-                oracleDiv.classList.add("fade-out");
-        
+    // Handle answer revealing
+    const oracleWrapper = document.querySelector('.oracle_wrapper');
+    const oracleAnswer = document.querySelector('.oracle_answer');
+    
+    if (oracleWrapper && oracleAnswer) {
+        // If tilting down (beta > 30 degrees)
+        if (beta > 30) {
+            if (!hasTiltTriggered) {
+                hasTiltTriggered = true;
+                
+                // Fade out current answer
+                oracleAnswer.classList.remove("fade-in");
+                oracleAnswer.classList.add("fade-out");
+                
                 setTimeout(() => {
-                    changeOracleColor();
+                    // Get new answer
                     getEightBallMessage();
-        
-                    // Add fade-in effect
-                    oracleDiv.classList.remove("fade-out");
-                    oracleDiv.classList.add("fade-in");
-        
-                    // ✅ Reset cooldown **AFTER** fade-in finishes
+                    
+                    // Fade in new answer
+                    oracleAnswer.classList.remove("fade-out");
+                    oracleAnswer.classList.add("fade-in");
+                    
+                    // Reset cooldown after animation
                     setTimeout(() => {
                         hasTiltTriggered = false;
-                    }, 1000); // Adjust based on fade-in time
-        
-                }, 1500); // Wait for fade-out before updating text
-        
-            }, 500); // Delay before updating message
+                    }, 1000);
+                }, 500);
+            }
         }
-    } else {
-        document.body.style.backgroundColor = "white"; // Default
     }
 });
 
@@ -305,7 +308,7 @@ class TextFragment {
         this.baseX = baseX;
         this.baseY = baseY;
         this.time = Math.random() * 1000;
-        this.speed = (0.7 + Math.random() * 3) * 0.3; // Reduced speed for gentler movement
+        this.speed = (0.1 + Math.random() * 0.3) * 0.3; // Much slower base speed
         this.opacityRange = {
             min: 0.1 + Math.random() * 0.15,
             max: 0.3 + Math.random() * 0.2
@@ -315,6 +318,8 @@ class TextFragment {
         this.type = type;
         this.messageId = messageId;
         this.highlightTimeout = null;
+        this.orbitRadius = 20 + Math.random() * 30; // Random orbit radius between 20-50px
+        this.orbitSpeed = 0.1 + Math.random() * 0.3; // Much slower orbit speed
         
         this.element.style.fontSize = `${this.size}px`;
         this.element.style.transform = `skew(${this.skew}deg)`;
@@ -323,17 +328,22 @@ class TextFragment {
     update(deltaTime) {
         this.time += deltaTime * this.speed;
         
-        // Reduced movement range for more contained motion
-        const noiseX = perlin.noise2D(this.time * 0.001, 0) * 20; // Reduced from 180 to 20
-        const noiseY = perlin.noise2D(0, this.time * 0.001) * 20; // Reduced from 180 to 20
+        // Calculate circular motion
+        const orbitAngle = this.time * this.orbitSpeed;
+        const orbitX = Math.cos(orbitAngle) * this.orbitRadius;
+        const orbitY = Math.sin(orbitAngle) * this.orbitRadius;
         
-        const x = Math.max(0, Math.min(100, this.baseX + noiseX));
-        const y = Math.max(0, Math.min(100, this.baseY + noiseY));
+        // Add some noise to the orbit for more organic movement
+        const noiseX = perlin.noise2D(this.time * 0.0001, 0) * 5; // Slower noise
+        const noiseY = perlin.noise2D(0, this.time * 0.0001) * 5; // Slower noise
+        
+        const x = Math.max(0, Math.min(100, this.baseX + orbitX + noiseX));
+        const y = Math.max(0, Math.min(100, this.baseY + orbitY + noiseY));
         this.element.style.left = `${x}%`;
         this.element.style.top = `${y}%`;
         
         if (!this.element.classList.contains('highlighted')) {
-            const opacityNoise = (perlin.noise2D(this.time * 0.005, this.time * 0.005) + 1) * 0.5;
+            const opacityNoise = (perlin.noise2D(this.time * 0.0005, this.time * 0.0005) + 1) * 0.5; // Slower opacity changes
             const opacity = this.opacityRange.min + 
                            (this.opacityRange.max - this.opacityRange.min) * opacityNoise;
             this.element.style.opacity = opacity;
@@ -389,7 +399,7 @@ function initializeTextCloud() {
     // Add instruction text
     const instruction = document.createElement('div');
     instruction.className = 'instruction-text';
-    instruction.textContent = 'Tilt your device to reveal wisdom';
+    instruction.textContent = 'Tilt your vessel to read your fortune';
     document.body.appendChild(instruction);
 
     // Fade out instruction after 3 seconds
@@ -479,33 +489,6 @@ function handleStoneSelection(stoneId) {
     });
 }
 
-// Update device orientation handler
-window.addEventListener("deviceorientation", (event) => {
-    const beta = event.beta;
-    const gamma = event.gamma;
-
-    if (!fragments || !selectedStone) return;
-
-    fragments.forEach(fragment => {
-        fragment.unhighlight();
-        
-        // Only highlight if fragment belongs to current message
-        if (fragment.messageId === currentMessageId) {
-            if (gamma < -15 && fragment.type === 'first') {
-                fragment.highlight(selectedStone);
-            }
-            // Right tilt: highlight second part
-            else if (gamma > 15 && fragment.type === 'second') {
-                fragment.highlight(selectedStone);
-            }
-            // Down tilt: highlight reflections
-            else if (beta > 15 && fragment.type === 'reflection') {
-                fragment.highlight(selectedStone);
-            }
-        }
-    });
-});
-
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded');
@@ -524,9 +507,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-const markers = ['(｡•́︿•̀｡)', '(◕‿◕✿)', '(╯°□°）╯︵ ┻━┻', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', '(ง •̀_•́)ง', '(ノಠ益ಠ)ノ彡┻━┻', '(づ｡◕‿‿◕｡)づ', '(っ◔◡◔)っ ♥', '(ﾉ´ヮ`)ﾉ*: ･ﾟ', '(◕ᴗ◕✿)', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ', '(◕‿◕)'];
+// Update markers array with more kaomojis
+const outerMarkers = ['(｡•́︿•̀｡)', '(◕‿◕✿)', '(╯°□°）╯︵ ┻━┻', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', '(ง •̀_•́)ง', '(ノಠ益ಠ)ノ彡┻━┻', '(づ｡◕‿‿◕｡)づ', '(っ◔◡◔)っ ♥', '(ﾉ´ヮ`)ﾉ*: ･ﾟ', '(◕ᴗ◕✿)', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ', '(◕‿◕)'];
+const innerMarkers = ['(´･ω･`)', '(｡♥‿♥｡)', '(╥﹏╥)', '(◠‿◠✿)', '(⊙_☉)', '(◑‿◐)', '(◕‿◕✿)', '(◠‿◠)'];
 
-// Initialize markers in a circle
+// Initialize markers in concentric circles
 function initializeMarkers() {
     const markersContainer = document.querySelector('.markers-container');
     if (!markersContainer) return;
@@ -534,14 +519,15 @@ function initializeMarkers() {
     // Clear existing markers
     markersContainer.innerHTML = '';
     
-    markers.forEach((symbol, index) => {
+    // Create outer ring
+    outerMarkers.forEach((symbol, index) => {
         const marker = document.createElement('div');
-        marker.className = 'marker';
+        marker.className = 'marker outer';
         marker.textContent = symbol;
         
-        // Calculate position on circle
-        const angle = (index / markers.length) * Math.PI * 2;
-        const radius = 120;
+        // Calculate position on outer circle
+        const angle = (index / outerMarkers.length) * Math.PI * 2;
+        const radius = window.innerWidth * 0.40; // 40% of viewport width
         
         const x = Math.cos(angle) * radius + 150;
         const y = Math.sin(angle) * radius + 150;
@@ -549,14 +535,40 @@ function initializeMarkers() {
         marker.style.left = `${x - 20}px`;
         marker.style.top = `${y - 20}px`;
         
-        // Add click handler that first requests permission
         marker.addEventListener('click', () => {
             requestPermission().then(() => {
-                handleMarkerSelection(index);
+                handleMarkerSelection(index, 'outer');
             }).catch((error) => {
                 console.error('Permission error:', error);
-                // Proceed anyway if permission fails
-                handleMarkerSelection(index);
+                handleMarkerSelection(index, 'outer');
+            });
+        });
+        
+        markersContainer.appendChild(marker);
+    });
+    
+    // Create inner ring
+    innerMarkers.forEach((symbol, index) => {
+        const marker = document.createElement('div');
+        marker.className = 'marker inner';
+        marker.textContent = symbol;
+        
+        // Calculate position on inner circle
+        const angle = (index / innerMarkers.length) * Math.PI * 2;
+        const radius = window.innerWidth * 0.25; // 25% of viewport width
+        
+        const x = Math.cos(angle) * radius + 150;
+        const y = Math.sin(angle) * radius + 150;
+        
+        marker.style.left = `${x - 20}px`;
+        marker.style.top = `${y - 20}px`;
+        
+        marker.addEventListener('click', () => {
+            requestPermission().then(() => {
+                handleMarkerSelection(index, 'inner');
+            }).catch((error) => {
+                console.error('Permission error:', error);
+                handleMarkerSelection(index, 'inner');
             });
         });
         
@@ -564,14 +576,14 @@ function initializeMarkers() {
     });
 }
 
-// Update selection handler
-function handleMarkerSelection(index) {
+// Update selection handler to handle both rings
+function handleMarkerSelection(index, ring) {
     const markersContainer = document.querySelector('.markers-container');
     const markers = document.querySelectorAll('.marker');
     const instructionText = document.querySelector('.instruction-text');
     
     markers.forEach((marker, i) => {
-        if (i === index) {
+        if (marker.classList.contains(ring) && i === index) {
             marker.classList.add('selected');
         } else {
             marker.classList.remove('selected');
