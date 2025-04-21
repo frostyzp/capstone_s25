@@ -11,8 +11,7 @@ let hasGeneratedWish1 = false;
 // Add color array at the top with other declarations
 const brightColors = [
     'rgb(244, 250, 255)', // pink
-    'rgb(255, 255, 255)', // white
-    'rgb(255, 255, 0)'    // yellow
+    'rgb(255, 255, 255)'  // white
 ];
 
 function getRandomColor() {
@@ -349,6 +348,7 @@ function createRipplingText(lines, startPosition = 20) {
             transition: opacity 1s ease-out, width 1s ease, filter 10s linear;
             z-index: 3;
             filter: blur(0px);
+            text-shadow: 0 0 1px ${lineColor}, 0 0 3px ${lineColor};
         `;
         
         textContainer.appendChild(lineElement);
@@ -390,14 +390,14 @@ function createRipplingText(lines, startPosition = 20) {
             
             // Fade out after 12 seconds
             setTimeout(() => {
-                lineElement.style.transition = 'opacity 3s ease-out';
+                lineElement.style.transition = 'opacity 5s ease-out';
                 lineElement.style.opacity = '0';
                 
                 // Remove element after fade out completes
                 setTimeout(() => {
                     lineElement.remove();
-                }, 3000);
-            }, 12000);
+                }, 5000);
+            }, 25000);
         }, lineIndex * 400);
 
         // Return a promise that resolves after the line has appeared
@@ -535,4 +535,3 @@ function addNewLine(container, text) {
         }
     });
 }
-

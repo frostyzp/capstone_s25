@@ -295,7 +295,7 @@ function enableOrientationFeatures() {
     console.log('Initializing textillate...');
     
     // Initialize textillate for skipping rock
-    $('.skippingRock, #landingPageButton').textillate({
+    $('.skippingRockText, #landingPageButton').textillate({
       initialDelay: 0,
       autoStart: true,
       in: {

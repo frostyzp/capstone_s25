@@ -76,14 +76,14 @@ function draw() {
   fill('white');
   noStroke();
 
-  let myText = `
-  campfire
-  of
-  dreams
-  ^
-  ^
-  `;
-  text(myText, width / 2, 200);
+  // let myText = `
+  // campfire
+  // of
+  // dreams
+  // ^
+  // ^
+  // `;
+  // text(myText, width / 2, 200);
 }
 
 function windowResized() {
@@ -135,7 +135,7 @@ function drawFaceLandmarks(){
       textAlign(CENTER, CENTER);
       textSize(17);
       fill('white');
-      text('Your face needs to be present here.', width/2, height/4);
+      // text('Your face needs to be present here.', width/2, height/4);
 
   }
   } 

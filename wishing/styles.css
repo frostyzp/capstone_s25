@@ -306,6 +306,11 @@ button {
     left: 45%;
     bottom: 5%;
     transform: translateX(-50%);
+    /* width: 50%; */
+}
+
+.aria-label {
+    width: 50%;
 }
 
 #skippingRock:hover {
@@ -413,4 +418,20 @@ canvas {
     z-index: 1000;
     pointer-events: none;
     user-select: none;
+}
+
+.skippingRockText {
+    width: 60%;
+}
+
+.secondPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box;
 }
