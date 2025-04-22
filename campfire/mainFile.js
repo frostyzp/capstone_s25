@@ -370,7 +370,7 @@ function fadeToBlack() {
     // Create and show the text
     const textContainer = document.createElement('div');
     textContainer.className = 'awakening-text';
-    textContainer.textContent = 'the campfire of dreams <br> ';
+    textContainer.textContent = 'the campfire of dreams';
     textContainer.style.cssText = `
         position: fixed;
         top: 50%;
