@@ -74,6 +74,28 @@ function createAsciiRipple(x, y, color) {
     animateRipple();
 }
 
+// Define mock data and state variables globally
+const mockWishes = [
+    {
+        wish: "I dream of a treehouse where birds sing ancient melodies feelings of wonder",
+        skips: 42,
+        date: "4/20/25"
+    },
+    {
+        wish: "I dream of a garden where time stands still feelings of peace",
+        skips: 17,
+        date: "4/21/25"
+    },
+    {
+        wish: "I dream of a cloud where rainbows are born feelings of joy",
+        skips: 29,
+        date: "4/22/25"
+    }
+];
+
+let currentWishIndex = 0;
+let wishes = [...mockWishes];
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded');
     let storedUserInput = '';
@@ -91,16 +113,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchEndX = 0;
     let touchStartTime = 0;
 
-    // Add click handler for submit button
+    // Get DOM elements
+    const viewWishesBtn = document.getElementById('view-wishes-btn');
+    const wishesModal = document.getElementById('wishes-modal');
+    const modalOverlay = document.querySelector('.modal-overlay');
+    const closeModalBtn = document.getElementById('close-modal');
+    const wishesList = document.getElementById('wishes-list');
+    const prevBtn = document.querySelector('.nav-arrow.prev');
+    const nextBtn = document.querySelector('.nav-arrow.next');
     const submitButton = document.getElementById('submit-wish');
-    if (submitButton) {
-        submitButton.addEventListener('click', () => {
-            storedUserInput = document.getElementById('wish-input').value;
-            switchToPage('thirdPage');
-        });
-    } else {
-        console.error('Submit button not found');
-    }
 
     // Add swipe gesture detection for the third page
     const thirdPage = document.getElementById('third-page');
@@ -148,17 +169,37 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Trigger haptic feedback if supported
             if ('vibrate' in navigator) {
-                // Vibrate for 100ms
                 navigator.vibrate(100);
             }
+
+            // Animate the rock
+            const rock = document.getElementById('skippingRock');
+            
+            // Reset any existing animations
+            rock.classList.remove('throwing', 'reappearing');
+            
+            // Force a reflow to ensure the reset takes effect
+            void rock.offsetWidth;
+            
+            // Start the throw animation
+            rock.classList.add('throwing');
+            
+            // After throw animation completes, wait 3 seconds then fade in
+            setTimeout(() => {
+                rock.classList.remove('throwing');
+                rock.classList.add('reappearing');
+                
+                // Don't remove the reappearing class - let it stay visible
+                // The next swipe will reset it anyway
+            }, 3000);
             
             const { lines } = generateSimplePoem(storedUserInput);
             console.log('Generated lines:', lines);
             
             // Calculate starting position based on velocity and distance
             const basePosition = 5; // Base starting position (5% from bottom)
-            const velocityFactor = Math.min(Math.max(swipeVelocity * 500, -10), 20); // Scale velocity down
-            const distanceFactor = Math.min(swipeDistance / 20, 20); // Scale distance down
+            const velocityFactor = Math.min(Math.max(swipeVelocity * 500, -10), 20);
+            const distanceFactor = Math.min(swipeDistance / 20, 20);
             const startPosition = basePosition + velocityFactor + distanceFactor;
             
             console.log('Text starting position:', startPosition);
@@ -280,6 +321,122 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // Debug logging
+    console.log('Modal elements:', {
+        viewWishesBtn,
+        wishesModal,
+        modalOverlay,
+        closeModalBtn,
+        wishesList
+    });
+
+    function displayCurrentWish() {
+        console.log('Displaying wish:', currentWishIndex, wishes[currentWishIndex]);
+        if (!wishesList) return;
+
+        if (wishes.length === 0) {
+            wishesList.innerHTML = `
+                <div class="wish-item">
+                    <div class="wish-text">no wishes yet...</div>
+                    <div class="wish-stats">
+                        <span class="skipped-count">skipped<br>0 times</span>
+                        <span class="found-date">found on<br>--/--/--</span>
+                    </div>
+                </div>`;
+            return;
+        }
+
+        const wish = wishes[currentWishIndex];
+        wishesList.innerHTML = `
+            <div class="wish-item">
+                <div class="wish-text">${wish.wish}</div>
+                <div class="wish-stats">
+                    <span class="skipped-count">skipped<br>${wish.skips} times</span>
+                    <span class="found-date">found on<br>${wish.date}</span>
+                </div>
+            </div>`;
+    }
+
+    function formatDate(date) {
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const yy = String(date.getFullYear()).slice(-2);
+        return `${mm}/${dd}/${yy}`;
+    }
+
+    function addWishToList(wishText) {
+        const today = new Date();
+        const wish = {
+            wish: wishText,
+            skips: Math.floor(Math.random() * 50) + 1,
+            date: `${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}/${String(today.getFullYear()).slice(-2)}`
+        };
+        wishes.push(wish);
+        currentWishIndex = wishes.length - 1;
+        console.log('Added new wish:', wish);
+    }
+
+    // Navigation event listeners
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Previous clicked, current index:', currentWishIndex);
+            if (currentWishIndex <= 0) {
+                currentWishIndex = wishes.length - 1; // Loop to end
+            } else {
+                currentWishIndex--;
+            }
+            displayCurrentWish();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Next clicked, current index:', currentWishIndex);
+            if (currentWishIndex >= wishes.length - 1) {
+                currentWishIndex = 0; // Loop to beginning
+            } else {
+                currentWishIndex++;
+            }
+            displayCurrentWish();
+        });
+    }
+
+    // Modal open/close handlers
+    if (viewWishesBtn) {
+        viewWishesBtn.addEventListener('click', () => {
+            console.log('Opening modal');
+            if (wishesModal && modalOverlay) {
+                wishesModal.classList.add('visible');
+                modalOverlay.classList.add('visible');
+                displayCurrentWish(); // Display current wish when modal opens
+            }
+        });
+    }
+
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            if (wishesModal && modalOverlay) {
+                wishesModal.classList.remove('visible');
+                modalOverlay.classList.remove('visible');
+            }
+        });
+    }
+
+    // Form submission handler
+    if (submitButton) {
+        submitButton.addEventListener('click', () => {
+            const input1 = document.getElementById('wish-input-1').value;
+            const input2 = document.getElementById('wish-input-2').value;
+            const input3 = document.getElementById('wish-input-3').value;
+            
+            const wishText = `I dream of a ${input1} where ${input2} feelings of ${input3}`;
+            addWishToList(wishText);
+            switchToPage('thirdPage');
+        });
+    }
 });
 
 function createRipplingText(lines, startPosition = 20) {
@@ -345,10 +502,10 @@ function createRipplingText(lines, startPosition = 20) {
             font-family: 'VictorMono', monospace;
             font-size: ${fontSize}px;
             color: ${lineColor};
-            transition: opacity 1s ease-out, width 1s ease, filter 10s linear;
+            transition: opacity 1s ease-out, width 1s ease, transform 10s ease, filter 5s ease;
             z-index: 3;
+            transform: scale(1);
             filter: blur(0px);
-            text-shadow: 0 0 1px ${lineColor}, 0 0 3px ${lineColor};
         `;
         
         textContainer.appendChild(lineElement);
@@ -383,10 +540,15 @@ function createRipplingText(lines, startPosition = 20) {
             lineElement.style.opacity = opacity;
             console.log('Fading in line:', line);
             
-            // Start blur animation
+            // Start scale animation
             setTimeout(() => {
-                lineElement.style.filter = 'blur(3px)';
+                lineElement.style.transform = 'scale(1.1)';
             }, 50);
+            
+            // Start blur animation after 15 seconds
+            setTimeout(() => {
+                lineElement.style.filter = 'blur(2px)';
+            }, 10000);
             
             // Fade out after 12 seconds
             setTimeout(() => {
@@ -411,6 +573,8 @@ function createRipplingText(lines, startPosition = 20) {
     // Animate all lines sequentially
     async function animateLines() {
         console.log('Starting line animation with lines:', lines);
+        // Add 1 second delay before starting the first line
+        await new Promise(resolve => setTimeout(resolve, 1000));
         for (let i = 0; i < lines.length && i < 7; i++) {
             await animateLine(lines[i], i);
         }

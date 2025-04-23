@@ -1,4 +1,9 @@
 function generateSimplePoem(userInput) {
+    // Validate input
+    if (!userInput || typeof userInput !== 'string') {
+        userInput = '';
+    }
+
     // Process user input
     const words = RiTa.tokenize(userInput);
     const tags = RiTa.pos(words);
@@ -8,10 +13,15 @@ function generateSimplePoem(userInput) {
     let adjectives = [];
     let verbs = [];
     
-    for (let i = 0; i < words.length; i++) {
-        if (tags[i].startsWith('nn')) nouns.push(words[i]);
-        if (tags[i].startsWith('jj')) adjectives.push(words[i]);
-        if (tags[i].startsWith('vb')) verbs.push(words[i]);
+    // Add safety check for tags array
+    if (Array.isArray(tags) && tags.length > 0) {
+        for (let i = 0; i < words.length; i++) {
+            if (tags[i] && typeof tags[i] === 'string') {
+                if (tags[i].startsWith('nn')) nouns.push(words[i]);
+                if (tags[i].startsWith('jj')) adjectives.push(words[i]);
+                if (tags[i].startsWith('vb')) verbs.push(words[i]);
+            }
+        }
     }
     
     // Add defaults if none found ----------------------------------------------------------------------------------

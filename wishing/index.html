@@ -120,11 +120,19 @@
 
         <div id="input-container">
             <div id="wish-input-container">
-                <!-- <textarea id="wish-input" placeholder="describe a space you dream about living in"></textarea> -->
-                
-                <textarea id="wish-input" placeholder="describe a space you dream about living in"></textarea>
-
-                <button id="submit-wish">( go to the wishing pond )</button>
+                <div class="input-line">
+                    <span>I dream of a</span>
+                    <input type="text" id="wish-input-1" placeholder="_ _ _">
+                    <span>where</span>
+                </div>
+                <div class="input-line">
+                    <input type="text" id="wish-input-2" placeholder=" _ _ _"">
+                </div>
+                <div class="input-line">
+                    <span>feelings of</span>
+                    <input type="text" id="wish-input-3" placeholder="_ _ _ ">
+                </div>
+                <button id="submit-wish">( go to the wishing sea )</button>
             </div>
         </div>
     </div>
@@ -132,51 +140,64 @@
     <!--  ########################################################################################################### -->
     <div class="thirdPage page hidden" id="third-page">
         <div id="ripple-container">
-          <div class="background_ascii">
-
-          </div>
+          <div class="background_ascii"></div>
             <div id="ripple-1"></div>
-
-            <p style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; color: white; z-index: 4;"> Skip your rocks into the universe </p>
-            <p> ( )</p>
-
+            <div class="cloud-container">
+                <pre class="ascii-cloud cloud-1">
+                  ( .- )
+                  (   .  )   
+             ((        )
+             =(.( ..__ :.)
+             ...--_--_____;;,....____
+                </pre>
+                <pre class="ascii-cloud cloud-2">
+                  ( .- )
+                  (   .  )   
+             ((        )
+             =(.( ..__ :.)
+             ...--_--_____;;,....____
+'             '
+                </pre>
+                <pre class="ascii-cloud cloud-3">
+     .-~-.
+   .'     '.
+  /         \
+ '           '
+                </pre>
+            </div>
+            <p style="position: fixed; top: 10%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; color: white; z-index: 4;"> skip your stones into the universe </p>
+            <div id="arrow"> ^ <br> |<br> |</div>
+            <pre id="skippingRock" data-can-move>
+              _.-'~~`~~'-._
+           .-~`   `~.     -.    
+         .'      .          `.
+           `~-.____________.-~`
+            </pre>
+            <div class="button-container">
+                <button id="view-wishes-btn">( view other wishes )</button>
+            </div>
         </div>
-        <!-- <div class="landscape left">
-           \\ |||| <br>
-             || \\ || \ <br>
-             | \\ \\  <br>
-             |||  <br>
-              |||  <br>
-               |||wwVV w ^^ ^^^   <br>
-        </div>
-        <div class="landscape right">
-            %%  + <br>
-             &^^ grass +<br>
-             rocks ~~ ``<br>
-        </div>
-        <div class="landscape left">
-          \\ |||| <br>
-            || \\ || \ <br>
-            | \\ \\  <br>
-            |||  <br>
-             |||  <br>
-              |||wwVV w ^^ ^^^   <br>
-       </div> -->
-        <div id="arrow"> ^ <br> |<br> |</div>
-        <pre id="skippingRock" data-can-move>
-          _.-'~~`~~'-._
-       .-~`   `~.     -.    
-     .'      .          `.
-       `~-.____________.-~`
-        </pre>
     </div>
 
-
-
-    
-
-
-
+    <!-- Modal for viewing other wishes -->
+    <div class="modal-overlay"></div>
+    <div id="wishes-modal">
+        <p>other rocks skipped</p>
+        <div class="wish-navigation">
+            <span class="nav-arrow prev">&lt;</span>
+            <pre class="ascii-rock">
+   _.-'~~`~~'-._
+   .-~`   `~.     -.    
+   .'      .          `.
+  `~-.____________.-~`
+            </pre>
+            <span class="nav-arrow next">&gt;</span>
+        </div>
+        <div id="wishes-list">
+            <!-- Content will be dynamically populated by JavaScript -->
+        </div>
+        <button id="close-modal">( close )</button>
+    </div>
 
     <script>
       // Function to switch pages
