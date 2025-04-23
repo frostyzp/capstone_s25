@@ -41,59 +41,66 @@
 </head>
 
 <body data-playhtml>
-    <svg style="display: none">
-        <defs>
-            <filter id="ripple-displacement">
-                <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise">
-                    <animate attributeName="baseFrequency" 
-                            values="0.01;0.03;0.01" 
-                            keyTimes="0;0.5;1"
-                            keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
-                            calcMode="spline"
-                            dur="4s" 
-                            repeatCount="indefinite"/>
-                </feTurbulence>
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" xChannelSelector="R" yChannelSelector="G">
-                    <animate attributeName="scale" 
-                            values="15;25;15" 
-                            keyTimes="0;0.5;1"
-                            keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
-                            calcMode="spline"
-                            dur="3s" 
-                            repeatCount="indefinite"/>
-                </feDisplacementMap>
-            </filter>
-        </defs>
-    </svg>
+    <div class="filter-container">
+        <svg style="display: none">
+            <defs>
+                <filter id="ripple-displacement">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise">
+                        <animate attributeName="baseFrequency" 
+                                values="0.01;0.03;0.01" 
+                                keyTimes="0;0.5;1"
+                                keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
+                                calcMode="spline"
+                                dur="4s" 
+                                repeatCount="indefinite"/>
+                    </feTurbulence>
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" xChannelSelector="R" yChannelSelector="G">
+                        <animate attributeName="scale" 
+                                values="15;25;15" 
+                                keyTimes="0;0.5;1"
+                                keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
+                                calcMode="spline"
+                                dur="3s" 
+                                repeatCount="indefinite"/>
+                    </feDisplacementMap>
+                </filter>
+            </defs>
+        </svg>
 
-    <svg>
-        <filter id="wavy">
-        <feTurbulence id="turbulence" type="turbulence" numOctaves="1" 
-        result="NOISE"></feTurbulence>
-         <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="50">
-         </feDisplacementMap>
-        <animate xlink:href="#turbulence" attributeName="baseFrequency" dur="60s" keyTimes="0;0.5;1"
-      values="0.01 0.02;0.02 0.04;0.01 0.02" repeatCount="indefinite"></animate>
-       </filter>
-      </svg>
+        <svg>
+            <filter id="wavy">
+            <feTurbulence id="turbulence" type="turbulence" numOctaves="1" 
+            result="NOISE"></feTurbulence>
+             <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="50">
+             </feDisplacementMap>
+            <animate xlink:href="#turbulence" attributeName="baseFrequency" dur="60s" keyTimes="0;0.5;1"
+          values="0.01 0.02;0.02 0.04;0.01 0.02" repeatCount="indefinite"></animate>
+         </filter>
+        </svg>
 
 
-      <div class="landingPage page visible">
-        <div class="background-image"></div>
-        <div class="ascii-rocks">
-            <!-- <div class="rockPrevEntry rock-1">
-                _.-'~~`~~'-._ <br>
-                .-~` rock  `~-.  <br>
-              .'    one           `. <br>
-                `~-.____________.-~` <br>
-            </div>
-            <div class="rockPrevEntry rock-2">
-                _.-'~~`~~'-._ <br>
-                .-~` rock  `~-.  <br>
-              .'    two           `. <br>
-                `~-.____________.-~` <br>
-            </div>
-            <div class="rockPrevEntry rock-3">
+        <div class="landingPage page visible">
+          <div class="background-image"></div>
+          <div class="ascii-rocks">
+              <!-- <div class="rockPrevEntry rock-1">
+                  _.-'~~`~~'-._ <br>
+                  .-~` rock  `~-.  <br>
+                .'    one           `. <br>
+                  `~-.____________.-~` <br>
+              </div>
+              <div class="rockPrevEntry rock-2">
+                  _.-'~~`~~'-._ <br>
+                  .-~` rock  `~-.  <br>
+                .'    two           `. <br>
+                  `~-.____________.-~` <br>
+              </div>
+              <div class="rockPrevEntry rock-3">
+                  _.-'~~`~~'-._ <br>
+                  .-~` rock  `~-.  <br>
+                .'    three         `. <br>
+                  `~-.____________.-~` <br>
+              </div>
+              <div class="rockPrevEntry rock-3">
                 _.-'~~`~~'-._ <br>
                 .-~` rock  `~-.  <br>
               .'    three         `. <br>
@@ -104,154 +111,149 @@
               .-~` rock  `~-.  <br>
             .'    three         `. <br>
               `~-.____________.-~` <br>
+          </div> -->
           </div>
-          <div class="rockPrevEntry rock-3">
-            _.-'~~`~~'-._ <br>
-            .-~` rock  `~-.  <br>
-          .'    three         `. <br>
-            `~-.____________.-~` <br>
+          <!-- <p class="skippingRock">
+          _.-'~~`~~'-._
+          .-~` skip  ping  `~-. 
+        .'    st   o ne           `.
+          `~-.____________.-~`
+          _.-'~~`~~'-._
+          .-~` skip  ping  `~-. 
+        .'    st   o ne           `.
+          `~-.____________.-~`
+          <br>
+          _.-'~~`~~'-._
+          .-~` skip  ping  `~-. 
+        .'    st   <br>o ne           `.
+          `~-.____________.-~`
+          </p> -->
+
+          <p class="skippingRockText"> Skip a rock and make a wish to the universe.
+          </p>
+           
+          <button id="landingPageButton">( find a rock to skip )</button>
+      </div>
+
+
+      <!--  ########################################################################################################### -->
+
+      <div class="secondPage page hidden" id="second-page">
+        <!-- <div id="previous wishes">
+          <p> wishes retrieved from the wishing pond </p>
+    
         </div> -->
-        </div>
-        <!-- <p class="skippingRock">
-        _.-'~~`~~'-._
-        .-~` skip  ping  `~-. 
-      .'    st   o ne           `.
-        `~-.____________.-~`
-        _.-'~~`~~'-._
-        .-~` skip  ping  `~-. 
-      .'    st   o ne           `.
-        `~-.____________.-~`
-        <br>
-        _.-'~~`~~'-._
-        .-~` skip  ping  `~-. 
-      .'    st   <br>o ne           `.
-        `~-.____________.-~`
-        </p> -->
 
-        <p class="skippingRockText"> Skip a rock and make a wish to the universe.
-        </p>
-         
-        <button id="landingPageButton">( find a rock to skip )</button>
-    </div>
+          <div id="input-container">
+              <div id="wish-input-container">
+                  <div class="input-line">
+                      <span>I dream of a</span>
+                      <input type="text" id="wish-input-1" placeholder=" ">
+                      <span>where</span>
+                  </div>
+                  <div class="input-line">
+                      <input type="text" id="wish-input-2" placeholder=" "">
+                  </div>
+                  <div class="input-line">
+                      <span>feelings of</span>
+                      <input type="text" id="wish-input-3" placeholder="  ">
+                  </div>
+                  <button id="submit-wish">( go to the wishing sea )</button>
+              </div>
+          </div>
+      </div>
 
+      <!--  ########################################################################################################### -->
+      <div class="thirdPage page hidden" id="third-page">
+          <div id="ripple-container">
+            <div class="background_ascii"></div>
+              <div id="ripple-1"></div>
+              <div class="cloud-container">
+                  <pre class="ascii-cloud cloud-1">
+                    ( .- )
+                    (   .  )   
+               ((        )
+               =(.( ..__ :.)
+               ...--_--_____;;,....____
+                  </pre>
+                  <pre class="ascii-cloud cloud-2">
+                    ( .- )
+                    (   .  )   
+               ((        )
+               =(.( ..__ :.)
+               ...--_--_____;;,....____
+'               '
+                  </pre>
+                  <pre class="ascii-cloud cloud-3">
+       .-~-.
+     .'     '.
+    /         \
+   '           '
+                  </pre>
+              </div>
+              <p style="position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; color: white; z-index: 4;">  </p>
+              <div id="arrow"> ^ <br> |<br> |</div>
+              <pre id="skippingRock" data-can-move>
+                _.-'~~`~~'-._
+             .-~`   `~.     -.    
+           .'      .          `.
+             `~-.____________.-~`
+              </pre>
+              <div class="button-container">
+                  <button id="view-wishes-btn">( view other wishes )</button>
+              </div>
+          </div>
+      </div>
 
-    <!--  ########################################################################################################### -->
-
-    <div class="secondPage page hidden" id="second-page">
-      <!-- <div id="previous wishes">
-        <p> wishes retrieved from the wishing pond </p>
-  
-      </div> -->
-
-        <div id="input-container">
-            <div id="wish-input-container">
-                <div class="input-line">
-                    <span>I dream of a</span>
-                    <input type="text" id="wish-input-1" placeholder=" ">
-                    <span>where</span>
-                </div>
-                <div class="input-line">
-                    <input type="text" id="wish-input-2" placeholder=" "">
-                </div>
-                <div class="input-line">
-                    <span>feelings of</span>
-                    <input type="text" id="wish-input-3" placeholder="  ">
-                </div>
-                <button id="submit-wish">( go to the wishing sea )</button>
-            </div>
-        </div>
-    </div>
-
-    <!--  ########################################################################################################### -->
-    <div class="thirdPage page hidden" id="third-page">
-        <div id="ripple-container">
-          <div class="background_ascii"></div>
-            <div id="ripple-1"></div>
-            <div class="cloud-container">
-                <pre class="ascii-cloud cloud-1">
-                  ( .- )
-                  (   .  )   
-             ((        )
-             =(.( ..__ :.)
-             ...--_--_____;;,....____
-                </pre>
-                <pre class="ascii-cloud cloud-2">
-                  ( .- )
-                  (   .  )   
-             ((        )
-             =(.( ..__ :.)
-             ...--_--_____;;,....____
-'             '
-                </pre>
-                <pre class="ascii-cloud cloud-3">
-     .-~-.
-   .'     '.
-  /         \
- '           '
-                </pre>
-            </div>
-            <p style="position: fixed; top: 15%; left: 50%; transform: translate(-50%, -50%); width: 100%; text-align: center; color: white; z-index: 4;">  </p>
-            <div id="arrow"> ^ <br> |<br> |</div>
-            <pre id="skippingRock" data-can-move>
-              _.-'~~`~~'-._
-           .-~`   `~.     -.    
+      <!-- Modal for viewing other wishes -->
+      <div class="modal-overlay"></div>
+      <div id="wishes-modal">
+          <p>other rocks skipped</p>
+          <div class="wish-navigation">
+              <span class="nav-arrow prev">&lt;</span>
+              <pre class="ascii-rock">
+         _.-'~~`~~'-._
+         .-~`   `~.     -.    
          .'      .          `.
-           `~-.____________.-~`
-            </pre>
-            <div class="button-container">
-                <button id="view-wishes-btn">( view other wishes )</button>
-            </div>
-        </div>
-    </div>
+        `~-.____________.-~`
+              </pre>
+              <span class="nav-arrow next">&gt;</span>
+          </div>
+          <div id="wishes-list">
+              <!-- Content will be dynamically populated by JavaScript -->
+          </div>
+          <button id="close-modal">( close )</button>
+      </div>
 
-    <!-- Modal for viewing other wishes -->
-    <div class="modal-overlay"></div>
-    <div id="wishes-modal">
-        <p>other rocks skipped</p>
-        <div class="wish-navigation">
-            <span class="nav-arrow prev">&lt;</span>
-            <pre class="ascii-rock">
-   _.-'~~`~~'-._
-   .-~`   `~.     -.    
-   .'      .          `.
-  `~-.____________.-~`
-            </pre>
-            <span class="nav-arrow next">&gt;</span>
-        </div>
-        <div id="wishes-list">
-            <!-- Content will be dynamically populated by JavaScript -->
-        </div>
-        <button id="close-modal">( close )</button>
-    </div>
-
-    <script>
-      // Function to switch pages
-      function switchToPage(pageClass) {
-        console.log('Switching to page:', pageClass); // Add logging
-        document.querySelectorAll('.page').forEach(page => {
-          page.classList.add('hidden');
-          page.classList.remove('visible');
-        });
-        
-        const targetPage = document.querySelector('.' + pageClass);
-        if (targetPage) {
-            targetPage.classList.remove('hidden');
-            targetPage.classList.add('visible');
-            console.log('Page switched successfully'); // Add logging
-        } else {
-            console.error('Target page not found:', pageClass); // Add error logging
+      <script>
+        // Function to switch pages
+        function switchToPage(pageClass) {
+          console.log('Switching to page:', pageClass); // Add logging
+          document.querySelectorAll('.page').forEach(page => {
+            page.classList.add('hidden');
+            page.classList.remove('visible');
+          });
+          
+          const targetPage = document.querySelector('.' + pageClass);
+          if (targetPage) {
+              targetPage.classList.remove('hidden');
+              targetPage.classList.add('visible');
+              console.log('Page switched successfully'); // Add logging
+          } else {
+              console.error('Target page not found:', pageClass); // Add error logging
+          }
         }
-      }
-      
-      // Add event listener to transition to second page with the button
-      document.getElementById('landingPageButton').addEventListener('click', function() {
-        switchToPage('secondPage');
-      });
+        
+        // Add event listener to transition to second page with the button
+        document.getElementById('landingPageButton').addEventListener('click', function() {
+          switchToPage('secondPage');
+        });
 
-      // Make switchToPage available globally
-      window.switchToPage = switchToPage;
-    </script>
+        // Make switchToPage available globally
+        window.switchToPage = switchToPage;
+      </script>
 
+    </div>
 </body>
 
 </html>
