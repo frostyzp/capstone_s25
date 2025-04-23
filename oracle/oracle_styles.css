@@ -10,19 +10,120 @@ body {
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    background-color: #565656;
+    background-color: #222222;
     color: #ffffff;
     font-family: 'VictorMono', 'Courier New', monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.5s ease-out;
 }
 
 .elements-container {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    transition: opacity 0.5s ease-out;
+}
+
+.elements-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.permission-button, .content, h2 {
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.permission-button.hidden, .content.hidden, h2.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.permission-button {
+    font-family: 'VictorMono', 'Courier New', monospace;
+    position: fixed;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.permission-button button {
+    font-family: 'VictorMono', 'Courier New', monospace;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.content {
+    text-align: center;
+    padding: 20px;
+}
+
+#rotation-count {
+    display: inline-block;
+    min-width: 1.5em;
+    text-align: center;
+}
+
+.rotate-animation {
+    animation: rotateNumber 0.5s ease-out;
+    color: #ffffff;
+}
+
+@keyframes rotateNumber {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.5) rotate(180deg);
+    }
+    100% {
+        transform: scale(1) rotate(360deg);
+    }
+}
+
+.oracle_wrapper {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+.oracle_wrapper:not(.hidden) {
+    opacity: 1;
+}
+
+.rotation-counter {
+    font-family: 'VictorMono', 'Courier New', monospace;
+    color: #808080;
+    margin-bottom: 20px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.rotation-counter:not(.hidden) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ask-again-button {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.ask-again-button:not(.hidden) {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .element {
@@ -38,52 +139,13 @@ body {
     text-shadow: 0 0 10px rgba(128, 128, 128, 0.3);
     padding: 10px;
     border-radius: 5px;
+    text-align: center;
 }
 
 .element:hover {
     transform: scale(1.1);
     color: #ffffff;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.permission-button {
-    position: fixed;
-    bottom: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.permission-button button {
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    background-color: transparent;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.permission-button button:hover {
-    background-color: #45a049;
-}
-
-.content {
-    text-align: center;
-    padding: 20px;
-}
-
-.rotation-counter {
-    /* font-size: 1.5rem; */
-    margin-bottom: 20px;
-}
-
-.oracle_wrapper {
-    max-width: 80%;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    transition: opacity 0.5s ease;
 }
 
 .oracle_answer {
@@ -141,15 +203,16 @@ body {
 }
 
 .oracle_wrapper {
-    text-align: center;
-    border-radius: 20px;
-    outline: white;
-    height: 24rem;
-    transition: background-color 1s ease, box-shadow 1s ease; 
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    transition: opacity 0.5s ease;
 }
 
 .oracleBody {
-    background-color: #505050	;
+    /* background-color: #505050	; */
     border-radius: 20px; /* ✅ Adjust for roundness */
     padding: 2rem;
     perspective: 1000px; 
@@ -311,7 +374,7 @@ body {
 .text-fragment {
     position: absolute;
     color: #808080;
-    font-family: serif;
+    /* font-family: serif; */
     text-shadow: 0 0 2px rgba(128, 128, 128, 0.3),
                  0 0 4px rgba(128, 128, 128, 0.2),
                  0 0 6px rgba(128, 128, 128, 0.1);

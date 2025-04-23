@@ -199,13 +199,32 @@ const oracleMessages = [
 let selectedElement = null;
 let rotationCount = 0;
 let lastRotation = 0;
-let rotationThreshold = 30; // degrees
+let rotationThreshold = 45; // Increased threshold to 45 degrees
 let hasPermission = false;
+let lastRotationTime = 0;
+let rotationCooldown = 1000; // 1 second cooldown between rotations
+let rotationDirection = 0; // -1 for down, 1 for up, 0 for neutral
+let baseBackgroundColor = '#222222'; // Starting dark background
+
+function updateBackgroundColor() {
+    const percent = (rotationCount / 5) * 20; // 20% per rotation
+    const r = Math.floor(34 + (255 - 34) * (percent / 100));
+    const g = Math.floor(34 + (255 - 34) * (percent / 100));
+    const b = Math.floor(34 + (255 - 34) * (percent / 100));
+    document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+}
 
 // Initialize elements in a circle
 function initializeElements() {
     const container = document.querySelector('.elements-container');
     if (!container) return;
+
+    // Clear any existing elements
+    container.innerHTML = '';
+
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const radius = Math.min(window.innerWidth, window.innerHeight) * 0.3; // 30% of the smaller dimension
 
     elements.forEach((element, index) => {
         const div = document.createElement('div');
@@ -213,14 +232,16 @@ function initializeElements() {
         div.innerHTML = element.symbol.replace(/\n/g, '<br>');
         div.dataset.name = element.name;
 
-        // Position elements in a circle
+        // Calculate position on a circle
         const angle = (index / elements.length) * Math.PI * 2;
-        const radius = 150; // pixels
-        const x = Math.cos(angle) * radius + window.innerWidth / 2;
-        const y = Math.sin(angle) * radius + window.innerHeight / 2;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
 
+        // Position the element
+        div.style.position = 'absolute';
         div.style.left = `${x}px`;
         div.style.top = `${y}px`;
+        div.style.transform = 'translate(-50%, -50%)'; // Center the element on its position
 
         div.addEventListener('click', () => handleElementSelection(element));
         container.appendChild(div);
@@ -240,6 +261,8 @@ async function requestPermission() {
             if (permission === 'granted') {
                 hasPermission = true;
                 document.querySelector('.permission-button').classList.add('hidden');
+                document.querySelector('.elements-container').classList.add('hidden');
+                document.querySelector('h2').classList.add('hidden');
                 document.querySelector('.content').classList.remove('hidden');
                 document.querySelector('.rotation-counter').classList.remove('hidden');
                 startRotationDetection();
@@ -251,6 +274,8 @@ async function requestPermission() {
         // For non-iOS devices
         hasPermission = true;
         document.querySelector('.permission-button').classList.add('hidden');
+        document.querySelector('.elements-container').classList.add('hidden');
+        document.querySelector('h2').classList.add('hidden');
         document.querySelector('.content').classList.remove('hidden');
         document.querySelector('.rotation-counter').classList.remove('hidden');
         startRotationDetection();
@@ -264,21 +289,44 @@ function startRotationDetection() {
 function handleOrientation(event) {
     if (!hasPermission) return;
 
-    const beta = event.beta; // Front-back tilt
-    const currentRotation = Math.abs(beta);
+    const beta = event.beta; // Front-back tilt (-180 to 180)
+    const currentTime = Date.now();
 
-    // Detect a full rotation (when passing through 0 degrees)
-    if (Math.abs(currentRotation - lastRotation) > rotationThreshold) {
-        rotationCount++;
-        document.getElementById('rotation-count').textContent = rotationCount;
+    // Determine rotation direction
+    const newDirection = Math.sign(beta - lastRotation);
+    
+    // Only count a rotation if:
+    // 1. We've passed the threshold
+    // 2. We've changed direction
+    // 3. Enough time has passed since the last rotation
+    if (Math.abs(beta - lastRotation) > rotationThreshold && 
+        newDirection !== rotationDirection &&
+        currentTime - lastRotationTime > rotationCooldown) {
+        
+        // Only count if we've completed a full rotation (changed direction)
+        if (rotationDirection !== 0) {
+            rotationCount++;
+            document.getElementById('rotation-count').textContent = rotationCount;
+            lastRotationTime = currentTime;
+            
+            // Update background color
+            updateBackgroundColor();
+            
+            // Add visual feedback
+            const counter = document.getElementById('rotation-count');
+            counter.classList.add('rotate-animation');
+            setTimeout(() => counter.classList.remove('rotate-animation'), 500);
 
-        if (rotationCount >= 5) {
-            showOracleAnswer();
-            window.removeEventListener('deviceorientation', handleOrientation);
+            if (rotationCount >= 5) {
+                showOracleAnswer();
+                window.removeEventListener('deviceorientation', handleOrientation);
+            }
         }
+        
+        rotationDirection = newDirection;
     }
 
-    lastRotation = currentRotation;
+    lastRotation = beta;
 }
 
 function showOracleAnswer() {
@@ -304,6 +352,7 @@ function resetOracle() {
     document.querySelector('.content').classList.add('hidden');
     document.querySelector('.permission-button').classList.add('hidden');
     document.getElementById('rotation-count').textContent = '0';
+    document.body.style.backgroundColor = baseBackgroundColor;
 }
 
 // Initialize everything when DOM is loaded
