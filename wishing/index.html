@@ -41,6 +41,31 @@
 </head>
 
 <body data-playhtml>
+    <svg style="display: none">
+        <defs>
+            <filter id="ripple-displacement">
+                <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise">
+                    <animate attributeName="baseFrequency" 
+                            values="0.01;0.03;0.01" 
+                            keyTimes="0;0.5;1"
+                            keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
+                            calcMode="spline"
+                            dur="4s" 
+                            repeatCount="indefinite"/>
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" xChannelSelector="R" yChannelSelector="G">
+                    <animate attributeName="scale" 
+                            values="15;25;15" 
+                            keyTimes="0;0.5;1"
+                            keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
+                            calcMode="spline"
+                            dur="3s" 
+                            repeatCount="indefinite"/>
+                </feDisplacementMap>
+            </filter>
+        </defs>
+    </svg>
+
     <svg>
         <filter id="wavy">
         <feTurbulence id="turbulence" type="turbulence" numOctaves="1" 
@@ -122,15 +147,15 @@
             <div id="wish-input-container">
                 <div class="input-line">
                     <span>I dream of a</span>
-                    <input type="text" id="wish-input-1" placeholder="_ _ _">
+                    <input type="text" id="wish-input-1" placeholder=" ">
                     <span>where</span>
                 </div>
                 <div class="input-line">
-                    <input type="text" id="wish-input-2" placeholder=" _ _ _"">
+                    <input type="text" id="wish-input-2" placeholder=" "">
                 </div>
                 <div class="input-line">
                     <span>feelings of</span>
-                    <input type="text" id="wish-input-3" placeholder="_ _ _ ">
+                    <input type="text" id="wish-input-3" placeholder="  ">
                 </div>
                 <button id="submit-wish">( go to the wishing sea )</button>
             </div>

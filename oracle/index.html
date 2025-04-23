@@ -9,32 +9,26 @@
     <title>Oracle</title>
 </head>
 <body>
-    
-    <div class="markers-container">
-        <!-- Markers will be dynamically added here -->
+    <div class="elements-container">
+        <!-- Elements will be dynamically added here -->
     </div>
 
-    <div class="text-cloud">
-        <!-- Text fragments will be dynamically added here -->
+    <div class="permission-button hidden">
+        <button onclick="requestPermission()">( start your ritual )</button>
+
     </div>
-    
+
     <div class="content hidden">  
         <div class="oracleBody">
-            <p class="oracleTextp"> 
-                (´･ω･`) <br>
-            </p>    
-            <div class="instruction-text">Select a symbol to begin your reading</div>
-
-            <br> 
-            <!-- <p class="oracleTextp"> ––––––––––––––––––––––––– <br></p> -->
-            
+            <div class="rotation-counter hidden">
+                Rotate your phone <span id="rotation-count">0</span>/5 times
+            </div>
             <div class="oracle_wrapper hidden"> 
-                <div class="oracle_answer">Ask a yes/no question.
-                    After you do so, tilt your phone towards the ground to recieve your answer.</div>
+                <div class="oracle_answer"></div>
             </div>
         </div>
     </div>
     
-    <!-- <button id="permission-button" onclick="requestPermission()"> Enter </button> -->
+    <button class="ask-again-button hidden">Ask Again</button>
 </body>
 </html>

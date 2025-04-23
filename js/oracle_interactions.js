@@ -146,31 +146,173 @@ window.addEventListener("deviceorientation", (event) => {
     }
 });
 
-// Make requestPermission globally accessible
-window.requestPermission = function() {
-    return new Promise((resolve, reject) => {
-        if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-            DeviceMotionEvent.requestPermission().then(response => {
-                if (response === "granted") {
-                    if (DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
-                        return DeviceOrientationEvent.requestPermission();
-                    }
-                    return Promise.resolve("granted");
-                }
-                return Promise.reject("Motion permission denied");
-            }).then(response => {
-                if (response === "granted") {
-                    resolve();
-                } else {
-                    reject("Orientation permission denied");
-                }
-            }).catch(reject);
-        } else {
-            // For non-iOS devices or desktop browsers
-            resolve();
-        }
+// ASCII elements for selection
+const elements = [
+    { 
+        symbol: `  _\\|/_
+   /|\\ 
+  / | \\
+ /  |  \\
+/___|___\\`, 
+        name: 'grass' 
+    },
+    { 
+        symbol: `   .--.
+ .(    ).
+(___.__)__)`, 
+        name: 'cloud' 
+    },
+    { 
+        symbol: `   ___
+  /   \\
+ /     \\
+|       |
+ \\     /
+  \\___/`, 
+        name: 'rock' 
+    },
+    { 
+        symbol: `  ~ ~ ~
+ ~ ~ ~ ~
+~ ~ ~ ~ ~`, 
+        name: 'water' 
+    },
+    { 
+        symbol: `  (  )
+ (    )
+(      )
+ \\    /
+  \\__/`, 
+        name: 'fire' 
+    }
+];
+
+// Oracle messages
+const oracleMessages = [
+    "The winds whisper of change...",
+    "A new path unfolds before you...",
+    "The stars align in your favor...",
+    "Patience will bring clarity...",
+    "Trust your inner voice..."
+];
+
+let selectedElement = null;
+let rotationCount = 0;
+let lastRotation = 0;
+let rotationThreshold = 30; // degrees
+let hasPermission = false;
+
+// Initialize elements in a circle
+function initializeElements() {
+    const container = document.querySelector('.elements-container');
+    if (!container) return;
+
+    elements.forEach((element, index) => {
+        const div = document.createElement('div');
+        div.className = 'element';
+        div.innerHTML = element.symbol.replace(/\n/g, '<br>');
+        div.dataset.name = element.name;
+
+        // Position elements in a circle
+        const angle = (index / elements.length) * Math.PI * 2;
+        const radius = 150; // pixels
+        const x = Math.cos(angle) * radius + window.innerWidth / 2;
+        const y = Math.sin(angle) * radius + window.innerHeight / 2;
+
+        div.style.left = `${x}px`;
+        div.style.top = `${y}px`;
+
+        div.addEventListener('click', () => handleElementSelection(element));
+        container.appendChild(div);
     });
 }
+
+function handleElementSelection(element) {
+    selectedElement = element;
+    document.querySelector('.permission-button').classList.remove('hidden');
+}
+
+// Request device motion permission
+async function requestPermission() {
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+        try {
+            const permission = await DeviceMotionEvent.requestPermission();
+            if (permission === 'granted') {
+                hasPermission = true;
+                document.querySelector('.permission-button').classList.add('hidden');
+                document.querySelector('.content').classList.remove('hidden');
+                document.querySelector('.rotation-counter').classList.remove('hidden');
+                startRotationDetection();
+            }
+        } catch (error) {
+            console.error('Permission error:', error);
+        }
+    } else {
+        // For non-iOS devices
+        hasPermission = true;
+        document.querySelector('.permission-button').classList.add('hidden');
+        document.querySelector('.content').classList.remove('hidden');
+        document.querySelector('.rotation-counter').classList.remove('hidden');
+        startRotationDetection();
+    }
+}
+
+function startRotationDetection() {
+    window.addEventListener('deviceorientation', handleOrientation);
+}
+
+function handleOrientation(event) {
+    if (!hasPermission) return;
+
+    const beta = event.beta; // Front-back tilt
+    const currentRotation = Math.abs(beta);
+
+    // Detect a full rotation (when passing through 0 degrees)
+    if (Math.abs(currentRotation - lastRotation) > rotationThreshold) {
+        rotationCount++;
+        document.getElementById('rotation-count').textContent = rotationCount;
+
+        if (rotationCount >= 5) {
+            showOracleAnswer();
+            window.removeEventListener('deviceorientation', handleOrientation);
+        }
+    }
+
+    lastRotation = currentRotation;
+}
+
+function showOracleAnswer() {
+    const randomMessage = oracleMessages[Math.floor(Math.random() * oracleMessages.length)];
+    const oracleAnswer = document.querySelector('.oracle_answer');
+    const oracleWrapper = document.querySelector('.oracle_wrapper');
+    const rotationCounter = document.querySelector('.rotation-counter');
+    const askAgainButton = document.querySelector('.ask-again-button');
+
+    oracleAnswer.textContent = randomMessage;
+    oracleWrapper.classList.remove('hidden');
+    rotationCounter.classList.add('hidden');
+    askAgainButton.classList.remove('hidden');
+}
+
+// Reset the oracle
+function resetOracle() {
+    rotationCount = 0;
+    selectedElement = null;
+    document.querySelector('.rotation-counter').classList.add('hidden');
+    document.querySelector('.oracle_wrapper').classList.add('hidden');
+    document.querySelector('.ask-again-button').classList.add('hidden');
+    document.querySelector('.content').classList.add('hidden');
+    document.querySelector('.permission-button').classList.add('hidden');
+    document.getElementById('rotation-count').textContent = '0';
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeElements();
+    
+    // Add event listener for ask again button
+    document.querySelector('.ask-again-button').addEventListener('click', resetOracle);
+});
 
 function showContent() {
     // Add console log for debugging

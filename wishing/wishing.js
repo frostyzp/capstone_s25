@@ -457,15 +457,6 @@ function createRipplingText(lines, startPosition = 20) {
     if (!textContainer) {
         textContainer = document.createElement('div');
         textContainer.className = 'text-container';
-        textContainer.style.cssText = `
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            pointer-events: none;
-            z-index: 2;
-        `;
         container.appendChild(textContainer);
     }
 
