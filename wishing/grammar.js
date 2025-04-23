@@ -54,15 +54,16 @@ function generateSimplePoem(userInput) {
                 userAdjectives.push(word);
                 // Add comparative/superlative forms
                 if (tag === 'jjr' || tag === 'jjs') {
-                    const base = RiTa.baseForm(word);
-                    if (base !== word) userAdjectives.push(base);
+                    // Use stem instead of baseForm
+                    const stem = RiTa.stem(word);
+                    if (stem !== word) userAdjectives.push(stem);
                 }
             }
             if (tag.startsWith('vb')) {
                 userVerbs.push(word);
-                // Add base form
-                const base = RiTa.baseForm(word);
-                if (base !== word) userVerbs.push(base);
+                // Add base form using stem
+                const stem = RiTa.stem(word);
+                if (stem !== word) userVerbs.push(stem);
             }
             if (tag.startsWith('rb')) userAdverbs.push(word);
             if (tag.startsWith('in')) userPrepositions.push(word);

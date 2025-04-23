@@ -690,3 +690,67 @@ function addNewLine(container, text) {
         }
     });
 }
+
+// Add SVG filter support detection
+function checkSVGFilterSupport() {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+    svg.appendChild(filter);
+    document.body.appendChild(svg);
+    
+    const result = 'filter' in svg.style;
+    document.body.removeChild(svg);
+    return result;
+}
+
+// Apply appropriate effect based on support
+function applyRippleEffect() {
+    const textElements = document.querySelectorAll('.lineElement');
+    if (checkSVGFilterSupport()) {
+        textElements.forEach(element => {
+            element.classList.remove('no-svg-filter');
+        });
+    } else {
+        textElements.forEach(element => {
+            element.classList.add('no-svg-filter');
+        });
+    }
+}
+
+// Call this when the page loads and when new text elements are added
+document.addEventListener('DOMContentLoaded', function() {
+    applyRippleEffect();
+    
+    // Debounce the observer callback
+    let timeout;
+    const observer = new MutationObserver((mutations) => {
+        // Clear any pending timeouts
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        
+        // Only process if we actually added nodes
+        const hasNewNodes = mutations.some(mutation => 
+            mutation.addedNodes.length > 0 && 
+            Array.from(mutation.addedNodes).some(node => 
+                node.classList && node.classList.contains('lineElement')
+            )
+        );
+        
+        if (hasNewNodes) {
+            // Debounce the application of the effect
+            timeout = setTimeout(() => {
+                applyRippleEffect();
+            }, 100);
+        }
+    });
+    
+    // Only observe the ripple container where text elements are added
+    const rippleContainer = document.getElementById('ripple-container');
+    if (rippleContainer) {
+        observer.observe(rippleContainer, {
+            childList: true,
+            subtree: true
+        });
+    }
+});

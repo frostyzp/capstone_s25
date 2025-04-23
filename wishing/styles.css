@@ -113,9 +113,83 @@ body {
     animation: fadeIn 0.5s ease-out forwards;
 }
 
+/* New CSS-based ripple effect */
+#ripple-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.2) 25%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        rgba(255, 255, 255, 0.1) 100%
+    );
+    background-size: 400% 400%;
+    animation: rippleWave 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes rippleWave {
+    0% {
+        background-position: 0% 50%;
+        transform: scale(1);
+    }
+    50% {
+        background-position: 100% 50%;
+        transform: scale(1.02);
+    }
+    100% {
+        background-position: 0% 50%;
+        transform: scale(1);
+    }
+}
+
 #ripple-container.ripple-effect {
-    filter: url(#ripple-displacement);
-    transition: filter 0.3s ease-out;
+    /* Remove the filter from container */
+}
+
+/* Fallback styles for browsers that don't support SVG filters */
+#ripple-container.ripple-effect-fallback {
+    position: relative;
+    overflow: hidden;
+}
+
+#ripple-container.ripple-effect-fallback::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.2) 25%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        rgba(255, 255, 255, 0.1) 100%
+    );
+    background-size: 400% 400%;
+    animation: rippleWave 8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes rippleWave {
+    0% {
+        background-position: 0% 50%;
+        transform: scale(1);
+    }
+    50% {
+        background-position: 100% 50%;
+        transform: scale(1.02);
+    }
+    100% {
+        background-position: 0% 50%;
+        transform: scale(1);
+    }
 }
 
 #ripple-1, #ripple-2, #ripple-3 {
@@ -247,7 +321,7 @@ canvas {
     resize: vertical;
     padding: 10px;
     margin: 0;
-    border: 1px dashed grey;
+    border-bottom: 1px dashed grey;
 
 }
 
@@ -379,7 +453,7 @@ button {
         transform: translateX(-50%) translateY(0);
         opacity: 1;
     }
-    8=90% {
+    90% {
         opacity: 0;
     }
     100% {
@@ -738,5 +812,64 @@ canvas {
     transition: opacity 1s ease-out, width 1s ease, transform 10s ease, filter 5s ease;
     z-index: 3;
     transform: scale(1);
-    filter: blur(0px);
+    filter: url(#ripple-displacement);
+}
+
+/* Fallback for browsers that don't support SVG filters */
+.lineElement.no-svg-filter {
+    filter: none;
+    animation: textRipple 12s ease-in-out infinite;
+    will-change: transform;
+}
+
+@keyframes textRipple {
+    0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+    25% {
+        transform: translateY(-3px) scale(1.01) rotate(0.5deg);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.02) rotate(0deg);
+    }
+    75% {
+        transform: translateY(-3px) scale(1.01) rotate(-0.5deg);
+    }
+    100% {
+        transform: translateY(0) scale(1) rotate(0deg);
+    }
+}
+
+/* Add a subtle opacity variation for more depth */
+.lineElement.no-svg-filter::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.1) 100%
+    );
+    background-size: 200% 200%;
+    animation: opacityWave 8s ease-in-out infinite;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+@keyframes opacityWave {
+    0% {
+        background-position: 0% 50%;
+        opacity: 0.3;
+    }
+    50% {
+        background-position: 100% 50%;
+        opacity: 0.5;
+    }
+    100% {
+        background-position: 0% 50%;
+        opacity: 0.3;
+    }
 }
