@@ -23,7 +23,7 @@
     
     <div class="intro-page page visible">
         <p class="oracle-title"> rock oracle </p>
-        <button class="debug-button" onclick="switchToPage('oracle-answer-page')">Debug</button>
+        <!-- <button class="debug-button" onclick="switchToPage('oracle-answer-page'); getEightBallMessage()">Debug</button> -->
 
 
         <div class="intro-content">
@@ -50,7 +50,7 @@
     <div class="question-page page hidden">
         <div class="question-content">
             <p class="intro-text">Ask a yes / no question</p>
-            <textarea class="question-input" placeholder=". . . "></textarea>
+            <textarea class="question-input" placeholder=". . . " autocorrect="on" autocapitalize="sentences" spellcheck="true" inputmode="text"></textarea>
             <button class="continue-button hidden">( continue )</button>
         </div>
     </div>

@@ -53,7 +53,9 @@ function getEightBallMessage() {
         void oracleWrapper.offsetWidth;
         
         // Set the new message
-        oracleAnswer.textContent = eightBallMessages[randomIndex];
+        // oracleAnswer.textContent = eightBallMessages[randomIndex];
+        oracleWrapper.textContent=eightBallMessages[randomIndex];
+        console.log(oracleWrapper.textContent);
         
         // Add fade-in class to trigger animation
         oracleWrapper.classList.add('fade-in');
@@ -405,12 +407,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const continueButton = document.querySelector('.continue-button');
     
     if (questionInput && continueButton) {
+        // Handle input events
         questionInput.addEventListener('input', function() {
             if (this.value.trim().length > 0) {
                 continueButton.classList.remove('hidden');
             } else {
                 continueButton.classList.add('hidden');
             }
+        });
+
+        // Handle keydown events to ensure spaces work
+        questionInput.addEventListener('keydown', function(e) {
+            // Allow all key inputs including spaces
+            e.stopPropagation();
+        });
+
+        // Handle keyup events
+        questionInput.addEventListener('keyup', function(e) {
+            // Allow all key inputs including spaces
+            e.stopPropagation();
         });
         
         continueButton.addEventListener('click', function() {

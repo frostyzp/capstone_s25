@@ -3,6 +3,11 @@
     src: url('/Users/arinp/Documents/GitHub/capstone_s25/VictorMono-Regular.woff2') format('woff2');
 }
 
+@font-face {
+    font-family: 'EarthTone';
+    src: url('/Users/arinp/Documents/GitHub/capstone_s25/EarthTone.ttf') format('truetype');
+}
+
 html, body {
     margin: 0;
     padding: 0;
@@ -659,6 +664,7 @@ canvas {
 
 .skippingRockText {
     width: 60%;
+    font-family: 'EarthTone', monospace;
 }
 
 .secondPage {

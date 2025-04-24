@@ -25,7 +25,7 @@ body {
     transition: background-color 0.5s ease-out;
     font-size: 1rem;
     filter: url(#distort);
-    background-image: linear-gradient(rgba(53, 53, 53, 0.97), rgba(40, 40, 40, 0.97)), url('rock_pattern.png');
+    /* background-image: linear-gradient(rgba(53, 53, 53, 0.97), rgba(40, 40, 40, 0.97)), url('rock_pattern.png'); */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -500,14 +500,6 @@ button:hover {
     visibility: visible;
 }
 
-/* Remove individual page styles since they're now handled by .page */
-.intro-page,
-.question-page,
-.main-page,
-.oracle-answer-page {
-    /* All common styles are now in .page */
-}
-
 /* Oracle answer page specific styles */
 .oracle-content {
     width: 80%;
@@ -583,12 +575,30 @@ svg {
     margin-bottom: 2rem;
     transition: all 0.3s ease;
     box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: text;
+    user-select: text;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .question-input:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.4);
     background: rgba(255, 255, 255, 0.15);
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+    .question-input {
+        font-size: 16px; /* Ensure readable font size on mobile */
+        -webkit-text-size-adjust: 100%; /* Prevent iOS text size adjustment */
+        line-height: 1.4; /* Improve readability */
+        padding: 12px; /* Slightly reduce padding for better mobile experience */
+    }
 }
 
 .continue-button {
