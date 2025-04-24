@@ -4,25 +4,23 @@ body {
     overflow-x: hidden;
     font-size: 1rem;
     background-color: black;
-    color: white; /* Set text color to white */
+    color: white;
     text-align: center;
-
     background-image: url('background.png');
-    background-color: black;
-    font-family: monospace; /* Better for ASCII art */
-
     font-family: 'VictorMono', 'Courier New', Courier, monospace;
-    @font-face {
-        font-family: 'VictorMono';
-        src: url('/Users/arinp/Documents/GitHub/capstone_s25/VictorMono-Regular.woff2') format('woff2');
-    }
-
-    @font-face {
-        font-family: 'EarthTone';
-        src: url('/Users/arinp/Documents/GitHub/capstone_s25/EarthTone.ttf') format('truetype');
-    }
-
 }
+
+@font-face {
+    font-family: 'VictorMono';
+    src: url('/VictorMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'EarthTone';
+    src: url('/EarthTone-Regular.ttf') format('truetype');
+}
+
+
 
 .graveyardMain {
     text-align: center;
