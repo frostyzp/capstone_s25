@@ -16,6 +16,12 @@ body {
         font-family: 'VictorMono';
         src: url('/Users/arinp/Documents/GitHub/capstone_s25/VictorMono-Regular.woff2') format('woff2');
     }
+
+    @font-face {
+        font-family: 'EarthTone';
+        src: url('/Users/arinp/Documents/GitHub/capstone_s25/EarthTone.ttf') format('truetype');
+    }
+
 }
 
 .graveyardMain {
@@ -147,6 +153,13 @@ body {
     }
 }
 
+.intro-text {
+    font-family: 'EarthTone', monospace;
+    font-size: 1.1rem;
+    margin: 2rem auto;
+    padding: 0 20px;
+}
+
 .graveyard-count {
     background-color: black;
     background-image: url('/rock_bg.png');
@@ -176,4 +189,24 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
+}
+
+.rock-svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    opacity: 0.9;
+}
+
+.rock-svg path {
+    stroke: #4C484A;
+    stroke-width: 3px;
+    filter: url(#noise1);
+}
+
+/* Apply filter to all text elements */
+p, span, div, button {
+    filter: url(#distort);
 }

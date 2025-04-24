@@ -26,6 +26,9 @@ body {
     z-index: 0;
     opacity: 0.6;
     filter: url(#distort);
+    width: 80%;
+    max-width: 400px;
+    height: auto;
 }
 
 .landing-svg path {
@@ -897,6 +900,11 @@ canvas {
     .lineElement {
         /* Optimize transitions for mobile */
         transition: opacity 0.8s ease-out, transform 0.8s ease;
+    }
+
+    .landing-svg {
+        width: 90%;
+        max-width: 300px;
     }
 }
 

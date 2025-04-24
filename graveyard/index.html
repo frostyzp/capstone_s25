@@ -8,36 +8,41 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/textillate/0.4.0/jquery.textillate.min.js"></script>
     <script src="graveyard.js"></script>
     <link rel="stylesheet" href="styles.css">
-    <title>graveyard of the unanswered</title>
+    <title>cemetery of the unanswered</title>
     <!-- <h1> graveyard of the unanswered </h1> -->
     <script src="https://cdn.jsdelivr.net/npm/typewriter-effect@2.18.2/dist/core.js"></script>
 </head>
+<svg>
+    <defs>
+        <filter id="distort">
+            <feTurbulence baseFrequency="0.01 0.01" numOctaves="10" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="R">
+        </filter>
+    </defs>
+</svg>
 <body>
 
+
     <div class="graveyard-count">
+        <svg width="287" height="379" viewBox="0 0 287 379" fill="none" xmlns="http://www.w3.org/2000/svg" class="rock-svg">
+            <defs>
+                <filter id="noise1">
+                    <feTurbulence baseFrequency="0.20">
+                        <animate attributeName="baseFrequency" 
+                                values="0.24;0.25" 
+                                keyTimes="0;1"
+                                dur="3s" 
+                                repeatCount="indefinite"/>
+                    </feTurbulence>
+                    <feDisplacementMap in="SourceGraphic" scale="7"/>
+                </filter>
+            </defs>
+            <path filter="url(#noise1)" d="M100.797 13.3363C108.831 12.332 113.544 2.5036 121.396 2.21279C128.37 1.95449 133.225 1.38663 140.141 4.53019C145.435 6.93629 152.073 9.45199 156.415 13.3363C173.361 28.4993 185.148 48.1543 199.467 65.8641C207.874 76.263 216.646 86.4167 224.855 97.0203C230.163 103.876 235.031 110.954 240.562 117.671C244.682 122.673 249.125 128.974 250.913 135.232C258.028 160.134 259.058 186.331 266.723 211.242C268.993 218.62 270.126 226.096 271.564 233.644C273.835 245.568 276.199 257.532 277.641 269.589C279.241 282.979 282.056 296.214 283.46 309.552C283.856 313.312 285.262 316.92 285.262 320.675C285.262 327.526 283.831 333.995 283.408 340.759C283.122 345.332 282.645 361.374 276.456 362.749C271.658 363.815 266.421 365.445 262.191 367.435C256.602 370.066 246.664 369.819 240.614 370.165C234.86 370.493 229.042 370.885 223.362 371.143C215.049 371.521 205.929 374.447 197.613 375.778C191.094 376.821 184.683 376.705 178.095 376.705C159.383 376.705 140.667 375.778 122.014 375.778C111.064 375.778 100.282 374.085 89.3645 373.924C80.1171 373.788 70.7293 374.509 61.5042 373.873C53.7925 373.341 46.243 372.164 38.5876 371.143C32.0236 370.268 25.8991 367.702 19.2245 367.435C15.2391 367.276 11.3664 366.656 7.37995 366.508C5.42138 366.436 5.43514 360.592 5.26854 359.093C3.55794 343.697 0.614557 330.017 2.74515 314.393C3.84834 306.302 4.39308 297.943 4.39308 289.777C4.39308 282.295 6.57586 275.269 7.12246 267.89C8.01054 255.901 9.02788 243.977 9.02788 231.893C9.02788 226.75 8.68526 221.464 9.07938 216.341C9.63812 209.077 9.46636 200.193 11.0878 193.167C14.2012 179.675 13.9674 165.542 16.9071 152.02C17.8734 147.575 17.7672 142.613 18.246 138.064C18.6485 134.241 18.2111 128.173 20.1514 124.778C22.015 121.516 22.3935 116.039 23.1383 112.315C24.1134 107.439 25.1534 102.528 25.7647 97.6383C26.6341 90.6826 30.4926 84.4881 32.7169 78.0176C35.0289 71.2916 38.1304 64.9057 41.6775 58.7574C45.4356 52.2433 51.3593 47.3075 57.0239 42.5871C61.1112 39.181 65.406 37.196 69.7438 34.1929C75.0241 30.5373 82.9264 30.5628 88.7465 27.6527C92.9391 25.5564 96.6898 22.805 100.797 20.546C105.256 18.0936 101.999 12.7352 106.359 10.5554" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <p class="intro-text">Preserving what’s been left behind drifting, echoing, floating. View the gravestones by tapping.</p>
+
         <div class="background-image"></div>
-        <p class="graveyardMain">|^------------^|</p>
-
-        <p class="graveyardMain">|^----------------------^|</p>
-        <p class="graveyardMain">|^--------------------------^|</p>
-        <p class="graveyardMain">|           R I P           |</p>
-        <p class="graveyardMain">|                           |</p>
-        <p class="graveyardMain">|         graveyard         |</p>
-        <p class="graveyardMain">|          of the           |</p>
-        <p class="graveyardMain">|        unanswered         |</p>
-        <p class="graveyardMain">|        ----------         |</p>
-        <p class="graveyardMain">|                           |</p>
-        <p class="graveyardMain">|  remains of words, dreams  |</p>
-        <p class="graveyardMain">|     wishes, and hopes      |</p>
-        <p class="graveyardMain">|            --              |</p>
-        <p class="graveyardMain">|drifting, echoing, floating |</p>
-        <p class="graveyardMain">|            --              |</p>
-        <p class="graveyardMain">|--tap to reveal gravestones--|</p>
-        <p class="graveyardMain">|//\//\//\//\//\//\//\//\//\//\|</p>
-        <p class="graveyardMain">|//\//\//\//\//\//\//\//\//\//\|</p>
-        <br>        <br>
-
-        <div id="enter">[ enter the graveyard ]</div>
+        <div id="enter">( explore the graveyard )</div>
 
     </div>
 

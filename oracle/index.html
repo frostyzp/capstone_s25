@@ -23,6 +23,8 @@
     
     <div class="intro-page page visible">
         <p class="oracle-title"> rock oracle </p>
+        <button class="debug-button" onclick="switchToPage('oracle-answer-page')">Debug</button>
+
 
         <div class="intro-content">
             <svg width="300" height="308" viewBox="0 0 300 308" fill="none" xmlns="http://www.w3.org/2000/svg" class="intro-svg">
@@ -63,21 +65,18 @@
             <button onclick="requestPermission()">( trust this rock )</button>
         </div>
 
-        <div class="content hidden">  
-            <div class="oracleBody">
-                <div class="oracle_wrapper hidden"> 
-                    <div class="oracle_answer"></div>
-                </div>
-            </div>
-        </div>
-        
-        <button class="ask-again-button hidden">Ask Again</button>
+
     </div>
 
-
-
-
-
+    <div class="oracle-answer-page page hidden">
+        <div class="oracle-content">
+            <div class="oracle_wrapper">
+                <div class="oracle_answer"></div>
+            </div>
+        </div>
+        <button class="ask-again-button hidden">Ask Again</button>
+    </div>
+    
     <script>
         function switchToPage(pageClass) {
             document.querySelectorAll('.page').forEach(page => {

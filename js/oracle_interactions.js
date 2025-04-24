@@ -43,9 +43,20 @@ let isInteraction = false;
 
 function getEightBallMessage() {
     const randomIndex = Math.floor(Math.random() * eightBallMessages.length);
+    const oracleWrapper = document.querySelector('.oracle_wrapper');
     const oracleAnswer = document.querySelector('.oracle_answer');
-    if (oracleAnswer) {
+    if (oracleWrapper && oracleAnswer) {
+        // Remove fade-in class first to reset animation
+        oracleWrapper.classList.remove('fade-in');
+        
+        // Force a reflow
+        void oracleWrapper.offsetWidth;
+        
+        // Set the new message
         oracleAnswer.textContent = eightBallMessages[randomIndex];
+        
+        // Add fade-in class to trigger animation
+        oracleWrapper.classList.add('fade-in');
     }
 }
 
@@ -257,7 +268,7 @@ function handleElementSelection(element) {
 async function requestPermission() {
     try {
         const permissionButton = document.querySelector('.permission-button');
-        const content = document.querySelector('.content');
+        const mainPage = document.querySelector('.main-page');
         const elementsContainer = document.querySelector('.elements-container');
         const instructions = document.querySelector('.oracle-instructions');
         
@@ -276,16 +287,9 @@ async function requestPermission() {
                     // Hide elements container
                     if (elementsContainer) elementsContainer.classList.add('hidden');
                     
-                    // Show content with fade in
-                    content.classList.remove('hidden');
-                    content.classList.add('visible');
-                    
                     // Update instructions
                     if (instructions) {
-                        instructions.textContent = "Your feelings and energy are now accessible to this rock. \n\nTilt left or right to ";
-                        setTimeout(() => {
-                            instructions.textContent = "Rotate your vessel 3x to reveal your fortune.";
-                        }, 3000);
+                        instructions.textContent = "Rotate your vessel 3 times to reveal your fortune.";
                     }
                     
                     startRotationDetection();
@@ -300,13 +304,9 @@ async function requestPermission() {
             // Hide elements container
             if (elementsContainer) elementsContainer.classList.add('hidden');
             
-            // Show content with fade in
-            content.classList.remove('hidden');
-            content.classList.add('visible');
-            
             // Update instructions
             if (instructions) {
-                instructions.textContent = "Permission needs to be granted for the rock to tell your fortune.";
+                instructions.textContent = "Rotate your vessel 3 times to reveal your fortune.";
             }
             
             startRotationDetection();
@@ -352,8 +352,10 @@ function handleOrientation(event) {
             // Update background color
             updateBackgroundColor();
             
-            if (rotationCount >= 5) {
-                showOracleAnswer();
+            if (rotationCount >= 3) {
+                // Switch to oracle-answer-page and show answer
+                switchToPage('oracle-answer-page');
+                getEightBallMessage();
                 window.removeEventListener('deviceorientation', handleOrientation);
             }
         }

@@ -366,17 +366,22 @@ document.addEventListener('DOMContentLoaded', () => {
     enterText.addEventListener('click', function() {
         // Make the canvas container visible again
         // Fade out graveyardCount over 2 seconds
-        graveyardMain.style.transition = 'opacity 1s ease-in-out'; // Reduced transition time
-        graveyardMain.style.opacity = '0';
+        if (graveyardMain) {
+            graveyardMain.style.transition = 'opacity 1s ease-in-out'; // Reduced transition time
+            graveyardMain.style.opacity = '0';
+        }
 
-        container.style.transition = 'opacity 1s ease-in-out'; // Reduced transition time
-        container.style.display = 'block'; // Change to 'block' or 'flex' as needed
-        container.style.visibility = 'visible'; // Ensure visibility is set to visible
+        if (container) {
+            container.style.transition = 'opacity 1s ease-in-out'; // Reduced transition time
+            container.style.display = 'block'; // Change to 'block' or 'flex' as needed
+            container.style.visibility = 'visible'; // Ensure visibility is set to visible
+        }
 
-
-        graveyardCount.style.transition = 'opacity 2s ease-in-out'; // Reduced transition time
-        graveyardCount.style.opacity = '0';
-        console.log('graveyardCount is not visible'); // Debugging log
+        if (graveyardCount) {
+            graveyardCount.style.transition = 'opacity 2s ease-in-out'; // Reduced transition time
+            graveyardCount.style.opacity = '0';
+            console.log('graveyardCount is not visible'); // Debugging log
+        }
 
         // buryEntry.style.display = 'block'; 
 
