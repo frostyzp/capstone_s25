@@ -45,21 +45,17 @@
         <svg style="display: none">
             <defs>
                 <filter id="ripple-displacement">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.01" numOctaves="1" result="noise">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise">
                         <animate attributeName="baseFrequency" 
-                                values="0.01;0.03;0.01" 
-                                keyTimes="0;0.5;1"
-                                keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
-                                calcMode="spline"
+                                values="0.02;0.04" 
+                                keyTimes="0;1"
                                 dur="4s" 
                                 repeatCount="indefinite"/>
                     </feTurbulence>
-                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" xChannelSelector="R" yChannelSelector="G">
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G">
                         <animate attributeName="scale" 
-                                values="15;25;15" 
-                                keyTimes="0;0.5;1"
-                                keySplines="0.4 0 0.2 1;0.4 0 0.2 1"
-                                calcMode="spline"
+                                values="15;25" 
+                                keyTimes="0;1"
                                 dur="3s" 
                                 repeatCount="indefinite"/>
                     </feDisplacementMap>
