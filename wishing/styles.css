@@ -15,7 +15,22 @@ html, body {
 body {
     font-family: 'VictorMono', 'Courier New', Courier, monospace;
     background-color: white;
-    /* filter: url(#distort); */
+}
+
+/* Apply filter only to specific elements that need it */
+.landing-svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    opacity: 0.6;
+    filter: url(#distort);
+}
+
+.landing-svg path {
+    stroke: #4C484A;
+    stroke-width: 1px;
 }
 
 /* Apply filter to all text elements */
@@ -954,19 +969,4 @@ canvas {
         background-position: 0% 50%;
         opacity: 0.3;
     }
-}
-
-.landing-svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 0;
-    opacity: 0.6;
-}
-
-.landing-svg path {
-    stroke: #4C484A;
-    stroke-width: 1px;
-    filter: url(#distort);
 }

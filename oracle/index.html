@@ -11,8 +11,8 @@
 <svg>
 	<defs>
 		<filter id="distort">
-			<feTurbulence baseFrequency="0.01 0.02" numOctaves="2" result="noise"  />
-			<feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="R">
+			<feTurbulence baseFrequency="0.01 0.01" numOctaves="10" result="noise"  />
+			<feDisplacementMap in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="R">
 		</filter>
 	</defs>
 </svg>
@@ -77,7 +77,7 @@
 
 
 
-    
+
     <script>
         function switchToPage(pageClass) {
             document.querySelectorAll('.page').forEach(page => {

@@ -44,14 +44,14 @@
     <svg style="display: none">
         <defs>
             <filter id="distort">
-                <feTurbulence baseFrequency="0.01 0.02" numOctaves="2" result="noise" />
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="R">
+                <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise">
                     <animate attributeName="baseFrequency" 
-                            values="0.01 0.02;0.02 0.03" 
+                            values="0.02;0.03" 
                             keyTimes="0;1"
-                            dur="3s" 
+                            dur="4s" 
                             repeatCount="indefinite"/>
-                </feDisplacementMap>
+                </feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
             </filter>
         </defs>
     </svg>
@@ -68,11 +68,11 @@
                                 repeatCount="indefinite"/>
                     </feTurbulence>
                     <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G">
-                        <animate attributeName="scale" 
+                        <!-- <animate attributeName="scale" 
                                 values="15;25" 
                                 keyTimes="0;1"
                                 dur="3s" 
-                                repeatCount="indefinite"/>
+                                repeatCount="indefinite"/> -->
                     </feDisplacementMap>
                 </filter>
             </defs>
