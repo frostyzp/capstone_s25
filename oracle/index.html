@@ -8,6 +8,16 @@
 
     <title>Oracle</title>
 </head>
+<svg>
+	<defs>
+		<filter id="distort">
+			<feTurbulence baseFrequency="0.01 0.01" numOctaves="1" result="noise"  />
+			<feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="R">
+		</filter>
+	</defs>
+</svg>
+
+
 <body>
     <div class="intro-page page visible">
         <div class="intro-content">
@@ -17,7 +27,7 @@
     </div>
 
     <div class="main-page page hidden">
-        <p class="oracle-title"> Rock Oracle </p>
+        <p class="oracle-title"> rock oracle </p>
         <div class="elements-container">
             <!-- Elements will be dynamically added here -->
         </div>

@@ -19,6 +19,12 @@ body {
     justify-content: center;
     transition: background-color 0.5s ease-out;
     font-size: 1.2rem;
+    filter: url(#distort);
+}
+
+/* Apply filter to all text elements */
+p, span, div, button {
+    filter: url(#distort);
 }
 
 .oracle-title {
@@ -492,3 +498,11 @@ body {
 .intro-button:hover {
     opacity: 0.8;
 }
+
+
+
+/*  ------------------------------------------------------  */
+
+svg {
+    position: absolute;
+  }
