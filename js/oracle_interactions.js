@@ -255,86 +255,64 @@ function handleElementSelection(element) {
 
 // Request device motion permission
 async function requestPermission() {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-        try {
-            const permission = await DeviceMotionEvent.requestPermission();
-            if (permission === 'granted') {
-                hasPermission = true;
-                
-                // Safely check and hide elements
-                const elementsToHide = [
-                    '.permission-button',
-                    '.elements-container',
-                    'h2'
-                ];
-                
-                elementsToHide.forEach(selector => {
-                    const element = document.querySelector(selector);
-                    if (element) element.classList.add('hidden');
-                });
-                
-                // Safely show elements
-                const elementsToShow = [
-                    '.content',
-                    '.rotation-counter'
-                ];
-                
-                elementsToShow.forEach(selector => {
-                    const element = document.querySelector(selector);
-                    if (element) element.classList.remove('hidden');
-                });
-                
-                // Update oracle instructions
-                const instructions = document.querySelector('.oracle-instructions');
-                if (instructions) {
-                    instructions.textContent = "Your feelings and energy is now accessible to this rock.";
-                    setTimeout(() => {
-                        instructions.textContent = "Rotate your phone to reveal your fortune.";
-                    }, 3000);
-                }
-                
-                startRotationDetection();
-            }
-        } catch (error) {
-            console.error('Permission error:', error);
-        }
-    } else {
-        // For non-iOS devices
-        hasPermission = true;
-        
-        // Safely check and hide elements
-        const elementsToHide = [
-            '.permission-button',
-            '.elements-container',
-            'h2'
-        ];
-        
-        elementsToHide.forEach(selector => {
-            const element = document.querySelector(selector);
-            if (element) element.classList.add('hidden');
-        });
-        
-        // Safely show elements
-        const elementsToShow = [
-            '.content',
-            '.rotation-counter'
-        ];
-        
-        elementsToShow.forEach(selector => {
-            const element = document.querySelector(selector);
-            if (element) element.classList.remove('hidden');
-        });
-        
-        // Update oracle instructions
+    try {
+        const permissionButton = document.querySelector('.permission-button');
+        const content = document.querySelector('.content');
+        const elementsContainer = document.querySelector('.elements-container');
         const instructions = document.querySelector('.oracle-instructions');
-        if (instructions) {
-            instructions.textContent = "Your feelings and energy is now accessible to this rock.";
-            setTimeout(() => {
-                instructions.textContent = "Rotate your phone to reveal your fortune.";
-            }, 3000);
-        }
         
-        startRotationDetection();
+        // Fade out permission button
+        permissionButton.classList.add('hidden');
+        
+        // Wait for fade out to complete
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            try {
+                const permission = await DeviceMotionEvent.requestPermission();
+                if (permission === 'granted') {
+                    hasPermission = true;
+                    
+                    // Hide elements container
+                    if (elementsContainer) elementsContainer.classList.add('hidden');
+                    
+                    // Show content with fade in
+                    content.classList.remove('hidden');
+                    content.classList.add('visible');
+                    
+                    // Update instructions
+                    if (instructions) {
+                        instructions.textContent = "Your feelings and energy are now accessible to this rock. \n\nTilt left or right to ";
+                        setTimeout(() => {
+                            instructions.textContent = "Rotate your vessel 3x to reveal your fortune.";
+                        }, 3000);
+                    }
+                    
+                    startRotationDetection();
+                }
+            } catch (error) {
+                console.error('Permission error:', error);
+            }
+        } else {
+            // For non-iOS devices
+            hasPermission = true;
+            
+            // Hide elements container
+            if (elementsContainer) elementsContainer.classList.add('hidden');
+            
+            // Show content with fade in
+            content.classList.remove('hidden');
+            content.classList.add('visible');
+            
+            // Update instructions
+            if (instructions) {
+                instructions.textContent = "Permission needs to be granted for the rock to tell your fortune.";
+            }
+            
+            startRotationDetection();
+        }
+    } catch (error) {
+        console.error('Error requesting permission:', error);
     }
 }
 
@@ -366,7 +344,7 @@ function handleOrientation(event) {
             // Update oracle instructions with rotation count
             const instructions = document.querySelector('.oracle-instructions');
             if (instructions) {
-                instructions.textContent = `Rotate your phone ${rotationCount}/5 times`;
+                instructions.textContent = `Rotate your vessel ${rotationCount}/3 times`;
             }
             
             lastRotationTime = currentTime;
@@ -387,16 +365,20 @@ function handleOrientation(event) {
 }
 
 function showOracleAnswer() {
-    const randomMessage = oracleMessages[Math.floor(Math.random() * oracleMessages.length)];
-    const oracleAnswer = document.querySelector('.oracle_answer');
     const oracleWrapper = document.querySelector('.oracle_wrapper');
-    const rotationCounter = document.querySelector('.rotation-counter');
-    const askAgainButton = document.querySelector('.ask-again-button');
-
-    oracleAnswer.textContent = randomMessage;
-    oracleWrapper.classList.remove('hidden');
-    rotationCounter.classList.add('hidden');
-    askAgainButton.classList.remove('hidden');
+    const oracleAnswer = document.querySelector('.oracle_answer');
+    const instructions = document.querySelector('.oracle-instructions');
+    
+    if (oracleWrapper && oracleAnswer) {
+        // Hide instructions
+        if (instructions) {
+            instructions.classList.add('hidden');
+        }
+        
+        // Show oracle answer
+        oracleWrapper.classList.remove('hidden');
+        getEightBallMessage();
+    }
 }
 
 // Reset the oracle
@@ -414,6 +396,26 @@ function resetOracle() {
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    disableUserScroll();
+    
+    // Add event listener for question input
+    const questionInput = document.querySelector('.question-input');
+    const continueButton = document.querySelector('.continue-button');
+    
+    if (questionInput && continueButton) {
+        questionInput.addEventListener('input', function() {
+            if (this.value.trim().length > 0) {
+                continueButton.classList.remove('hidden');
+            } else {
+                continueButton.classList.add('hidden');
+            }
+        });
+        
+        continueButton.addEventListener('click', function() {
+            switchToPage('main-page');
+        });
+    }
+    
     initializeElements();
     
     // Add event listener for ask again button
@@ -742,24 +744,6 @@ function handleStoneSelection(stoneId) {
         }
     });
 }
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM Content Loaded');
-    
-    // Add event listeners for stones
-    const stones = document.querySelectorAll('.stone');
-    stones.forEach(stone => {
-        stone.addEventListener('click', () => {
-            handleStoneSelection(stone.id);
-        });
-    });
-    
-    // Show content if permission button is not present
-    if (!document.querySelector("#permission-button")) {
-        showContent();
-    }
-});
 
 // Update markers array with more kaomojis
 const outerMarkers = ['(｡•́︿•̀｡)', '(◕‿◕✿)', '(╯°□°）╯︵ ┻━┻', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', '(ง •̀_•́)ง', '(ノಠ益ಠ)ノ彡┻━┻', '(づ｡◕‿‿◕｡)づ', '(っ◔◡◔)っ ♥', '(ﾉ´ヮ`)ﾉ*: ･ﾟ', '(◕ᴗ◕✿)', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ', '(◕‿◕)'];

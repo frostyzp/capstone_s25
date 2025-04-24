@@ -41,6 +41,21 @@
 </head>
 
 <body data-playhtml>
+    <svg style="display: none">
+        <defs>
+            <filter id="distort">
+                <feTurbulence baseFrequency="0.01 0.02" numOctaves="2" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="R">
+                    <animate attributeName="baseFrequency" 
+                            values="0.01 0.02;0.02 0.03" 
+                            keyTimes="0;1"
+                            dur="3s" 
+                            repeatCount="indefinite"/>
+                </feDisplacementMap>
+            </filter>
+        </defs>
+    </svg>
+
     <div class="filter-container">
         <svg style="display: none">
             <defs>
@@ -80,6 +95,9 @@
           <div class="ascii-rocks">
           </div>
 
+          <svg width="230" height="173" viewBox="0 0 230 173" fill="none" xmlns="http://www.w3.org/2000/svg" class="landing-svg">
+            <path d="M52.1804 158.987C44.3236 159.86 36.7806 162.359 28.5783 162.359C24.5506 162.359 16.8858 153.507 14.5918 150.558C7.17046 141.016 1.60439 125.212 1.60439 113.157C1.60439 101.899 -0.369732 93.9206 6.16248 84.1222C25.907 54.5055 54.8811 35.6384 85.7105 19.1227C95.6082 13.8203 104.42 7.61026 115.057 3.88741C124.847 0.460843 134.785 0.515678 145.09 0.515678C154.462 0.515678 163.538 1.09798 172.689 3.01326C178.505 4.23069 183.844 8.1279 189.36 9.50697C200.897 12.3912 209.563 26.2767 216.771 34.795C219.812 38.3885 222.065 41.9275 224.638 45.9717C227.315 50.1769 226.037 54.8662 227.76 58.9591C231.802 68.5573 219.337 81.8652 214.461 89.3672C209.102 97.6121 203.758 107.901 197.165 115.092C188.247 124.821 178.524 134.039 169.067 143.253C151.533 160.337 131.478 169.097 107.377 171.288C103.778 171.615 97.1729 172.43 93.7652 170.726C90.2735 168.98 87.6674 166.855 83.65 166.855C74.7403 166.855 65.3121 165.731 56.1141 165.731C51.9641 165.731 40.9413 166.122 40.9413 160.111" stroke="#4C484A" stroke-linecap="round"/>
+          </svg>
 
           <p class="skippingRockText"> Skip a rock and make a wish to the universe.
           </p>

@@ -1,8 +1,12 @@
 @font-face {
     font-family: 'VictorMono';
-    src: url('/Users/arinp/Documents/GitHub/capstone_s25/VictorMono-Regular.woff2') format('woff2');
+    src: url('../VictorMono-Regular.woff2') format('woff2');
 }
 
+@font-face {
+    font-family: 'EarthTone';
+    src: url('../EarthTone-Regular.ttf') format('truetype');
+}
 
 body {
     margin: 0;
@@ -20,6 +24,13 @@ body {
     transition: background-color 0.5s ease-out;
     font-size: 1.2rem;
     filter: url(#distort);
+    background-image: linear-gradient(rgba(53, 53, 53, 0.97), rgba(40, 40, 40, 0.97)), url('rock_pattern.png');
+    /* background-blend-mode: overlay; */
+    /* background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 10px); */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* Apply filter to all text elements */
@@ -28,6 +39,7 @@ p, span, div, button {
 }
 
 .oracle-title {
+    font-size: 0.8rem;
     position: fixed;
     top: 0;
     left: 0;
@@ -37,6 +49,7 @@ p, span, div, button {
 
 .oracle-instructions {
     position: fixed;
+    font-family: 'EarthTone', serif;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -77,24 +90,39 @@ p, span, div, button {
     position: fixed;
     bottom: 20%;
     left: 50%;
-    width: 100%;
     transform: translateX(-50%);
+    width: auto;
+    text-align: center;
+    transition: opacity 0.8s ease-in-out;
 }
 
 .permission-button button {
     font-family: 'VictorMono', 'Courier New', monospace;
-    padding: 15px 30px;
+    /* padding: 15px 30px; */
     font-size: 1.2rem;
     background-color: transparent;
-    color: white;
+    color: rgb(194, 194, 194);
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+    display: inline-block;
+}
+
+.permission-button.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .content {
     text-align: center;
     padding: 20px;
+    transition: opacity 0.8s ease-in-out;
+    opacity: 0;
+}
+
+.content.visible {
+    opacity: 1;
 }
 
 #rotation-count {
@@ -121,8 +149,20 @@ p, span, div, button {
 }
 
 .oracle_wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+}
+
+.oracle_wrapper.hidden {
     opacity: 0;
-    transition: opacity 0.5s ease-out;
+    pointer-events: none;
 }
 
 .oracle_wrapper:not(.hidden) {
@@ -178,8 +218,20 @@ p, span, div, button {
 }
 
 .oracle_answer {
-    font-size: 1.8rem;
-    line-height: 1.5;
+    font-family: 'VictorMono', 'Courier New', Courier, monospace;
+    font-size: 1.4rem;
+    color: #a0a0a0;
+    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 600px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    transition: opacity 0.5s ease;
 }
 
 .ask-again-button {
@@ -237,12 +289,6 @@ p, span, div, button {
 }
 
 .oracleBody {
-    /* background-color: #505050	; */
-    border-radius: 20px; /* ✅ Adjust for roundness */
-    padding: 2rem;
-    perspective: 1000px; 
-    /* transition: transform 0.1s ease-out; */
-    /* background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 1));  Black gradient background */
     border-radius: 20px;
     padding: 2rem;
     perspective: 1000px;
@@ -253,9 +299,13 @@ p, span, div, button {
 }
 
 .intro-text {
-    color: #808080;  /* Changed from #2a52be to medium grey */
-    opacity: 0;
-    animation: fadeInOut 4s ease-in-out infinite;
+    color: #bebebe;  /* Changed from #2a52be to medium grey */
+    opacity: 1;
+    /* animation: fadeInOut 4s ease-in-out infinite; */
+    font-family: 'EarthTone', serif;
+    padding: 0 3rem;
+    font-size: 1.1rem;
+
 }
 
 @keyframes fadeInOut {
@@ -460,16 +510,23 @@ p, span, div, button {
     left: 0;
     width: 100%;
     height: 100%;
-    transition: opacity 0.8s ease-in-out;
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .page.hidden {
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
+    transform: translateY(20px);
 }
 
 .page.visible {
     opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
 }
 
 .intro-page {
@@ -478,10 +535,18 @@ p, span, div, button {
     justify-content: center;
     align-items: center;
     text-align: center;
+    background: transparent;
+}
+
+.main-page {
+    background: transparent;
 }
 
 .intro-content {
-    /* max-width: 600px; */
+    position: relative;
+    z-index: 2;
+    padding: 2rem;
+    border-radius: 10px;
 }
 
 .intro-button {
@@ -491,8 +556,9 @@ p, span, div, button {
     color: #ffffff;
     padding: 15px 30px;
     cursor: pointer;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s ease;
     font-size: 1.2rem;
+    opacity: 1;
 }
 
 .intro-button:hover {
@@ -506,3 +572,88 @@ p, span, div, button {
 svg {
     position: absolute;
   }
+
+.intro-svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    opacity: 0.9;
+}
+
+.intro-svg path {
+    stroke: #4C484A;
+    stroke-width: 3px;
+}
+
+
+.intro-content {
+    position: relative;
+    z-index: 2;
+}
+
+.question-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: transparent;
+}
+
+.question-content {
+    position: relative;
+    z-index: 2;
+    padding: 3rem;
+    width: 80%;
+    max-width: 600px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+.question-text {
+    color: #bebebe;
+    font-family: 'EarthTone', serif;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.question-input {
+    width: 100%;
+    height: 120px;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: 'VictorMono', 'Courier New', monospace;
+    font-size: 1rem;
+    resize: none;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.question-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.continue-button {
+    font-family: 'VictoffrMono', 'Courier New', monospace;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    padding: 15px 30px;
+    cursor: pointer;
+    transition: opacity 0.5s ease;
+    font-size: 1.2rem;
+    opacity: 1;
+}
+
+.continue-button.hidden {
+    opacity: 0;
+    pointer-events: none;
+}

@@ -14,11 +14,13 @@ html, body {
 
 body {
     font-family: 'VictorMono', 'Courier New', Courier, monospace;
-    /* background-image: url('background.png'); */
-    /* background-size: cover; */
-    /* background-position: center; */
-    /* background: url('water-animation.gif') no-repeat center center fixed; */
-    /* animation: waterAnimation 10s infinite linear; */
+    background-color: white;
+    /* filter: url(#distort); */
+}
+
+/* Apply filter to all text elements */
+p, span, div, button {
+    filter: url(#distort);
 }
 
 /* ----- PAGE TRANSITION SYSTEM ----- */
@@ -952,4 +954,19 @@ canvas {
         background-position: 0% 50%;
         opacity: 0.3;
     }
+}
+
+.landing-svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    opacity: 0.6;
+}
+
+.landing-svg path {
+    stroke: #4C484A;
+    stroke-width: 1px;
+    filter: url(#distort);
 }
