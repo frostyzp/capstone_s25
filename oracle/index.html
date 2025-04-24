@@ -9,28 +9,48 @@
     <title>Oracle</title>
 </head>
 <body>
-    <p> Rock Oracle </p>
-    <div class="elements-container">
-        <!-- Elements will be dynamically added here -->
-    </div>
-
-    <h2> Pick an element </h2>
-    <div class="permission-button hidden">
-        <button onclick="requestPermission()">( start your ritual )</button>
-
-    </div>
-
-    <div class="content hidden">  
-        <div class="oracleBody">
-            <div class="rotation-counter hidden">
-                Rotate your phone <span id="rotation-count">0</span>/5 times
-            </div>
-            <div class="oracle_wrapper hidden"> 
-                <div class="oracle_answer"></div>
-            </div>
+    <div class="intro-page page visible">
+        <div class="intro-content">
+            <p class="intro-text">The rocks hold ancient wisdom, waiting to share their secrets with those who seek guidance.</p>
+            <button class="intro-button" onclick="switchToPage('main-page')">( enter the oracle )</button>
         </div>
     </div>
-    
-    <button class="ask-again-button hidden">Ask Again</button>
+
+    <div class="main-page page hidden">
+        <p class="oracle-title"> Rock Oracle </p>
+        <div class="elements-container">
+            <!-- Elements will be dynamically added here -->
+        </div>
+
+        <p class="oracle-instructions"> Pick an element </p>
+        <div class="permission-button hidden">
+            <button onclick="requestPermission()">( trust this rock )</button>
+        </div>
+
+        <div class="content hidden">  
+            <div class="oracleBody">
+                <div class="oracle_wrapper hidden"> 
+                    <div class="oracle_answer"></div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="ask-again-button hidden">Ask Again</button>
+    </div>
+
+    <script>
+        function switchToPage(pageClass) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+                page.classList.remove('visible');
+            });
+            
+            const targetPage = document.querySelector('.' + pageClass);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                targetPage.classList.add('visible');
+            }
+        }
+    </script>
 </body>
 </html>

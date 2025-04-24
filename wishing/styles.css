@@ -97,20 +97,57 @@ body {
 }
 
 /* ----- RIPPLE CONTAINER STYLES ----- */
+@property --color1 {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: rgb(2, 67, 124);
+}
+
+@property --color2 {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: rgb(2, 93, 124);
+}
+
 #ripple-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    --color1: rgb(2, 67, 124);
+    --color2: rgb(2, 93, 124);
     background: linear-gradient(to bottom,
-    rgb(2, 41, 124) 0%,
-    rgb(239, 239, 255) 25%,
-    rgb(2, 41, 124) 100%
+        var(--color1) 0%,
+        rgb(239, 239, 255) 25%,
+        var(--color2) 100%
     );
     z-index: 1;
     opacity: 0;
-    animation: fadeIn 0.5s ease-out forwards;
+    animation: fadeIn 0.5s ease-out forwards, hueShift 15s ease-in-out infinite;
+}
+
+@keyframes hueShift {
+    0% {
+        --color1: rgb(2, 67, 124);
+        --color2: rgb(2, 67, 124);
+    }
+    25% {
+        --color1: rgb(2, 85, 130);
+        --color2: rgb(2, 85, 130);
+    }
+    50% {
+        --color1: rgb(2, 67, 124);
+        --color2: rgb(2, 67, 124);
+    }
+    75% {
+        --color1: rgb(2, 29, 118);
+        --color2: rgb(2, 29, 118);
+    }
+    100% {
+        --color1: rgb(2, 67, 124);
+        --color2: rgb(2, 67, 124);
+    }
 }
 
 /* New CSS-based ripple effect */
@@ -290,7 +327,7 @@ canvas {
     left: 50%;
     transform: translateX(-50%);
     width: 80vw;
-    text-align: center;
+    text-align: left;
     z-index: 2;
     color: black;
     padding: 2rem;
@@ -305,6 +342,7 @@ canvas {
     align-items: center;
     width: 100%;
     margin: 0 auto 15px;
+    text-align: left;
     
 }
 
@@ -332,7 +370,8 @@ canvas {
     margin: 0 10px;
 }
 
-.input-line input {
+.input-line input,
+.input-line textarea {
     width: 100%;
     background: transparent;
     border: none;
@@ -344,15 +383,22 @@ canvas {
     transform: rotate(2deg);
     box-sizing: border-box;
     border: 1px dashed grey;
-
+    resize: none;
 }
 
-.input-line input::placeholder {
-    color: rgba(0, 0, 0, 0.5);
+.input-line textarea {
+    min-height: 80px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-y: auto;
 }
 
-.input-line input:focus {
+.input-line textarea:focus {
     outline: none;
+}
+
+.input-line textarea::placeholder {
+    color: rgba(0, 0, 0, 0.5);
 }
 
 /* ----- BUTTON STYLES ----- */
@@ -375,6 +421,13 @@ button {
     white-space: nowrap;
     display: inline-block;
     align-self: center;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#submit-wish.visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 #submit-wish:hover {

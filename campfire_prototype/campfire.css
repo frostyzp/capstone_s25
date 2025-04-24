@@ -1,5 +1,10 @@
 body {
-    background-color: black;
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
     font-family: serif; /* Using a serif font */
     text-align: center;   
     display: flex; /* Use flexbox for alignment */
@@ -33,8 +38,48 @@ h1, h2, p {
 
 /* Add this to campfire.css */
 .random-text {
-    font-family: 'Courier New', Courier, monospace; /* Use a monospace font */
-    font-size: 24px; /* Increase font size */
-    color: #333; /* Set text color */
-    padding: 10px; /* Add some padding */
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+    color: #ff6b6b; /* Changed to a warmer color */
+    padding: 10px;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.5); /* Added glow effect */
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.instructions {
+    color: #fff;
+    font-size: 18px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.filter-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    filter: url(#ripple-displacement);
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+    .filter-container {
+        filter: url(#ripple-displacement);
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+    
+    .random-text {
+        font-size: 20px;
+    }
+    
+    .instructions {
+        font-size: 16px;
+    }
 }

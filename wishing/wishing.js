@@ -122,6 +122,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevBtn = document.querySelector('.nav-arrow.prev');
     const nextBtn = document.querySelector('.nav-arrow.next');
     const submitButton = document.getElementById('submit-wish');
+    const input1 = document.getElementById('wish-input-1');
+    const input2 = document.getElementById('wish-input-2');
+    const input3 = document.getElementById('wish-input-3');
+
+    // Function to check if all inputs are filled
+    function areAllInputsFilled() {
+        return input1.value.trim() !== '' && 
+               input2.value.trim() !== '' && 
+               input3.value.trim() !== '';
+    }
+
+    // Function to update submit button visibility
+    function updateSubmitButtonVisibility() {
+        if (areAllInputsFilled()) {
+            submitButton.classList.add('visible');
+        } else {
+            submitButton.classList.remove('visible');
+        }
+    }
+
+    // Add input event listeners to all input fields
+    [input1, input2, input3].forEach(input => {
+        input.addEventListener('input', updateSubmitButtonVisibility);
+    });
+
+    // Set initial state
+    submitButton.classList.remove('visible');
 
     // Add swipe gesture detection for the third page
     const thirdPage = document.getElementById('third-page');
@@ -428,6 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Form submission handler
     if (submitButton) {
         submitButton.addEventListener('click', () => {
+            if (!areAllInputsFilled()) return; // Double check before submission
+            
             const input1 = document.getElementById('wish-input-1').value;
             const input2 = document.getElementById('wish-input-2').value;
             const input3 = document.getElementById('wish-input-3').value;

@@ -1,3 +1,111 @@
+// Add these arrays at the top with other declarations
+const verbs = ["rest", "breathe", "live", "dream", "float", "drift", "flow", "glow", "dance", "sing", "whisper", "echo"];
+const verbsIng = verbs.map(v => v + "ing");
+
+// Use RiTa for these word types
+const adverbs = ["gently", "softly", "quietly", "slowly", "deeply", "lightly", "swiftly", "calmly", "peacefully", "serenely"];
+const dets = ["another", "some", "that", "this", "every", "each", "any", "the", "a"];
+const timewords = ["morning", "evening", "dusk", "dawn", "twilight", "midnight", "daybreak", "sunset", "seasons", "moments"];
+const materials = ["light", "shadow", "air", "water", "fire", "earth", "stone", "wood", "glass", "crystal", "silver", "gold"];
+const startVerbs = ["dreaming of", "hoping for", "daydreaming", "envisioning", "wishing", "yearning"];
+const connecting = ["among", "between", "hidden", "by", "in", "inside", "outside", "within", "through", "beyond"];
+
+// Enhanced noun categories
+const natureNouns = ["garden", "forest", "meadow", "river", "mountain", "valley", "ocean", "sky", "cloud", "star", "moon", "sun", "tree", "flower", "leaf", "stone", "sand", "wave", "breeze", "rain"];
+const spaceNouns = ["space", "universe", "cosmos", "galaxy", "star", "planet", "moon", "comet", "nebula", "void", "infinity", "eternity"];
+const sanctuaryNouns = ["sanctuary", "haven", "retreat", "refuge", "shelter", "abode", "dwelling", "home", "nest", "cove", "grove", "glade", "clearing", "meadow", "garden"];
+const abstractNouns = ["dream", "hope", "peace", "serenity", "tranquility", "harmony", "balance", "wisdom", "knowledge", "truth", "beauty", "grace", "light", "darkness", "silence", "sound"];
+
+const defaultNouns = [...natureNouns, ...spaceNouns, ...sanctuaryNouns, ...abstractNouns];
+
+// Helper function to get random words using RiTa
+function getRandomWord(pos, count = 1) {
+    try {
+        if (count === 1) {
+            return RiTa.randomWord({ pos: pos });
+        } else {
+            const words = [];
+            for (let i = 0; i < count; i++) {
+                words.push(RiTa.randomWord({ pos: pos }));
+            }
+            return words;
+        }
+    } catch (e) {
+        console.error("Error getting random word:", e);
+        return null;
+    }
+}
+
+// Helper function to get a noun from the appropriate category
+function getContextualNoun(userNoun) {
+    try {
+        // First try to categorize the user's noun
+        const nounCategories = {
+            nature: natureNouns,
+            space: spaceNouns,
+            sanctuary: sanctuaryNouns,
+            abstract: abstractNouns
+        };
+
+        // Try to find which category the user's noun belongs to
+        let bestCategory = null;
+        let bestMatch = 0;
+
+        for (const [category, nouns] of Object.entries(nounCategories)) {
+            const match = nouns.some(noun => 
+                RiTa.similarBySound(userNoun, noun) || 
+                RiTa.similarBySound(noun, userNoun)
+            );
+            if (match) {
+                bestCategory = category;
+                break;
+            }
+        }
+
+        // If we found a category, use it
+        if (bestCategory) {
+            return nounCategories[bestCategory][Math.floor(Math.random() * nounCategories[bestCategory].length)];
+        }
+
+        // If no category found, try to get a similar word using RiTa
+        try {
+            const similarWords = RiTa.similarBySound(userNoun);
+            if (Array.isArray(similarWords) && similarWords.length > 0) {
+                // Filter out words that are too different in length
+                const filteredWords = similarWords.filter(word => 
+                    Math.abs(word.length - userNoun.length) <= 3 &&
+                    word.toLowerCase() !== userNoun.toLowerCase()
+                );
+                if (filteredWords.length > 0) {
+                    return filteredWords[Math.floor(Math.random() * filteredWords.length)];
+                }
+            }
+        } catch (e) {
+            console.log("No similar words found for:", userNoun);
+        }
+
+        // If all else fails, return a random noun from the most appropriate category
+        return defaultNouns[Math.floor(Math.random() * defaultNouns.length)];
+    } catch (e) {
+        console.error("Error in getContextualNoun:", e);
+        return defaultNouns[Math.floor(Math.random() * defaultNouns.length)];
+    }
+}
+
+function getWordWithVariation(word, pos, userWords) {
+    if (pos.startsWith('nn')) {
+        if (Math.random() < 0.6) {
+            return word;
+        }
+        return getContextualNoun(word);
+    }
+    
+    if (Math.random() < 0.5 && userWords.length > 0) {
+        return getRandom(userWords);
+    }
+    return getRandomWord(pos) || word;
+}
+
 function generateSimplePoem(userInput) {
     // Validate input
     if (!userInput || typeof userInput !== 'string') {
@@ -11,7 +119,7 @@ function generateSimplePoem(userInput) {
 
     // Process user inputs with enhanced word extraction
     const words1 = RiTa.tokenize(wishInput1);
-    const words2 = RiTa.tokenize(wishInput2);
+    const words2 = RiTa.tokenize(wishInput2.replace(/\n/g, ' ')); // Replace newlines with spaces
     const words3 = RiTa.tokenize(wishInput3);
     
     const tags1 = RiTa.pos(words1);
@@ -72,9 +180,9 @@ function generateSimplePoem(userInput) {
     }
     
     // Process each input with enhanced extraction
-    processWords(words1, tags1);
-    processWords(words2, tags2);
-    processWords(words3, tags3);
+    processWords(words1, tags1, userNouns);
+    processWords(words2, tags2, userAdjectives);
+    processWords(words3, tags3, userVerbs);
     
     // Add semantic expansion for feelings
     if (userFeelings.length > 0) {
@@ -110,61 +218,59 @@ function generateSimplePoem(userInput) {
         // Helper function to get similar words using RiTa
         function getSimilarWord(word, pos) {
             try {
-                // Get similar words
-                const similar = RiTa.similarBySound(word);
-                const similarByPos = similar.filter(w => RiTa.pos(w)[0].startsWith(pos));
-                
-                // If we found similar words with matching part of speech, return one
-                if (similarByPos.length > 0) {
-                    return similarByPos[Math.floor(Math.random() * similarByPos.length)];
+                // For nouns, use our enhanced contextual noun system
+                if (pos.startsWith('nn')) {
+                    return getContextualNoun(word);
                 }
                 
-                // If no similar words found, try to get a random word with same POS
-                return RiTa.randomWord({ pos: pos });
+                // For other word types, try to get random words with same POS
+                try {
+                    return getRandomWord(pos) || word;
+                } catch (e) {
+                    console.error("Error getting random word:", e);
+                    return word;
+                }
             } catch (e) {
-                // If anything fails, return the original word
+                console.error("Error in getSimilarWord:", e);
                 return word;
             }
         }
 
         // Helper function to get a word with 50% chance of being similar to user input
         function getWordWithVariation(word, pos, userWords) {
+            // For nouns, allow more variation while keeping context
+            if (pos.startsWith('nn')) {
+                // 60% chance to use the exact user noun
+                if (Math.random() < 0.6) {
+                    return word;
+                }
+                // 40% chance to use a similar or related noun
+                return getSimilarWord(word, pos);
+            }
+            
+            // For other word types, keep the 50/50 split
             if (Math.random() < 0.5 && userWords.length > 0) {
-                // 50% chance to use a user word
                 return getRandom(userWords);
             } else {
-                // 50% chance to use a similar word
                 return getSimilarWord(word, pos);
             }
         }
     
         // Define the grammar components
-        const defaultNouns = ["place", "space", "home", "room", "garden", "haven", "sanctuary", "retreat", "corner", "nook", "shelter", "dwelling", "abode", "refuge", "hideaway", "domain", "realm"];
         const userAdjs = userAdjectives.length > 0 ? userAdjectives : ["peaceful", "calm", "beautiful"];
         const userVerbsList = userVerbs.length > 0 ? userVerbs : ["rest", "breathe", "live"];
         const userFeelingsList = userFeelings.length > 0 ? userFeelings : ["peace", "comfort", "safety", "belonging"];
         
         // Create arrays for different phrase types
-        const startVerbs = ["dreaming of", "hoping for", "daydreaming", "envisioning", "wishing", "yearning"];
-        const connecting = ["among", "between", "hidden", "by", "in", "inside", "outside"];
         const feelings = userFeelingsList.concat(["peace", "comfort", "safety", "belonging", "freedom", "solitude", 
                          "connection", "harmony", "warmth", "tranquility", "serenity", "joy", 
                          "wonder", "contentment"]);
         const poeticVerbs = ["drift", "float", "whisper", "dance", "flow", "shimmer", "echo", "sway", 
                       "bloom", "melt", "unfold", "dissolve"];
-        const verbsIng = ["drifting", "floating", "whispering", "dancing", "flowing", "shimmering", 
-                         "echoing", "swaying", "blooming", "melting", "unfolding", "dissolving"];
-        const materials = ["light", "shadow", "air", "water", "fire", "earth", "stone", "wood", 
-                         "glass", "crystal", "silver", "gold", "mist", "cloud", "sand", "silk", 
-                         "paper", "thread", "wax", "ice", "smoke", "dust", "rain", "snow", 
-                         "leaves", "petals", "feathers", "shells", "pebbles", "stars"];
         const colors = ["blue", "green", "golden", "amber", "silver", "rose", "violet", "turquoise", 
                        "emerald", "russet", "ivory", "azure", "crimson", "ochre", "indigo", "lavender"];
         const elements = ["air", "water", "earth", "fire", "wind", "rain", "sunlight", "moonlight", 
                          "stars", "clouds", "mist", "fog", "shadows", "reflections"];
-        const timewords = ["morning", "evening", "dusk", "dawn", "twilight", "midnight", "daybreak", 
-                          "sunset", "seasons", "moments", "eternities", "instants", "hours", "days", "years"];
-        const dets = ["another", "some", "that", "this", "every", "each", "any"];
         
         // Helper function to get random elements with user input priority
         function getRandomWithPriority(arr, userArr) {
@@ -191,22 +297,6 @@ function generateSimplePoem(userInput) {
                 getRandomWithPriority(userAdjs, userAdjectives) + " " + getRandomWithPriority(defaultNouns, userNouns),
                 getRandom(connecting) + " " + getRandomWithPriority(userAdjs, userAdjectives) + " " + getRandomWithPriority(defaultNouns, userNouns),
                 "a " + getRandomWithPriority(defaultNouns, userNouns) + " " + RiTa.randomWord({ pos: "in" }) + " " + getRandom(feelings)
-            ];
-            return getRandom(choices);
-        }
-        
-        function expandPhrase() {
-            const choices = [
-                getRandomWithPriority(userAdjs, userAdjectives) + " " + expandNounPhrase(),
-                getRandom(connecting) + " " + RiTa.randomWord({ pos: "nn" }),
-                "a " + getRandomWithPriority(userAdjs, userAdjectives) + " home",
-                "a place where " + expandClause(),
-                expandLiving(),
-                getRandomWithPriority(userAdjs, userAdjectives) + " " + getRandom(spaces),
-                getRandomWithPriority(userAdjs, userAdjectives) + " " + getRandom(feelings),
-                getRandomWithPriority(userAdjs, userAdjectives) + " " + expandNounPhrase(),
-                expandNounPhrase() + " with " + getRandomWithPriority(defaultNouns, userNouns),
-                getRandom(spaces) + " where all can " + getRandomWithPriority(userVerbsList, userVerbs)
             ];
             return getRandom(choices);
         }
@@ -246,70 +336,7 @@ function generateSimplePoem(userInput) {
         }
     
         
-        // Standard sentence structures ---------------------------------------------------------
-        function expandS1() {
-            return getRandom(dets) + " " + 
-                   getRandom(userAdjs) + " " + 
-                   getRandom(userNouns) + " for " + 
-                   "one to " + RiTa.randomWord({ pos: "vb" }) + " " + 
-                   RiTa.randomWord({ pos: "in" });
-        }
         
-        function expandS2() {
-            return "a place where " + 
-                   RiTa.randomWord({ pos: "nns" }) + " " + 
-                   RiTa.randomWord({ pos: "vb" }) + " like " + 
-                   getRandom(userAdjs) + " " + 
-                   RiTa.randomWord({ pos: "nn" });
-        }
-        
-        function expandS3() {
-            return "the " + 
-                   getRandom(userAdjs) + " " + 
-                   getRandom(spaces) + " where ";
-                                }
-        
-        function expandS4() {
-            return getRandom(dets) + " " +
-                  RiTa.randomWord({ pos: "nn" }) + " filled with " +
-                  getRandom(userAdjs) + " " +
-                  RiTa.randomWord({ pos: "nns" }) + " and " + 
-                  RiTa.randomWord({ pos: "jj" }) + " " +
-                  RiTa.randomWord({ pos: "nns" });
-        }
-        
-        function expandS5() {
-            return getRandom(userAdjs) + " light falling " +
-                   RiTa.randomWord({ pos: "in" }) + " " +
-                   getRandom(userAdjs) + " " +
-                   RiTa.randomWord({ pos: "nns" });
-        }
-        
-        function expandS6() {
-            return "the " + getRandom(feelings) + " of " +
-                   RiTa.randomWord({ pos: "vbg" }) + " " +
-                   RiTa.randomWord({ pos: "rb" }) + " " +
-                   RiTa.randomWord({ pos: "in" }) + " " +
-                   "the " +
-                   getRandom(userAdjs) + " " +
-                   RiTa.randomWord({ pos: "nn" });
-        }
-        
-        function expandUserS1() {
-            return getRandom(dets) + " " +
-                   getRandom(userAdjs) + " " +
-                   RiTa.randomWord({ pos: "nn" }) + " where " +
-                   "one can " +
-                   getRandom(userVerbs) + " " +
-                   RiTa.randomWord({ pos: "in" }) + " dreams";
-        }
-        
-        function expandUserS2() {
-            return "the " +
-                   getRandom(userNouns) + ", " +
-                   getRandom(userAdjs) + " and " +
-                   RiTa.randomWord({ pos: "jj" }) + ", " 
-        }
         
         function expandStart() {
             return getRandom(startVerbs) + " " + expandUserInspired();
@@ -329,21 +356,41 @@ function generateSimplePoem(userInput) {
             return getRandom(connecting) + " than " + getRandom(timewords) + ", " + expandLiving();
         }
         
+        
         function generateGrammarStructure() {
             const structures = [
+                // Template 1: Use user noun in first position
                 () => `${getRandom(startVerbs)} ${getRandom(dets)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)} ${getRandom(connecting)} ${getRandom(timewords)}`,
-                () => `${getRandom(startVerbs)} ${getRandom(dets)} ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)} ${getRandom(connecting)} ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} ${getRandom(timewords)}`,
-                () => `${getRandom(dets)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)} ${getRandom(connecting)} ${getRandom(timewords)}, ${getRandom(startVerbs)}`,
-                () => `A ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)} of ${getRandom(feelings)}, ${getRandom(verbsIng)} ${getRandom(connecting)} ${getRandom(dets)} ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)}`,
-                () => `A ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)} of ${getRandom(materials)}, ${getRandom(verbsIng)} like ${getRandom(dets)} ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} ${getRandom(timewords)}`,
-                () => `more ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} than ${getRandom(dets)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)}, less ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} than ${getRandom(timewords)} ${getRandom(connecting)} ${getRandom(feelings)}`,
-                () => `as if ${getRandom(dets)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)} could ${getWordWithVariation(getRandom(userVerbsList), "vb", userVerbs)} ${getRandom(dets)} ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} ${getRandom(feelings)}`,
-                () => `${getRandom(timewords)}'s ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)} ${getWordWithVariation(getRandom(userVerbsList), "vb", userVerbs)} ${getRandom(dets)} ${getRandom(feelings)} of ${getWordWithVariation(getRandom(userAdjs), "jj", userAdjectives)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)}`
+                
+                // Template 2: Use different structure without user noun
+                () => `${getRandom(dets)} ${getRandom(userAdjs)} ${getRandom(defaultNouns)} where ${getRandomWord('vb')}`,
+                
+                // Template 3: Use user noun in different position
+                () => `the ${getRandom(feelings)} of ${getRandom(verbsIng)} ${getRandomWord('rb')} in ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)}`,
+                
+                // Template 4: Use different structure
+                () => `${getRandom(dets)} ${getRandom(materials)} of ${getRandom(feelings)}, ${getRandom(verbsIng)} ${getRandom(connecting)} ${getRandom(dets)} ${getRandom(userAdjs)} ${getRandom(defaultNouns)}`,
+                
+                // Template 5: Use user noun in final position
+                () => `more ${getRandom(userAdjs)} than ${getRandom(dets)} ${getRandom(defaultNouns)}, less ${getRandom(userAdjs)} than ${getRandom(timewords)} ${getRandom(connecting)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)}`,
+                
+                // Template 6: Use different structure without user noun
+                () => `as if ${getRandom(dets)} ${getRandom(defaultNouns)} could ${getRandomWord('vb')} ${getRandom(dets)} ${getRandom(userAdjs)} ${getRandom(feelings)}`,
+                
+                // Template 7: Use user noun in middle position
+                () => `${getRandom(timewords)}'s ${getRandom(userAdjs)} ${getWordWithVariation(getRandom(userNouns), "nn", userNouns)} ${getRandomWord('vb')} ${getRandom(dets)} ${getRandom(feelings)}`
             ];
 
             let currentIndex = 0;
+            let usedNouns = new Set(); // Track which nouns we've used
+
             return {
                 generateNextLine() {
+                    // Reset used nouns if we've used them all
+                    if (usedNouns.size >= userNouns.length) {
+                        usedNouns.clear();
+                    }
+
                     const line = structures[currentIndex]();
                     currentIndex = (currentIndex + 1) % structures.length;
                     return line.charAt(0).toUpperCase() + line.slice(1);

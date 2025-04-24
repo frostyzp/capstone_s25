@@ -222,9 +222,9 @@ function initializeElements() {
     // Clear any existing elements
     container.innerHTML = '';
 
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    const radius = Math.min(window.innerWidth, window.innerHeight) * 0.3; // 30% of the smaller dimension
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const radius = Math.min(viewportWidth, viewportHeight) * 0.3;
 
     elements.forEach((element, index) => {
         const div = document.createElement('div');
@@ -234,14 +234,14 @@ function initializeElements() {
 
         // Calculate position on a circle
         const angle = (index / elements.length) * Math.PI * 2;
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
 
         // Position the element
         div.style.position = 'absolute';
-        div.style.left = `${x}px`;
-        div.style.top = `${y}px`;
-        div.style.transform = 'translate(-50%, -50%)'; // Center the element on its position
+        div.style.left = `${viewportWidth / 2 + x}px`;
+        div.style.top = `${viewportHeight / 2 + y}px`;
+        div.style.transform = 'translate(-50%, -50%)';
 
         div.addEventListener('click', () => handleElementSelection(element));
         container.appendChild(div);
@@ -260,11 +260,39 @@ async function requestPermission() {
             const permission = await DeviceMotionEvent.requestPermission();
             if (permission === 'granted') {
                 hasPermission = true;
-                document.querySelector('.permission-button').classList.add('hidden');
-                document.querySelector('.elements-container').classList.add('hidden');
-                document.querySelector('h2').classList.add('hidden');
-                document.querySelector('.content').classList.remove('hidden');
-                document.querySelector('.rotation-counter').classList.remove('hidden');
+                
+                // Safely check and hide elements
+                const elementsToHide = [
+                    '.permission-button',
+                    '.elements-container',
+                    'h2'
+                ];
+                
+                elementsToHide.forEach(selector => {
+                    const element = document.querySelector(selector);
+                    if (element) element.classList.add('hidden');
+                });
+                
+                // Safely show elements
+                const elementsToShow = [
+                    '.content',
+                    '.rotation-counter'
+                ];
+                
+                elementsToShow.forEach(selector => {
+                    const element = document.querySelector(selector);
+                    if (element) element.classList.remove('hidden');
+                });
+                
+                // Update oracle instructions
+                const instructions = document.querySelector('.oracle-instructions');
+                if (instructions) {
+                    instructions.textContent = "Your feelings and energy is now accessible to this rock.";
+                    setTimeout(() => {
+                        instructions.textContent = "Rotate your phone to reveal your fortune.";
+                    }, 3000);
+                }
+                
                 startRotationDetection();
             }
         } catch (error) {
@@ -273,11 +301,39 @@ async function requestPermission() {
     } else {
         // For non-iOS devices
         hasPermission = true;
-        document.querySelector('.permission-button').classList.add('hidden');
-        document.querySelector('.elements-container').classList.add('hidden');
-        document.querySelector('h2').classList.add('hidden');
-        document.querySelector('.content').classList.remove('hidden');
-        document.querySelector('.rotation-counter').classList.remove('hidden');
+        
+        // Safely check and hide elements
+        const elementsToHide = [
+            '.permission-button',
+            '.elements-container',
+            'h2'
+        ];
+        
+        elementsToHide.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) element.classList.add('hidden');
+        });
+        
+        // Safely show elements
+        const elementsToShow = [
+            '.content',
+            '.rotation-counter'
+        ];
+        
+        elementsToShow.forEach(selector => {
+            const element = document.querySelector(selector);
+            if (element) element.classList.remove('hidden');
+        });
+        
+        // Update oracle instructions
+        const instructions = document.querySelector('.oracle-instructions');
+        if (instructions) {
+            instructions.textContent = "Your feelings and energy is now accessible to this rock.";
+            setTimeout(() => {
+                instructions.textContent = "Rotate your phone to reveal your fortune.";
+            }, 3000);
+        }
+        
         startRotationDetection();
     }
 }
@@ -306,17 +362,18 @@ function handleOrientation(event) {
         // Only count if we've completed a full rotation (changed direction)
         if (rotationDirection !== 0) {
             rotationCount++;
-            document.getElementById('rotation-count').textContent = rotationCount;
+            
+            // Update oracle instructions with rotation count
+            const instructions = document.querySelector('.oracle-instructions');
+            if (instructions) {
+                instructions.textContent = `Rotate your phone ${rotationCount}/5 times`;
+            }
+            
             lastRotationTime = currentTime;
             
             // Update background color
             updateBackgroundColor();
             
-            // Add visual feedback
-            const counter = document.getElementById('rotation-count');
-            counter.classList.add('rotate-animation');
-            setTimeout(() => counter.classList.remove('rotate-animation'), 500);
-
             if (rotationCount >= 5) {
                 showOracleAnswer();
                 window.removeEventListener('deviceorientation', handleOrientation);

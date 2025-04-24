@@ -9,6 +9,28 @@
     <script src="campfire.js" defer></script> <!-- Link to your JavaScript file -->
 </head>
 <body>
+    <div class="filter-container">
+        <svg style="display: none">
+            <defs>
+                <filter id="ripple-displacement">
+                    <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise">
+                        <animate attributeName="baseFrequency" 
+                                values="0.02;0.04" 
+                                keyTimes="0;1"
+                                dur="4s" 
+                                repeatCount="indefinite"/>
+                    </feTurbulence>
+                    <feDisplacementMap in="SourceGraphic" in2="noise" scale="20" xChannelSelector="R" yChannelSelector="G">
+                        <animate attributeName="scale" 
+                                values="15;25" 
+                                keyTimes="0;1"
+                                dur="3s" 
+                                repeatCount="indefinite"/>
+                    </feDisplacementMap>
+                </filter>
+            </defs>
+        </svg>
+
         <header>
             <!-- <h1> ... </h1> -->
         </header>
@@ -33,14 +55,10 @@
                     |^|<br>
                     ^[]^
                 </div>
-
-
-
-
             </section>
         </main>
         <footer>
         </footer>
-
+    </div>
 </body>
 </html>
