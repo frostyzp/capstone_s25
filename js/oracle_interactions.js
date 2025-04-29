@@ -72,9 +72,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-
-
-
 function touchstart() {
     timer = setTimeout(onlongtouch, touchduration); 
 }

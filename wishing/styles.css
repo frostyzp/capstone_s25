@@ -43,7 +43,7 @@ body {
 
 /* Apply filter to all text elements */
 p, span, div, button {
-    filter: url(#distort);
+    /* filter: url(#distort); */
 }
 
 /* ----- PAGE TRANSITION SYSTEM ----- */
@@ -889,7 +889,7 @@ canvas {
     left: 0;
     width: 100%;
     height: 100%;
-    filter: url(#ripple-displacement);
+    /* filter: url(#ripple-displacement); */
     /* Add hardware acceleration */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);

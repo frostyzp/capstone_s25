@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blinking Windows</title>
+    <title>campfire of dreams</title>
     
     <!-- p5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     
-    <!-- Typewriter Effect (only one instance) -->
+    <!-- Typewriter Effect -->
     <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
     
     <!-- Handsfree.js -->
@@ -19,8 +19,46 @@
     
     <!-- Local Stylesheet -->
     <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        svg {
+            position: absolute;
+        }
+
+        .intro-svg {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0.9;
+            transition: opacity 1s ease-out;
+        }
+
+        .intro-svg.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .intro-svg path {
+            stroke: #4C484A;
+            stroke-width: 3px;
+        }
+    </style>
 </head>
 <body>
+    <!-- SVG Filter Definition -->
+    <svg style="display: none;">
+        <defs>
+            <filter id="wavy">
+                <feTurbulence id="turbulence" type="turbulence" numOctaves="3" result="NOISE"></feTurbulence>
+                <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="10">
+                </feDisplacementMap>
+                <animate xlink:href="#turbulence" attributeName="baseFrequency" dur="60s" keyTimes="0;0.5;1"
+                    values="0.01 0.02;0.02 0.04;0.01 0.02" repeatCount="indefinite"></animate>
+            </filter>
+        </defs>
+    </svg>
+
     <!-- JavaScript Files -->
     <script src="sketch.js"></script>
     <script src="landmarks.js"></script>
@@ -30,19 +68,84 @@
         <video autoplay loop muted playsinline style="position: absolute; width: 100%; height: 100%; object-fit: cover;">
             <source src="campfire.mp4" type="video/mp4">
         </video>
-        <div class="mainText floating-dream"></div>
+        
+        <img id="campfire-image" src="campfire.png" style="position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out; z-index: 2;">
+        
+        <svg width="300" height="308" viewBox="0 0 300 308" fill="none" xmlns="http://www.w3.org/2000/svg" class="intro-svg">
+            <defs>
+                <filter id="noise1">
+                    <feTurbulence baseFrequency="0.20">
+                        <animate attributeName="baseFrequency" 
+                                values="0.24;0.25" 
+                                keyTimes="0;1"
+                                dur="3s" 
+                                repeatCount="indefinite"/>
+                    </feTurbulence>
+                    <feDisplacementMap in="SourceGraphic" scale="7"/>
+                </filter>
+            </defs>
+        </svg>
 
-        <!-- <h2 class="cloudText"> . ݁₊ ⊹ . ݁˖ . ݁ </h2>
-            <h2 class="cloudText"> . ݁₊ ⊹ . ݁˖ . ݁ </h2>
-
-        <h2 class="cloudText">~( . ݁₊ ⊹ . ݁˖ . ݁ </h2>
-
-        <h2 class="cloudText"> . ݁₊ ⊹ . ݁˖ . ݁) </h2>
-        <h2 class="cloudText"> . ݁₊ ⊹ . ݁˖ . ݁ </h2> -->
-                    
+        <div id="awakening-text"></div>
     </div>
 
-    
+    <script>
+        let isFadedToBlack = false;
+        let fadeTimeout;
+        const fadeDuration = 2000; // 2 seconds
+        const video = document.querySelector('video');
+        const campfireImage = document.getElementById('campfire-image');
+        const awakeningText = document.getElementById('awakening-text');
+        const introSvg = document.querySelector('.intro-svg');
+        const mainContainer = document.querySelector('div');
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            opacity: 0;
+            transition: opacity ${fadeDuration}ms ease-in-out;
+            pointer-events: none;
+            z-index: 1;
+        `;
+        mainContainer.appendChild(overlay);
+
+        function fadeToBlack() {
+            if (isFadedToBlack) return;
+            isFadedToBlack = true;
+            overlay.style.opacity = '1';
+            video.style.opacity = '0';
+            campfireImage.style.opacity = '1';
+            awakeningText.style.opacity = '1';
+            awakeningText.style.display = 'block';
+            introSvg.style.opacity = '0';
+        }
+
+        function fadeFromBlack() {
+            if (!isFadedToBlack) return;
+            isFadedToBlack = false;
+            overlay.style.opacity = '0';
+            video.style.opacity = '1';
+            campfireImage.style.opacity = '0';
+            awakeningText.style.opacity = '0';
+            awakeningText.style.display = 'none';
+            introSvg.style.opacity = '1';
+        }
+
+        function handleFaceDetection() {
+            if (isFadedToBlack) {
+                fadeFromBlack();
+            }
+            clearTimeout(fadeTimeout);
+            fadeTimeout = setTimeout(fadeToBlack, 10000);
+        }
+
+        // Simulate face detection every 5 seconds
+        setInterval(handleFaceDetection, 5000);
+    </script>
 </body>
 </html>
 

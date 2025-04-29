@@ -1,4 +1,3 @@
-
 // Crappy Blink Detector using p5.js + handsfree.js
 //
 // HOW IT WORKS, USING RUDIMENTARY STATISTICS:
@@ -278,36 +277,25 @@ function checkBlink() {
   const currentTime = millis();
           
   if (currentTime - lastBlink >= cooldown){
+      // Call the blink effect function
+      window.createBlinkEffect();
 
       if (document.title === "Blinking Windows") {
         // Code specific to the About page
-        // console.log("About page loaded");
-        // print("Blink (Windows)) at " + int(millis()) + " milliseconds");
-        // spawnWords();
         createDreamText();
         mainTextChange();
       } else {
-        // console.log("Garden");
-        // print("Blink (Garden) at " + int(millis()) + " milliseconds");
-
-        spawnGardenWord();
-        
+        createDreamText();
       }
- 
-
 
     // fade color in the bg
     let firstColor = color(0,0,0);
     let secondColor = color(255,255,255,10);
     fill(lerpColor(firstColor, secondColor, blinkActivation));
 
-    //rect(0, 0, width, height);
     // update last blink
     lastBlink = currentTime;
-
   }
-
-
 }
 
 
