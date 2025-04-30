@@ -48,13 +48,13 @@ let openedWindows = []; // Array to keep track of opened windows
 
 // Add this at the top of your file with other declarations
 const dreams = [
-    [ // Dream sequence 1 - Lost Love
+    [ 
         "last night",
         "yesterday",
         "remember when we danced under stars?",
         "this morning"
     ],
-    [ // Dream sequence 2 - Childhood Memories
+    [
         " she's the one left to carry everything for my parents while I chase something far away",
         "it felt foreign, familiar, and distant",
         "I once dreamt of my dad growing old while I was overseas studying.",
@@ -66,7 +66,7 @@ const dreams = [
         "Mom calling us home at sunset",
         "The old treehouse where we played"
     ],
-    [ // Dream sequence 3 - Future Hopes
+    [ 
         "I remember imagining the carnage—her half body becoming muscle flesh and bone",
         "I was with the ex situationship and we were hanging out",
         "despite like carrying memories of my college life",
@@ -80,7 +80,7 @@ const dreams = [
         "I cried to my parents in the dream, not knowing what to say.",
         "kind of dirty talked to me towards the end of the night,",        "Flying through cotton candy clouds",
     ],
-    [ // Dream sequence 4 - Abstract/Surreal
+    [ 
             "I told my sister about it over the phone.",
             "but it had like a pointy nose like a pointy triangle nose head",
             "The size of one of my suitcases. It must've cost millions.",
@@ -280,11 +280,37 @@ let lastBlinkTime = 0; // Track last blink time
 const BLINK_COOLDOWN = 1000; // 1 second cooldown between blinks
 let canSpawnWords = false; // Controls whether words can be spawned
 let backgroundSound = null;
+let soundtrack2 = null;
+let audioLoaded = false;
 
 function initializeSound() {
-    backgroundSound = new Audio('campfire.mp3'); // Add sound file path here
+    // Main soundtrack
+    backgroundSound = new Audio('campfire.mp3');
     backgroundSound.loop = true;
-    backgroundSound.volume = 0.5; // Set volume to 50%
+    backgroundSound.volume = 0.2;
+    
+    // Second soundtrack
+    soundtrack2 = new Audio('fire.mp3');
+    soundtrack2.loop = true;
+    soundtrack2.volume = 0.5;
+
+    // Add event listeners for loading
+    const audioElements = [backgroundSound, soundtrack2];
+    let loadedCount = 0;
+
+    audioElements.forEach(audio => {
+        audio.addEventListener('canplaythrough', () => {
+            loadedCount++;
+            if (loadedCount === audioElements.length) {
+                audioLoaded = true;
+                console.log('All audio files loaded successfully');
+            }
+        });
+
+        audio.addEventListener('error', (e) => {
+            console.error('Error loading audio:', e);
+        });
+    });
 }
 
 function checkFacePresence() {
@@ -343,6 +369,7 @@ function fadeToVideo() {
     const textContainer = document.querySelector('.awakening-text');
     const introSvg = document.querySelector('.intro-svg');
     const overlay = document.querySelector('.fade-black-overlay');
+    const campfireImage = document.getElementById('campfire-image');
     
     if (!video) {
         console.error('Video element not found!');
@@ -368,6 +395,10 @@ function fadeToVideo() {
         introSvg.classList.add('hidden');
     }
     
+    // Fade out the image
+    campfireImage.style.transition = `opacity ${FADE_IN_DURATION/1000}s ease-out`;
+    campfireImage.style.opacity = '0';
+    
     // Ensure video is visible and at full opacity
     video.style.display = 'block';
     video.style.transition = `opacity ${FADE_IN_DURATION/1000}s ease-in`;
@@ -377,11 +408,26 @@ function fadeToVideo() {
     setTimeout(() => {
         canSpawnWords = true;
         console.log('Video fully visible, word spawning enabled');
-        // Play background sound when video is visible
-        if (backgroundSound) {
-            backgroundSound.play().catch(error => {
-                console.log('Audio playback failed:', error);
-            });
+        
+        // Play both soundtracks when video is visible
+        if (audioLoaded) {
+            if (backgroundSound) {
+                backgroundSound.play().catch(error => {
+                    console.log('Soundtrack 1 playback failed:', error);
+                });
+            }
+            if (soundtrack2) {
+                soundtrack2.play().catch(error => {
+                    console.log('Soundtrack 2 playback failed:', error);
+                });
+            }
+        } else {
+            console.log('Audio not fully loaded yet, retrying...');
+            // Retry after a short delay
+            setTimeout(() => {
+                if (backgroundSound) backgroundSound.play().catch(console.error);
+                if (soundtrack2) soundtrack2.play().catch(console.error);
+            }, 1000);
         }
     }, FADE_IN_DURATION);
     
@@ -397,6 +443,7 @@ function fadeToBlack() {
     console.log('Starting fade to black...');
     const video = document.querySelector('video');
     const body = document.body;
+    const campfireImage = document.getElementById('campfire-image');
     let overlay = document.querySelector('.fade-black-overlay');
     
     if (!video) {
@@ -415,15 +462,22 @@ function fadeToBlack() {
         overlay.classList.add('active');
     }, 10); // allow DOM to register
     
-    // Disable word spawning and pause sound
+    // Disable word spawning and pause soundtracks
     canSpawnWords = false;
     if (backgroundSound) {
         backgroundSound.pause();
+    }
+    if (soundtrack2) {
+        soundtrack2.pause();
     }
     
     // Fade out video
     video.style.transition = `opacity ${FADE_DURATION/1000}s ease-out`;
     video.style.opacity = '0';
+    
+    // Fade in the image
+    campfireImage.style.transition = `opacity ${FADE_DURATION/1000}s ease-in`;
+    campfireImage.style.opacity = '1';
     
     // Set black background
     body.style.transition = `background-color ${FADE_DURATION/1000}s ease-out`;

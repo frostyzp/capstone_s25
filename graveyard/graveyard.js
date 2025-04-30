@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Add audio element
+    const audio = document.createElement('audio');
+    audio.src = 'graveyard.mp3'; // Audio file for graveyard ambiance
+    audio.loop = true;
+    audio.volume = 0.5;
+    document.body.appendChild(audio);
+
     const container = document.getElementById('canvas-container');
     const graveyardCount = document.getElementsByClassName('graveyard-count')[0];
     const grainedElement = document.getElementsByClassName('grained-element')[0];
@@ -435,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
             driftingDiv.textContent = content;
             driftingDiv.dataset.content = content;
             driftingDiv.style.whiteSpace = 'pre';
-            driftingDiv.style.animation = 'windBlow 35s steps(4) infinite';
+            driftingDiv.style.animation = 'windBlow 10s steps(4) infinite';
             
             wrapper.appendChild(driftingDiv);
             container.appendChild(wrapper);
@@ -445,6 +452,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Click event listener for "Scroll to enter"
     enterText.addEventListener('click', function() {
+        // Start playing the music
+        audio.play().catch(error => {
+            console.log('Audio playback failed:', error);
+        });
+
         // Make the canvas container visible again
         // Fade out graveyardCount over 2 seconds
         if (graveyardMain) {
@@ -498,29 +510,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // BURY ENTRY MODAL - CONTRIBUTE TO THE GRAVEYARD ------------------------------------------------------------
     buryEntry.addEventListener('click', function() {
+        // Pause music when modal is opened
+        audio.pause();
 
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '50%';
-    modal.style.left = '50%';
-    modal.style.transform = 'translate(-50%, -50%)';
-    modal.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-    modal.style.border = '2px solid #000';
-    modal.style.padding = '20px';
-    modal.style.zIndex = '1000';
-    modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-    modal.innerText = 'Contribute to the graveyard.';
+        const modal = document.createElement('div');
+        modal.style.position = 'fixed';
+        modal.style.top = '50%';
+        modal.style.left = '50%';
+        modal.style.transform = 'translate(-50%, -50%)';
+        modal.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+        modal.style.border = '2px solid #000';
+        modal.style.padding = '20px';
+        modal.style.zIndex = '1000';
+        modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+        modal.innerText = 'Contribute to the graveyard.';
 
-    const closeButton = document.createElement('button');
-    closeButton.innerText = 'Close';
-    closeButton.style.marginTop = '10px';
-    closeButton.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
+        const closeButton = document.createElement('button');
+        closeButton.innerText = 'Close';
+        closeButton.style.marginTop = '10px';
+        closeButton.addEventListener('click', () => {
+            modal.style.display = 'none';
+            // Resume music when modal is closed
+            audio.play().catch(error => {
+                console.log('Audio playback failed:', error);
+            });
+        });
 
-    modal.appendChild(closeButton);
-    document.body.appendChild(modal);        
-
+        modal.appendChild(closeButton);
+        document.body.appendChild(modal);        
     });
 
     $(document).ready(function() {

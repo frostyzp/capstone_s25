@@ -7,7 +7,7 @@ body {
     color: white;
     text-align: center;
     background-image: url('background.png');
-    font-family: 'VictorMono', 'Courier New', Courier, monospace;
+    font-family: 'VictorMono', 'Courienterer New', Courier, monospace;
 }
 
 @font-face {
@@ -20,7 +20,29 @@ body {
     src: url('/EarthTone-Regular.ttf') format('truetype');
 }
 
+.main-title {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    /* font-family: 'EarthTone', monospace; */
+    font-size: 1rem;
+    color: white;
+    z-index: 1000;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
 
+.sub-text {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    font-size: 1rem;
+    color: rgb(94, 94, 94);
+    z-index: 1000;
+}
 
 .graveyardMain {
     text-align: center;
@@ -75,18 +97,13 @@ body {
 .content-div {
     transform: skewY(-20deg) translateZ(20px);
     perspective: 1000px;
-    filter: url(#pixelate);
-
     animation: ghostfade 4s infinite;
-
 }
 
 .content-div-2 {
     transform: skewY(20deg) translateZ(-20px);
     perspective: 1000px;    
     animation: ghostfade 4s infinite;
-    filter: url(#pixelate);
-
 }
 
 .content-div-landscape {
@@ -110,6 +127,7 @@ body {
     width: 900vw; /* 5x width */
     height: 700vh; /* 3x height */
     display: none;
+    opacity: 0.8;
     /* overflow: hidden; */
 }
 
@@ -124,7 +142,7 @@ body {
     left: 0;
     animation-name: grained;
     animation-iteration-count: infinite;
-    animation-duration: 1s;
+    animation-duration: 3s;
     animation-timing-function: steps(1);
     z-index: -1;
 }
@@ -150,9 +168,9 @@ body {
 }
 
 @keyframes windBlow {
-    0% { transform: translateX(0px) rotate(0deg); }
-    50% { transform: translateX(250px) rotate(0deg); }
-    100% { transform: translateX(700px) rotate(0deg); }
+    0% { opacity: 0.05; }
+    50% { opacity: 0.4; }
+    100% { opacity: 0.05; }
 }
 
 
@@ -165,9 +183,9 @@ body {
     text-align: center;
     width: auto;
     z-index: 1000;
-    font-family: 'EarthTone', monospace;
+    /* font-family: 'EarthTone', monospace; */
     font-size: 1.1rem;
-    color: white;
+    color: rgb(138, 138, 138);
     cursor: pointer;
     transition: opacity 0.3s ease;
     display: none; /* Initially hidden */

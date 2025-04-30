@@ -25,11 +25,24 @@ body {
     transition: background-color 0.5s ease-out;
     font-size: 1rem;
     filter: url(#distort);
-    /* background-image: linear-gradient(rgba(53, 53, 53, 0.97), rgba(40, 40, 40, 0.97)), url('rock_pattern.png'); */
+    background-image: linear-gradient(rgba(53, 53, 53, 0.97), rgba(40, 40, 40, 0.97)), url('rock_pattern.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+}
+
+.main-title {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    /* font-family: 'EarthTone', monospace; */
+    font-size: 1rem;
+    color: white;
+    z-index: 1000;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
 }
 
 /* Apply filter to all text elements */
@@ -84,7 +97,7 @@ p, span, div, button {
 .elements-container {
     position: fixed;
     top: 0;
-    left: 0;
+    left: -10%;
     width: 100%;
     height: 100%;
     transition: opacity 0.5s ease-out;
@@ -154,29 +167,86 @@ button:hover {
 
 /* Oracle wrapper */
 .oracle_wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 10px;
+}
+
+.oracle-word {
+    font-size: 24px;
+    color: #fff;
+    transition: opacity 0.3s ease-in-out;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.instruction-text {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: 18px;
+    text-align: center;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.instruction-text.fade-out {
+    opacity: 0;
+}
+
+.ask-again-button {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ask-again-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.oracle-answer-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #000;
+    transition: background-color 0.3s ease;
+}
+
+/* Add smooth transitions for page switching */
+.page {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.5s ease;
-    max-width: 80%;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
+    transition: opacity 0.5s ease-in-out;
 }
 
-.oracle_wrapper.hidden {
+.page.hidden {
     opacity: 0;
     pointer-events: none;
 }
 
-.oracle_wrapper:not(.hidden) {
+.page.visible {
     opacity: 1;
+    pointer-events: auto;
 }
 
 /* Oracle answer */
@@ -282,30 +352,6 @@ button:hover {
     transform: scale(1.1);
     color: #ffffff;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-/* Ask again button */
-.ask-again-button {
-    position: fixed;
-    bottom: 10%;
-    left: 50%;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
-
-.ask-again-button:not(.hidden) {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.ask-again-button:hover {
-    background-color: #1976D2;
 }
 
 /* Oracle colors */
@@ -552,7 +598,7 @@ p {
     position: relative;
     z-index: 2;
     padding: 3rem;
-    width: 80%;
+    width: 100%;
     max-width: 600px;
     box-sizing: border-box;
     margin: 0 auto;
@@ -570,7 +616,7 @@ p {
     height: 120px;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     color: #ffffff;
     font-family: 'VictorMono', 'Courier New', monospace;

@@ -93,6 +93,24 @@ document.addEventListener("click", function() {
 
 // ––––––––––––––––––––––––– TILTING -------------------------------------- 
 
+// Split the answer into two arrays of alternating words
+function splitAnswerIntoArrays(answer) {
+    const words = answer.split(' ');
+    const firstArray = [];
+    const secondArray = [];
+    
+    words.forEach((word, index) => {
+        if (index % 2 === 0) {
+            firstArray.push(word);
+        } else {
+            secondArray.push(word);
+        }
+    });
+    
+    return { firstArray, secondArray };
+}
+
+// Update the device orientation handler
 window.addEventListener("deviceorientation", (event) => {
     const beta = event.beta;  // Front-back tilt (-90 to 90)
     const gamma = event.gamma; // Left-right tilt (-90 to 90)
@@ -105,53 +123,51 @@ window.addEventListener("deviceorientation", (event) => {
     const blueIntensity = Math.floor(tiltPercentage * 20); // Range 0-20 for subtle blue
     document.body.style.backgroundColor = `rgb(0, 0, ${blueIntensity})`;
 
-    // Handle text fragment highlighting
+    // Get the current answer and split it
+    const oracleWrapper = document.querySelector('.oracle_wrapper');
+    if (!oracleWrapper) return;
+    
+    const currentAnswer = oracleWrapper.textContent;
+    const { firstArray, secondArray } = splitAnswerIntoArrays(currentAnswer);
+    
+    // Handle text fragment highlighting based on tilt
     fragments.forEach(fragment => {
         // First unhighlight all fragments
         fragment.unhighlight();
         
-        // Then highlight based on tilt
+        // TILT TO REVEAL WORDS
         if (fragment.messageId === currentMessageId) {
-            if (gamma < -15 && fragment.type === 'first') {
+            if (gamma < -15 && firstArray.includes(fragment.textContent)) {
                 fragment.highlight(selectedStone);
             }
-            else if (gamma > 15 && fragment.type === 'second') {
-                fragment.highlight(selectedStone);
-            }
-            else if (beta > 15 && fragment.type === 'reflection') {
+            else if (gamma > 15 && secondArray.includes(fragment.textContent)) {
                 fragment.highlight(selectedStone);
             }
         }
     });
 
     // Handle answer revealing
-    const oracleWrapper = document.querySelector('.oracle_wrapper');
-    const oracleAnswer = document.querySelector('.oracle_answer');
-    
-    if (oracleWrapper && oracleAnswer) {
-        // If tilting down (beta > 30 degrees)
-        if (beta > 30) {
-            if (!hasTiltTriggered) {
-                hasTiltTriggered = true;
+    if (beta > 30) {
+        if (!hasTiltTriggered) {
+            hasTiltTriggered = true;
+            
+            // Fade out current answer
+            oracleWrapper.classList.remove("fade-in");
+            oracleWrapper.classList.add("fade-out");
+            
+            setTimeout(() => {
+                // Get new answer
+                getEightBallMessage();
                 
-                // Fade out current answer
-                oracleAnswer.classList.remove("fade-in");
-                oracleAnswer.classList.add("fade-out");
+                // Fade in new answer
+                oracleWrapper.classList.remove("fade-out");
+                oracleWrapper.classList.add("fade-in");
                 
+                // Reset cooldown after animation
                 setTimeout(() => {
-                    // Get new answer
-                    getEightBallMessage();
-                    
-                    // Fade in new answer
-                    oracleAnswer.classList.remove("fade-out");
-                    oracleAnswer.classList.add("fade-in");
-                    
-                    // Reset cooldown after animation
-                    setTimeout(() => {
-                        hasTiltTriggered = false;
-                    }, 1000);
-                }, 500);
-            }
+                    hasTiltTriggered = false;
+                }, 1000);
+            }, 500);
         }
     }
 });
@@ -288,7 +304,7 @@ async function requestPermission() {
                     
                     // Update instructions
                     if (instructions) {
-                        instructions.textContent = "Rotate your vessel 3 times to reveal your fortune.";
+                        instructions.textContent = "Tilt your vessel left and right to read your fortune.";
                     }
                     
                     startRotationDetection();
@@ -451,7 +467,9 @@ function showContent() {
         
         content.classList.add('visible');
     } else {
-        console.error('Content element not found');
+        console.log('Content element not found, but continuing execution');
+        // Continue execution even if content element is not found
+        return;
     }
 }
 
@@ -573,7 +591,7 @@ const perlin = new PerlinNoise();
 
 // Fragment class to manage individual text fragments
 class TextFragment {
-    constructor(element, baseX, baseY, type, messageId) {
+    constructor(element, baseX, baseY, type, messageId, textContent) {
         this.element = element;
         this.baseX = baseX;
         this.baseY = baseY;
@@ -587,12 +605,14 @@ class TextFragment {
         this.skew = -20 + Math.random() * 40;
         this.type = type;
         this.messageId = messageId;
+        this.textContent = textContent;
         this.highlightTimeout = null;
         this.orbitRadius = 20 + Math.random() * 30; // Random orbit radius between 20-50px
         this.orbitSpeed = 0.1 + Math.random() * 0.3; // Much slower orbit speed
         
         this.element.style.fontSize = `${this.size}px`;
         this.element.style.transform = `skew(${this.skew}deg)`;
+        this.element.textContent = textContent;
     }
 
     update(deltaTime) {
@@ -649,27 +669,20 @@ function initializeTextCloud() {
     
     const fragments = [];
     let currentMessageId = Math.floor(Math.random() * eightBallMessages.length);
+    const currentMessage = eightBallMessages[currentMessageId];
     
-    eightBallMessages.forEach((message, messageId) => {
-        const [firstPart, secondPart] = message.split('–').map(part => part.trim());
-        
-        // First part (prediction)
-        firstPart.split(' ').forEach(word => {
-            const fragment = createFragment(word, 'first', messageId);
-            fragments.push(fragment);
-        });
-
-        // Second part (nature connection)
-        secondPart.split(' ').forEach(word => {
-            const fragment = createFragment(word, 'second', messageId);
-            fragments.push(fragment);
-        });
+    // Split the message into words and create fragments
+    const words = currentMessage.split(' ');
+    words.forEach((word, index) => {
+        const type = index % 2 === 0 ? 'first' : 'second';
+        const fragment = createFragment(word, type, currentMessageId);
+        fragments.push(fragment);
     });
 
     // Add instruction text
     const instruction = document.createElement('div');
     instruction.className = 'instruction-text';
-    instruction.textContent = 'Tilt your vessel to read your fortune';
+    instruction.textContent = 'Tilt left to reveal the first part, tilt right to reveal the second part';
     document.body.appendChild(instruction);
 
     // Fade out instruction after 3 seconds
@@ -701,7 +714,6 @@ function initializeTextCloud() {
 function createFragment(word, type, messageId) {
     const fragment = document.createElement('span');
     fragment.className = 'text-fragment';
-    fragment.textContent = word;
     
     // Calculate position on a circle with some noise
     const angle = Math.random() * Math.PI * 2; // Random angle between 0 and 2π
@@ -711,7 +723,7 @@ function createFragment(word, type, messageId) {
     const baseX = 50 + Math.cos(angle) * radius; // Center at 50%
     const baseY = 50 + Math.sin(angle) * radius; // Center at 50%
     
-    const textFragment = new TextFragment(fragment, baseX, baseY, type, messageId);
+    const textFragment = new TextFragment(fragment, baseX, baseY, type, messageId, word);
     document.querySelector('.text-cloud').appendChild(fragment);
     
     return textFragment;
@@ -869,6 +881,116 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded');
     initializeMarkers();
     showContent();
+});
+
+// Initialize the oracle answer page
+function initializeOracleAnswer() {
+    const oracleWrapper = document.querySelector('.oracle_wrapper');
+    if (!oracleWrapper) return;
+
+    // Get a random message
+    const randomIndex = Math.floor(Math.random() * eightBallMessages.length);
+    const message = eightBallMessages[randomIndex];
+    
+    // Split the message into words
+    const words = message.split(' ');
+    
+    // Clear existing content
+    oracleWrapper.innerHTML = '';
+    
+    // Create word elements
+    words.forEach((word, index) => {
+        const wordElement = document.createElement('span');
+        wordElement.className = 'oracle-word';
+        wordElement.textContent = word;
+        wordElement.style.opacity = '0'; // Start invisible
+        wordElement.dataset.type = index % 2 === 0 ? 'first' : 'second';
+        oracleWrapper.appendChild(wordElement);
+    });
+
+    // Add instruction text
+    const instruction = document.createElement('div');
+    instruction.className = 'instruction-text';
+    instruction.textContent = 'Tilt left to reveal the first part, tilt right to reveal the second part';
+    document.body.appendChild(instruction);
+
+    // Fade out instruction after 3 seconds
+    setTimeout(() => {
+        instruction.classList.add('fade-out');
+    }, 3000);
+
+    // Show ask again button
+    const askAgainBtn = document.querySelector('.ask-again-button');
+    if (askAgainBtn) {
+        askAgainBtn.classList.remove('hidden');
+    }
+}
+
+// Update the device orientation handler for the oracle answer page
+window.addEventListener("deviceorientation", (event) => {
+    const beta = event.beta;  // Front-back tilt (-90 to 90)
+    const gamma = event.gamma; // Left-right tilt (-90 to 90)
+
+    // Only handle tilting if we're on the oracle answer page
+    const oracleAnswerPage = document.querySelector('.oracle-answer-page');
+    if (!oracleAnswerPage || oracleAnswerPage.classList.contains('hidden')) return;
+
+    // Calculate background color based on tilt
+    const maxTilt = 45; // Maximum tilt angle for full color effect
+    const tiltPercentage = Math.min(Math.abs(gamma) / maxTilt, 1); // Normalize to 0-1
+    const blueIntensity = Math.floor(tiltPercentage * 20); // Range 0-20 for subtle blue
+    document.body.style.backgroundColor = `rgb(0, 0, ${blueIntensity})`;
+
+    // Get all word elements
+    const words = document.querySelectorAll('.oracle-word');
+    
+    // Handle word visibility based on tilt
+    words.forEach(word => {
+        const type = word.dataset.type;
+        const isFirstPart = type === 'first';
+        
+        if (gamma < -15 && isFirstPart) {
+            // Tilt left - reveal first part
+            word.style.opacity = '1';
+        } else if (gamma > 15 && !isFirstPart) {
+            // Tilt right - reveal second part
+            word.style.opacity = '1';
+        } else {
+            // Reset opacity when not tilted
+            word.style.opacity = '0';
+        }
+    });
+
+    // Handle new answer on downward tilt
+    if (beta > 30) {
+        if (!hasTiltTriggered) {
+            hasTiltTriggered = true;
+            initializeOracleAnswer();
+            
+            // Reset cooldown after animation
+            setTimeout(() => {
+                hasTiltTriggered = false;
+            }, 1000);
+        }
+    }
+});
+
+// Update the continue button click handler
+document.addEventListener('DOMContentLoaded', function() {
+    const continueButton = document.querySelector('.continue-button');
+    if (continueButton) {
+        continueButton.addEventListener('click', function() {
+            switchToPage('oracle-answer-page');
+            initializeOracleAnswer();
+        });
+    }
+
+    const askAgainButton = document.querySelector('.ask-again-button');
+    if (askAgainButton) {
+        askAgainButton.addEventListener('click', function() {
+            initializeOracleAnswer();
+        });
+    }
 });
 
 

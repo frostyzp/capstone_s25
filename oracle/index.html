@@ -19,6 +19,8 @@
 
 
 <body>
+    <!-- <h1 class="main-title">cemetery of the unanswered</h1> -->
+
     <div class="ascii-rocks"></div>
     
     <div class="intro-page page visible">
@@ -51,7 +53,7 @@
         <div class="question-content">
             <p class="intro-text">Ask a yes / no question</p>
             <textarea class="question-input" placeholder=". . . " autocorrect="on" autocapitalize="sentences" spellcheck="true" inputmode="text"></textarea>
-            <button class="continue-button hidden">( continue )</button>
+            <button class="permission-button hidden" onclick="requestPermission()">( trust this rock )</button>
         </div>
     </div>
 
@@ -61,9 +63,7 @@
         </div>
 
         <p class="oracle-instructions"> Pick an element </p>
-        <div class="permission-button hidden">
-            <button onclick="requestPermission()">( trust this rock )</button>
-        </div>
+        <button class="continue-button hidden" onclick="switchToPage('oracle-answer-page')">( continue )</button>
 
 
     </div>
