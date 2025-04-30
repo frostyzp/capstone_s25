@@ -25,8 +25,7 @@
     
     <div class="intro-page page visible">
         <p class="oracle-title"> rock oracle </p>
-        <!-- <button class="debug-button" onclick="switchToPage('oracle-answer-page'); getEightBallMessage()">Debug</button> -->
-
+        <button class="debug-button" onclick="initializeOracleAnswer(); switchToPage('oracle-answer-page')">Test Oracle</button>
 
         <div class="intro-content">
             <svg width="300" height="308" viewBox="0 0 300 308" fill="none" xmlns="http://www.w3.org/2000/svg" class="intro-svg">
@@ -69,21 +68,25 @@
     </div>
 
     <div class="oracle-answer-page page hidden">
+        <p>Tilt left to reveal the first part, tilt right to reveal the second part</p>
         <div class="oracle-content">
             <div class="oracle_wrapper">
                 <div class="oracle_answer"></div>
             </div>
         </div>
+        <button class="debug-reveal-button">Reveal All</button>
         <button class="ask-again-button hidden">Ask Again</button>
     </div>
     
     <script>
         function switchToPage(pageClass) {
+            // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.add('hidden');
                 page.classList.remove('visible');
             });
             
+            // Show the target page
             const targetPage = document.querySelector('.' + pageClass);
             if (targetPage) {
                 targetPage.classList.remove('hidden');

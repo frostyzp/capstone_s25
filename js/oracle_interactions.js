@@ -30,147 +30,279 @@ const eightBallMessages = [
     "Very doubtful – go listen to the birds anyway."
 ];
 
-let hasTiltTriggered = false; // 
+let hasPermission = false;
+let hasTiltTriggered = false;
 
-var xDown = null;                                                        
-var yDown = null;
+// Initialize elements in a circle
+function initializeElements() {
+    console.log('Initializing elements');
+    const container = document.querySelector('.elements-container');
+    if (!container) {
+        console.log('ERROR: Elements container not found');
+        return;
+    }
 
-var onlongtouch; 
-var timer;
-var touchduration = 500; //length of time we want the user to touch before we do something
+    container.innerHTML = '';
 
-let isInteraction = false;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const radius = Math.min(viewportWidth, viewportHeight) * 0.3;
 
-function getEightBallMessage() {
-    const randomIndex = Math.floor(Math.random() * eightBallMessages.length);
-    const oracleWrapper = document.querySelector('.oracle_wrapper');
-    const oracleAnswer = document.querySelector('.oracle_answer');
-    if (oracleWrapper && oracleAnswer) {
-        // Remove fade-in class first to reset animation
-        oracleWrapper.classList.remove('fade-in');
+    elements.forEach((element, index) => {
+        const div = document.createElement('div');
+        div.className = 'element';
+        div.innerHTML = element.symbol.replace(/\n/g, '<br>');
+        div.dataset.name = element.name;
+        div.style.cursor = 'pointer';
+
+        const angle = (index / elements.length) * Math.PI * 2;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+
+        div.style.position = 'absolute';
+        div.style.left = `${viewportWidth / 2 + x}px`;
+        div.style.top = `${viewportHeight / 2 + y}px`;
+        div.style.transform = 'translate(-50%, -50%)';
+
+        div.addEventListener('click', () => {
+            console.log('Element clicked:', element);
+            handleElementSelection(element);
+        });
         
-        // Force a reflow
-        void oracleWrapper.offsetWidth;
-        
-        // Set the new message
-        // oracleAnswer.textContent = eightBallMessages[randomIndex];
-        oracleWrapper.textContent=eightBallMessages[randomIndex];
-        console.log(oracleWrapper.textContent);
-        
-        // Add fade-in class to trigger animation
-        oracleWrapper.classList.add('fade-in');
+        container.appendChild(div);
+    });
+    
+    console.log('Elements initialized:', elements.length);
+}
+
+function handleElementSelection(element) {
+    console.log('Element selected:', element);
+    selectedElement = element;
+    const continueButton = document.querySelector('.continue-button');
+    if (continueButton) {
+        continueButton.classList.remove('hidden');
     }
 }
 
-// BOILER PLATE STUFF TO PREVENT SCROLL
-document.addEventListener("DOMContentLoaded", function () {
-    disableUserScroll(); // Now safe to run
-
-    
-
-
-});
-
-
-function touchstart() {
-    timer = setTimeout(onlongtouch, touchduration); 
-}
-  
-function touchend() {
-    //stops short touches from firing the event
-    if (timer)
-        clearTimeout(timer); // clearTimeout, not cleartimeout..
-}
-
-onlongtouch = function() { //do something 
-    document.body.style.backgroundColor="black";
-}
-
-document.addEventListener("click", function() {
-    isInteraction = true;
-    console.log("User interaction detected");
-});
-
-// ––––––––––––––––––––––––– TILTING -------------------------------------- 
-
-// Split the answer into two arrays of alternating words
-function splitAnswerIntoArrays(answer) {
-    const words = answer.split(' ');
-    const firstArray = [];
-    const secondArray = [];
-    
-    words.forEach((word, index) => {
-        if (index % 2 === 0) {
-            firstArray.push(word);
+// Request device motion permission
+async function requestPermission() {
+    try {
+        if (typeof DeviceMotionEvent.requestPermission === 'function') {
+            try {
+                const permission = await DeviceMotionEvent.requestPermission();
+                if (permission === 'granted') {
+                    hasPermission = true;
+                    startTiltDetection();
+                }
+            } catch (error) {
+                console.error('Permission error:', error);
+            }
         } else {
-            secondArray.push(word);
+            // For non-iOS devices
+            hasPermission = true;
+            startTiltDetection();
         }
-    });
-    
-    return { firstArray, secondArray };
+    } catch (error) {
+        console.error('Error requesting permission:', error);
+    }
 }
 
-// Update the device orientation handler
-window.addEventListener("deviceorientation", (event) => {
-    const beta = event.beta;  // Front-back tilt (-90 to 90)
+function startTiltDetection() {
+    window.addEventListener('deviceorientation', handleOrientation);
+}
+
+function handleOrientation(event) {
+    if (!hasPermission) return;
+
     const gamma = event.gamma; // Left-right tilt (-90 to 90)
-
-    if (!fragments || !selectedStone) return;
-
-    // Calculate background color based on tilt
-    const maxTilt = 45; // Maximum tilt angle for full color effect
-    const tiltPercentage = Math.min(Math.abs(gamma) / maxTilt, 1); // Normalize to 0-1
-    const blueIntensity = Math.floor(tiltPercentage * 20); // Range 0-20 for subtle blue
-    document.body.style.backgroundColor = `rgb(0, 0, ${blueIntensity})`;
-
-    // Get the current answer and split it
     const oracleWrapper = document.querySelector('.oracle_wrapper');
     if (!oracleWrapper) return;
+
+    // Get all word elements
+    const words = document.querySelectorAll('.oracle-word');
     
-    const currentAnswer = oracleWrapper.textContent;
-    const { firstArray, secondArray } = splitAnswerIntoArrays(currentAnswer);
-    
-    // Handle text fragment highlighting based on tilt
-    fragments.forEach(fragment => {
-        // First unhighlight all fragments
-        fragment.unhighlight();
+    // Handle word visibility based on tilt
+    words.forEach(word => {
+        const type = word.dataset.type;
+        const isFirstPart = type === 'first';
         
-        // TILT TO REVEAL WORDS
-        if (fragment.messageId === currentMessageId) {
-            if (gamma < -15 && firstArray.includes(fragment.textContent)) {
-                fragment.highlight(selectedStone);
-            }
-            else if (gamma > 15 && secondArray.includes(fragment.textContent)) {
-                fragment.highlight(selectedStone);
-            }
+        if (gamma < -15 && isFirstPart) {
+            // Tilt left - reveal first part
+            word.style.opacity = '1';
+        } else if (gamma > 15 && !isFirstPart) {
+            // Tilt right - reveal second part
+            word.style.opacity = '1';
+        } else {
+            // Reset opacity when not tilted
+            word.style.opacity = '0';
         }
     });
+}
 
-    // Handle answer revealing
-    if (beta > 30) {
-        if (!hasTiltTriggered) {
-            hasTiltTriggered = true;
-            
-            // Fade out current answer
-            oracleWrapper.classList.remove("fade-in");
-            oracleWrapper.classList.add("fade-out");
-            
-            setTimeout(() => {
-                // Get new answer
-                getEightBallMessage();
-                
-                // Fade in new answer
-                oracleWrapper.classList.remove("fade-out");
-                oracleWrapper.classList.add("fade-in");
-                
-                // Reset cooldown after animation
-                setTimeout(() => {
-                    hasTiltTriggered = false;
-                }, 1000);
-            }, 500);
+// Initialize the oracle answer page
+function initializeOracleAnswer() {
+    console.log('Starting oracle answer initialization');
+    const oracleAnswer = document.querySelector('.oracle_answer');
+    if (!oracleAnswer) {
+        console.log('ERROR: Oracle answer div not found');
+        return;
+    }
+
+    // Get a random message
+    const randomIndex = Math.floor(Math.random() * eightBallMessages.length);
+    const message = eightBallMessages[randomIndex];
+    console.log('Creating message:', message);
+    
+    // Clear existing content
+    oracleAnswer.innerHTML = '';
+    
+    // Split message into words and create word elements
+    const words = message.split(' ');
+    words.forEach((word, index) => {
+        const wordElement = document.createElement('span');
+        wordElement.className = 'oracle-word';
+        wordElement.textContent = word + ' ';
+        wordElement.dataset.index = index;
+        oracleAnswer.appendChild(wordElement);
+    });
+
+    // Add device orientation event listener
+    window.addEventListener('deviceorientation', handleOrientation);
+}
+
+function handleOrientation(event) {
+    const gamma = event.gamma; // Left-right tilt (-90 to 90)
+    const words = document.querySelectorAll('.oracle-word');
+    
+    words.forEach(word => {
+        const index = parseInt(word.dataset.index);
+        // Alternate words based on index (even/odd)
+        const isEven = index % 2 === 0;
+        
+        if (gamma < -15 && isEven) {
+            // Tilt left - show even indexed words
+            word.style.opacity = '1';
+        } else if (gamma > 15 && !isEven) {
+            // Tilt right - show odd indexed words
+            word.style.opacity = '1';
+        } else {
+            // Reset opacity when not tilted
+            word.style.opacity = '0';
         }
+    });
+}
+
+// Reset the oracle
+function resetOracle() {
+    initializeOracleAnswer();
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
+    
+    // Add event listener for question input
+    const questionInput = document.querySelector('.question-input');
+    const permissionButton = document.querySelector('.permission-button');
+    
+    if (questionInput) {
+        // Handle input events
+        questionInput.addEventListener('input', function() {
+            if (this.value.trim().length > 0) {
+                permissionButton.classList.remove('hidden');
+            } else {
+                permissionButton.classList.add('hidden');
+            }
+        });
+
+        // Handle keydown events to ensure spaces work
+        questionInput.addEventListener('keydown', function(e) {
+            e.stopPropagation();
+        });
+
+        // Handle keyup events
+        questionInput.addEventListener('keyup', function(e) {
+            e.stopPropagation();
+        });
+    }
+    
+    // Add permission button click handler
+    if (permissionButton) {
+        permissionButton.addEventListener('click', function() {
+            switchToPage('main-page');
+        });
+    }
+    
+    // Add continue button click handler
+    const continueButton = document.querySelector('.continue-button');
+    if (continueButton) {
+        console.log('Continue button found');
+        continueButton.addEventListener('click', function() {
+            console.log('Continue button clicked');
+            console.log('Selected element:', selectedElement);
+            
+            // Check which page is currently visible
+            const questionPage = document.querySelector('.question-page');
+            const mainPage = document.querySelector('.main-page');
+            const oracleAnswerPage = document.querySelector('.oracle-answer-page');
+            
+            console.log('Question page visible:', questionPage.classList.contains('visible'));
+            console.log('Main page visible:', mainPage.classList.contains('visible'));
+            
+            if (questionPage.classList.contains('visible')) {
+                // If we're on the question page, go to main page
+                console.log('Switching from question page to main page');
+                switchToPage('main-page');
+            } else if (mainPage.classList.contains('visible')) {
+                if (selectedElement) {
+                    console.log('Switching from main page to oracle answer page');
+                    // Hide the continue button
+                    this.classList.add('hidden');
+                    // Switch to oracle answer page
+                    switchToPage('oracle-answer-page');
+                    // Initialize the oracle answer
+                    console.log('About to initialize oracle answer');
+                    initializeOracleAnswer();
+                    // Request permission for device motion
+                    requestPermission();
+                } else {
+                    console.log('No element selected');
+                }
+            } else {
+                console.log('Neither question page nor main page is visible');
+            }
+        });
+    } else {
+        console.log('Continue button not found');
+    }
+
+    // Initialize elements
+    initializeElements();
+    
+    // Add event listener for ask again button
+    const askAgainBtn = document.querySelector('.ask-again-button');
+    if (askAgainBtn) {
+        askAgainBtn.addEventListener('click', resetOracle);
     }
 });
+
+function disableUserScroll() {
+    document.body.style.overflow = "hidden";
+    window.addEventListener("wheel", preventScroll, { passive: false });
+    window.addEventListener("touchmove", preventScroll, { passive: false });
+    window.addEventListener("keydown", preventArrowScroll);
+}
+
+function preventScroll(event) {
+    event.preventDefault();
+}
+
+function preventArrowScroll(event) {
+    const keys = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "];
+    if (keys.includes(event.key)) {
+        event.preventDefault();
+    }
+}
 
 // ASCII elements for selection
 const elements = [
@@ -226,7 +358,6 @@ let selectedElement = null;
 let rotationCount = 0;
 let lastRotation = 0;
 let rotationThreshold = 45; // Increased threshold to 45 degrees
-let hasPermission = false;
 let lastRotationTime = 0;
 let rotationCooldown = 1000; // 1 second cooldown between rotations
 let rotationDirection = 0; // -1 for down, 1 for up, 0 for neutral
@@ -239,218 +370,6 @@ function updateBackgroundColor() {
     const b = Math.floor(34 + (255 - 34) * (percent / 100));
     document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 }
-
-// Initialize elements in a circle
-function initializeElements() {
-    const container = document.querySelector('.elements-container');
-    if (!container) return;
-
-    // Clear any existing elements
-    container.innerHTML = '';
-
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    const radius = Math.min(viewportWidth, viewportHeight) * 0.3;
-
-    elements.forEach((element, index) => {
-        const div = document.createElement('div');
-        div.className = 'element';
-        div.innerHTML = element.symbol.replace(/\n/g, '<br>');
-        div.dataset.name = element.name;
-
-        // Calculate position on a circle
-        const angle = (index / elements.length) * Math.PI * 2;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-
-        // Position the element
-        div.style.position = 'absolute';
-        div.style.left = `${viewportWidth / 2 + x}px`;
-        div.style.top = `${viewportHeight / 2 + y}px`;
-        div.style.transform = 'translate(-50%, -50%)';
-
-        div.addEventListener('click', () => handleElementSelection(element));
-        container.appendChild(div);
-    });
-}
-
-function handleElementSelection(element) {
-    selectedElement = element;
-    document.querySelector('.permission-button').classList.remove('hidden');
-}
-
-// Request device motion permission
-async function requestPermission() {
-    try {
-        const permissionButton = document.querySelector('.permission-button');
-        const mainPage = document.querySelector('.main-page');
-        const elementsContainer = document.querySelector('.elements-container');
-        const instructions = document.querySelector('.oracle-instructions');
-        
-        // Fade out permission button
-        permissionButton.classList.add('hidden');
-        
-        // Wait for fade out to complete
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        if (typeof DeviceMotionEvent.requestPermission === 'function') {
-            try {
-                const permission = await DeviceMotionEvent.requestPermission();
-                if (permission === 'granted') {
-                    hasPermission = true;
-                    
-                    // Hide elements container
-                    if (elementsContainer) elementsContainer.classList.add('hidden');
-                    
-                    // Update instructions
-                    if (instructions) {
-                        instructions.textContent = "Tilt your vessel left and right to read your fortune.";
-                    }
-                    
-                    startRotationDetection();
-                }
-            } catch (error) {
-                console.error('Permission error:', error);
-            }
-        } else {
-            // For non-iOS devices
-            hasPermission = true;
-            
-            // Hide elements container
-            if (elementsContainer) elementsContainer.classList.add('hidden');
-            
-            // Update instructions
-            if (instructions) {
-                instructions.textContent = "Rotate your vessel 3 times to reveal your fortune.";
-            }
-            
-            startRotationDetection();
-        }
-    } catch (error) {
-        console.error('Error requesting permission:', error);
-    }
-}
-
-function startRotationDetection() {
-    window.addEventListener('deviceorientation', handleOrientation);
-}
-
-function handleOrientation(event) {
-    if (!hasPermission) return;
-
-    const beta = event.beta; // Front-back tilt (-180 to 180)
-    const currentTime = Date.now();
-
-    // Determine rotation direction
-    const newDirection = Math.sign(beta - lastRotation);
-    
-    // Only count a rotation if:
-    // 1. We've passed the threshold
-    // 2. We've changed direction
-    // 3. Enough time has passed since the last rotation
-    if (Math.abs(beta - lastRotation) > rotationThreshold && 
-        newDirection !== rotationDirection &&
-        currentTime - lastRotationTime > rotationCooldown) {
-        
-        // Only count if we've completed a full rotation (changed direction)
-        if (rotationDirection !== 0) {
-            rotationCount++;
-            
-            // Update oracle instructions with rotation count
-            const instructions = document.querySelector('.oracle-instructions');
-            if (instructions) {
-                instructions.textContent = `Rotate your vessel ${rotationCount}/3 times`;
-            }
-            
-            lastRotationTime = currentTime;
-            
-            // Update background color
-            updateBackgroundColor();
-            
-            if (rotationCount >= 3) {
-                // Switch to oracle-answer-page and show answer
-                switchToPage('oracle-answer-page');
-                getEightBallMessage();
-                window.removeEventListener('deviceorientation', handleOrientation);
-            }
-        }
-        
-        rotationDirection = newDirection;
-    }
-
-    lastRotation = beta;
-}
-
-function showOracleAnswer() {
-    const oracleWrapper = document.querySelector('.oracle_wrapper');
-    const oracleAnswer = document.querySelector('.oracle_answer');
-    const instructions = document.querySelector('.oracle-instructions');
-    
-    if (oracleWrapper && oracleAnswer) {
-        // Hide instructions
-        if (instructions) {
-            instructions.classList.add('hidden');
-        }
-        
-        // Show oracle answer
-        oracleWrapper.classList.remove('hidden');
-        getEightBallMessage();
-    }
-}
-
-// Reset the oracle
-function resetOracle() {
-    rotationCount = 0;
-    selectedElement = null;
-    document.querySelector('.rotation-counter').classList.add('hidden');
-    document.querySelector('.oracle_wrapper').classList.add('hidden');
-    document.querySelector('.ask-again-button').classList.add('hidden');
-    document.querySelector('.content').classList.add('hidden');
-    document.querySelector('.permission-button').classList.add('hidden');
-    document.getElementById('rotation-count').textContent = '0';
-    document.body.style.backgroundColor = baseBackgroundColor;
-}
-
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    disableUserScroll();
-    
-    // Add event listener for question input
-    const questionInput = document.querySelector('.question-input');
-    const continueButton = document.querySelector('.continue-button');
-    
-    if (questionInput && continueButton) {
-        // Handle input events
-        questionInput.addEventListener('input', function() {
-            if (this.value.trim().length > 0) {
-                continueButton.classList.remove('hidden');
-            } else {
-                continueButton.classList.add('hidden');
-            }
-        });
-
-        // Handle keydown events to ensure spaces work
-        questionInput.addEventListener('keydown', function(e) {
-            // Allow all key inputs including spaces
-            e.stopPropagation();
-        });
-
-        // Handle keyup events
-        questionInput.addEventListener('keyup', function(e) {
-            // Allow all key inputs including spaces
-            e.stopPropagation();
-        });
-        
-        continueButton.addEventListener('click', function() {
-            switchToPage('main-page');
-        });
-    }
-    
-    initializeElements();
-    
-    // Add event listener for ask again button
-    document.querySelector('.ask-again-button').addEventListener('click', resetOracle);
-});
 
 function showContent() {
     // Add console log for debugging
@@ -470,31 +389,6 @@ function showContent() {
         console.log('Content element not found, but continuing execution');
         // Continue execution even if content element is not found
         return;
-    }
-}
-
-function disableUserScroll() {
-    document.body.style.overflow = "hidden"; // Prevent scrolling
-    window.addEventListener("wheel", preventScroll, { passive: false });
-    window.addEventListener("touchmove", preventScroll, { passive: false });
-    window.addEventListener("keydown", preventArrowScroll);
-}
-
-function enableUserScroll() {
-    document.body.style.overflow = "auto"; // Restore scrolling
-    window.removeEventListener("wheel", preventScroll);
-    window.removeEventListener("touchmove", preventScroll);
-    window.removeEventListener("keydown", preventArrowScroll);
-}
-
-function preventScroll(event) {
-    event.preventDefault();
-}
-
-function preventArrowScroll(event) {
-    const keys = ["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End", " "]; // Spacebar too
-    if (keys.includes(event.key)) {
-        event.preventDefault();
     }
 }
 
@@ -883,114 +777,24 @@ document.addEventListener('DOMContentLoaded', function() {
     showContent();
 });
 
-// Initialize the oracle answer page
-function initializeOracleAnswer() {
-    const oracleWrapper = document.querySelector('.oracle_wrapper');
-    if (!oracleWrapper) return;
-
-    // Get a random message
-    const randomIndex = Math.floor(Math.random() * eightBallMessages.length);
-    const message = eightBallMessages[randomIndex];
-    
-    // Split the message into words
-    const words = message.split(' ');
-    
-    // Clear existing content
-    oracleWrapper.innerHTML = '';
-    
-    // Create word elements
-    words.forEach((word, index) => {
-        const wordElement = document.createElement('span');
-        wordElement.className = 'oracle-word';
-        wordElement.textContent = word;
-        wordElement.style.opacity = '0'; // Start invisible
-        wordElement.dataset.type = index % 2 === 0 ? 'first' : 'second';
-        oracleWrapper.appendChild(wordElement);
+// Update the switchToPage function
+function switchToPage(pageClass) {
+    console.log('Switching to page:', pageClass);
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.add('hidden');
+        page.classList.remove('visible');
     });
-
-    // Add instruction text
-    const instruction = document.createElement('div');
-    instruction.className = 'instruction-text';
-    instruction.textContent = 'Tilt left to reveal the first part, tilt right to reveal the second part';
-    document.body.appendChild(instruction);
-
-    // Fade out instruction after 3 seconds
-    setTimeout(() => {
-        instruction.classList.add('fade-out');
-    }, 3000);
-
-    // Show ask again button
-    const askAgainBtn = document.querySelector('.ask-again-button');
-    if (askAgainBtn) {
-        askAgainBtn.classList.remove('hidden');
+    
+    // Show the target page
+    const targetPage = document.querySelector('.' + pageClass);
+    if (targetPage) {
+        targetPage.classList.remove('hidden');
+        targetPage.classList.add('visible');
+        console.log('Page switched successfully:', pageClass);
+    } else {
+        console.log('Target page not found:', pageClass);
     }
 }
-
-// Update the device orientation handler for the oracle answer page
-window.addEventListener("deviceorientation", (event) => {
-    const beta = event.beta;  // Front-back tilt (-90 to 90)
-    const gamma = event.gamma; // Left-right tilt (-90 to 90)
-
-    // Only handle tilting if we're on the oracle answer page
-    const oracleAnswerPage = document.querySelector('.oracle-answer-page');
-    if (!oracleAnswerPage || oracleAnswerPage.classList.contains('hidden')) return;
-
-    // Calculate background color based on tilt
-    const maxTilt = 45; // Maximum tilt angle for full color effect
-    const tiltPercentage = Math.min(Math.abs(gamma) / maxTilt, 1); // Normalize to 0-1
-    const blueIntensity = Math.floor(tiltPercentage * 20); // Range 0-20 for subtle blue
-    document.body.style.backgroundColor = `rgb(0, 0, ${blueIntensity})`;
-
-    // Get all word elements
-    const words = document.querySelectorAll('.oracle-word');
-    
-    // Handle word visibility based on tilt
-    words.forEach(word => {
-        const type = word.dataset.type;
-        const isFirstPart = type === 'first';
-        
-        if (gamma < -15 && isFirstPart) {
-            // Tilt left - reveal first part
-            word.style.opacity = '1';
-        } else if (gamma > 15 && !isFirstPart) {
-            // Tilt right - reveal second part
-            word.style.opacity = '1';
-        } else {
-            // Reset opacity when not tilted
-            word.style.opacity = '0';
-        }
-    });
-
-    // Handle new answer on downward tilt
-    if (beta > 30) {
-        if (!hasTiltTriggered) {
-            hasTiltTriggered = true;
-            initializeOracleAnswer();
-            
-            // Reset cooldown after animation
-            setTimeout(() => {
-                hasTiltTriggered = false;
-            }, 1000);
-        }
-    }
-});
-
-// Update the continue button click handler
-document.addEventListener('DOMContentLoaded', function() {
-    const continueButton = document.querySelector('.continue-button');
-    if (continueButton) {
-        continueButton.addEventListener('click', function() {
-            switchToPage('oracle-answer-page');
-            initializeOracleAnswer();
-        });
-    }
-
-    const askAgainButton = document.querySelector('.ask-again-button');
-    if (askAgainButton) {
-        askAgainButton.addEventListener('click', function() {
-            initializeOracleAnswer();
-        });
-    }
-});
 
 

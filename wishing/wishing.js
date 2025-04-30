@@ -77,19 +77,39 @@ function createAsciiRipple(x, y, color) {
 // Define mock data and state variables globally
 const mockWishes = [
     {
-        wish: "I dream of a treehouse where birds sing ancient melodies feelings of wonder",
-        skips: 42,
+        wish: "I dream of a treehouse where birds sing ancient melodies, feelings of wonder",
+        skips: 13,
         date: "4/20/25"
     },
     {
-        wish: "I dream of a garden where time stands still feelings of peace",
+        wish: "I dream of a garden where time stands still, feelings of peace", 
         skips: 17,
         date: "4/21/25"
     },
     {
-        wish: "I dream of a cloud where rainbows are born feelings of joy",
+        wish: "I dream of a cloud where rainbows are born, feelings of joy",
         skips: 29,
         date: "4/22/25"
+    },
+    {
+        wish: "I dream of a moonlit lake where stars dance on ripples, feelings of serenity",
+        skips: 14,
+        date: "4/23/25"
+    },
+    {
+        wish: "I dream of a forest clearing where fireflies paint stories, feelings of magic",
+        skips: 24,
+        date: "4/24/25"
+    },
+    {
+        wish: "I dream of a barn peak where winds talk like cows, feelings of freedom",
+        skips: 13,
+        date: "4/25/25"
+    },
+    {
+        wish: "I dream of a hidden cave where crystals hold memories, feelings of mystery",
+        skips: 3,
+        date: "4/26/25"
     }
 ];
 
@@ -98,6 +118,14 @@ let wishes = [...mockWishes];
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM Content Loaded');
+    
+    // Initialize background music
+    const audio = document.createElement('audio');
+    audio.src = '/wishing/ocean.mp3';
+    audio.loop = true;
+    audio.volume = 0.3;
+    document.body.appendChild(audio);
+    
     let storedUserInput = '';
     let isDragging = false;
     let startX = 0;
@@ -193,6 +221,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (swipeDistance > 50) { // Swipe up detected
             console.log('Swipe up detected on third page');
+            
+            // Play ocean sound
+            const oceanSound = new Audio('/wishing/ocean.mp3');
+            oceanSound.play().catch(e => console.error('Error playing sound:', e));
             
             // Trigger haptic feedback if supported
             if ('vibrate' in navigator) {

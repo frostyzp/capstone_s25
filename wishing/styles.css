@@ -347,11 +347,6 @@ canvas {
 
 /* ----- INPUT CONTAINER STYLES ----- */
 #wish-input-container {
-    position: fixed;
-    bottom: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80vw;
     text-align: left;
     z-index: 2;
     color: black;
@@ -983,4 +978,26 @@ canvas {
         background-position: 0% 50%;
         opacity: 0.3;
     }
+}
+
+.page {
+    transition: opacity 0.8s ease-in-out;
+  }
+  .page.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .page.visible {
+    opacity: 1;
+  }
+
+.sub-text {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    font-size: 1rem;
+    color: rgb(94, 94, 94);
+    z-index: 1000;
 }
