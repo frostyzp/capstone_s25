@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const grainedElement = document.getElementsByClassName('grained-element')[0];
     const buryEntry = document.getElementById('bury_entry');
     const graveyardMain = document.getElementsByClassName('graveyardMain')[0];
+    const introText = document.querySelector('.intro-text');
+    const enterText = document.getElementById('enter');
     const asciiElements = [
         "I miss you everyday baby...",
         "Thank you for checking on me, everything will be alright. Have a great evening and see you tomorrow.",
@@ -17,9 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
         "Who are you?",
         "Mama Papa I see them… the angels ^^^^^^^^",
         "I'm so tired. Can I go now?",
-        "I love you, and I'm so proud of you"
+        "I love you, and I'm so proud of you",
+        "It was nice to hear that your laugh never changed",
+        "You had the kindest smile, eyes, and nature. I'm sorry you had to go through it alone",
+        "Good luck to u! Hope Chicago treats you well",
+        "I heard (the gist of) what happened… I love u, I'm here for you, and I wanna see if you're okay. let me know if you need anything, even if you j want to talk ILY",
+        "Hi just wanted to check in and see how you are doing. Been thinking about messaging you a few times this year, hope u r happy n well",
+        "Our snap streak is dying",
+        "Why didn't you unfollow me everywhere if you were just gonna ghost me",
+        "But I want YOU to be my Valentines. No one can replace you",
+        "I hope we can both get closure."
     ];
     let existingDivPositions = [];
+    let messageIndex = 0; // Track current message index
     const asciiLandscape = [
         "{{}}",
         "{}",
@@ -29,22 +41,48 @@ document.addEventListener('DOMContentLoaded', () => {
         "              v .   ._, |_  .,\n           `-._\\/  .  \\ /    |/_\n               \\\\  _\\, y | \//\n         _\\_.___\\\\, \\/ -.\\||\n           `7-,--.`._||  / / ,\n           /'     `-. `./ / |/_.'\n                     |    |//\n                     |_    /\n                     |-   |\n                     |   =|\n                     |    |\n--------------------/ ,  . \\--",
         "{}",
         "~Y~",
-        "|",
+        "              v .   ._, |_  .,\n           `-._\\/  .  \\ /    |/_\n               \\\\  _\\, y | \//\n         _\\_.___\\\\, \\/ -.\\||\n           `7-,--.`._||  / / ,\n           /'     `-. `./ / |/_.'\n                     |    |//\n                     |_    /\n                     |-   |\n                     |   =|\n                     |    |\n--------------------/ ,  . \\--",
         "*",
-        "* *",
         "{{}}\n{}\n~Y~\n|\n^^^^^^",
-        "{ { } }",
-        "{}",
+        "{ { } }\n{}\n~Y~\n|\n^^^^^^",
         "~Y~",
         "|",
         "^^^^^^",
-        "*",
-        "* *",
+        "\*/",
+        "*\n^\n^",
         "{{}}\n{}\n~Y~\n|\n^^^^^^",
     ];
 
+    const driftingTexts = [
+        "The intimacy of having never \ntalked again…",
+        "The bond of absence",
+        "The silence",
+        "\nyou carry around",
+        "The ghost of nothing but\n time\n and memory",
+        "Memory and time, \nsuspended",
+        "Presence",
+        "Remains\nand imprints"
+    ];
 
-// install js libraries
+    // Add typewriter effect to intro text
+    const introTypewriter = new Typewriter(introText, {
+        delay: 50,
+        cursor: ''
+    });
+    introTypewriter
+        .typeString('the bond of absence, the silence we carry around.')
+        .pauseFor(500)
+        .typeString('<br>View the gravestones by tapping.')
+        .start();
+
+    // Add typewriter effect to enter text
+    const enterTypewriter = new Typewriter(enterText, {
+        delay: 50,
+        cursor: ''
+    });
+    enterTypewriter
+        .typeString('( explore the graveyard )')
+        .start();
 
     // COVER FOR RANDOM DIVS
     function createRandomDivs(count) {
@@ -164,13 +202,13 @@ document.addEventListener('DOMContentLoaded', () => {
             contentDiv.style.top = `${position.y}px`;
             
             // Store the actual content and generate matching ASCII cover
-            const content = asciiElements[Math.floor(Math.random() * asciiElements.length)];
+            const content = asciiElements[messageIndex];
+            messageIndex = (messageIndex + 1) % asciiElements.length; // Increment and wrap around
             const formattedContent = formatTextContent(content);
             
             // Replace the last line with 'w' or 'v'
             const lines = formattedContent.split('\n');
             if (lines.length > 0) {
-                // Replace the last line with 'w' or 'v'
                 lines[lines.length - 1] = Math.random() < 0.5 ? 'wwwvvWW v vvww' : 'vwwWWvwvv v vvWw';
             }
             const adjustedFormattedContent = lines.join('\n'); // Join lines back
@@ -194,6 +232,15 @@ document.addEventListener('DOMContentLoaded', () => {
             contentDiv.textContent = asciiCover;
             contentDiv.style.whiteSpace = 'pre'; // Preserve ASCII art formatting
 
+            // Function to update feFlood values
+            function updatePixelateFilter(x, y) {
+                const filter = document.querySelector('#pixelate feFlood');
+                if (filter) {
+                    filter.setAttribute('x', x);
+                    filter.setAttribute('y', y);
+                }
+            }
+
             // For desktop, reveal based on mouse position with opacity
             contentDiv.addEventListener('mousemove', function(e) {
                 const rect = this.getBoundingClientRect();
@@ -203,8 +250,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const progress = x / rect.width;
                 const revealAmount = Math.floor(progress * content.length);
-                const newOpacity = 0.3 + (progress * 0.7); // Opacity ranges from 0.3 to 1.0
+                const newOpacity = 0.3 + (progress * 0.7);
                 this.style.opacity = newOpacity.toString();
+                
+                // Update feFlood values based on progress
+                const newX = Math.max(0, 4 - (progress * 4));
+                const newY = Math.max(0, 4 - (progress * 4));
+                updatePixelateFilter(newX, newY);
                 
                 // Direct text update without typewriter
                 const revealedText = content.substring(0, revealAmount);
@@ -217,12 +269,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const content = this.dataset.content;
                 const asciiCover = this.dataset.asciiCover;
                 
-                // Reset to saved progress opacity
                 const progress = revealedChars / content.length;
                 const savedOpacity = 0.3 + (progress * 0.7);
                 this.style.opacity = savedOpacity.toString();
                 
-                // Direct text update without typewriter
+                // Reset feFlood values
+                updatePixelateFilter(4, 4);
+                
                 const revealedText = content.substring(0, revealedChars);
                 const remainingAscii = asciiCover.substring(revealedChars);
                 this.textContent = revealedText + remainingAscii;
@@ -325,65 +378,90 @@ document.addEventListener('DOMContentLoaded', () => {
             landscapeDiv.dataset.content = content;
             landscapeDiv.style.whiteSpace = 'pre';
 
-            // Change color to bright green if content is "*" or "* *"
-            if (content === '*' || content === '* *') {
-                landscapeDiv.style.color = 'lime'; // Bright green
-                landscapeDiv.style.animation = 'float 2s ease-in-out infinite'; // Add floating animation
-                wrapper.style.animation = 'float 2s ease-in-out infinite'; // Add floating animation
+            // Check if this is one of the special text elements
+            const isSpecialText = content.includes('\n') && !content.includes('\\') && !content.includes('/');
+            
+            if (isSpecialText) {
+                // For special text, just add the landscape div
+                wrapper.appendChild(landscapeDiv);
+                observer.observe(landscapeDiv);
+            } else {
+                // For regular elements, create perpendicular div
+                const perpendicularDiv = document.createElement('div');
+                perpendicularDiv.className = 'content-div-landscape';
+                
+                perpendicularDiv.style.left = `${xPos}px`;
+                perpendicularDiv.style.top = `${yPos}px`;
+                perpendicularDiv.style.transform = 'skewY(-20deg) translateZ(20px)';
+                
+                perpendicularDiv.textContent = content;
+                perpendicularDiv.dataset.content = content;
+                perpendicularDiv.style.whiteSpace = 'pre';
+
+                // Add floating animation for special characters
+                if (content === '*' || content === '* *') {
+                    landscapeDiv.style.animation = 'float 2s steps(4) infinite';
+                    perpendicularDiv.style.animation = 'float 2s steps(4) infinite';
+                    wrapper.style.animation = 'float 2s 2s steps(4) infinite';
+                }
+
+                wrapper.appendChild(landscapeDiv);
+                wrapper.appendChild(perpendicularDiv);
+                observer.observe(landscapeDiv);
+                observer.observe(perpendicularDiv);
             }
 
-            // Create perpendicular div with inverse skew
-            const perpendicularDiv = document.createElement('div');
-            perpendicularDiv.className = 'content-div-landscape';
-            
-            perpendicularDiv.style.left = `${xPos}px`;
-            perpendicularDiv.style.top = `${yPos}px`;
-            perpendicularDiv.style.transform = 'skewY(-20deg) translateZ(20px)';  // Inverse values
-            
-            perpendicularDiv.textContent = content;
-            perpendicularDiv.dataset.content = content;
-            perpendicularDiv.style.whiteSpace = 'pre';
-
-            // Change color to bright green if content is "*" or "* *"
-            if (content === '*' || content === '* *') {
-                perpendicularDiv.style.color = 'lime'; // Bright green
-            }
-
-            wrapper.appendChild(landscapeDiv);
-            wrapper.appendChild(perpendicularDiv);
             container.appendChild(wrapper);
-
-            // Observe both divs for typewriter effect
-            observer.observe(landscapeDiv);
-            observer.observe(perpendicularDiv);
-        } // Fixed bracket issue here
+        }
     }
 
-    const enterText = document.getElementById('enter'); // Reference to the "Scroll to enter" text
-    const buryText = document.getElementById('enter'); // Reference to the "Scroll to enter" text
+    function createDriftingTexts(count) {
+        for (let i = 0; i < count; i++) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'drifting-wrapper';
+            
+            const driftingDiv = document.createElement('div');
+            driftingDiv.className = 'content-div-landscape';
+            
+            // Random positioning within the viewport
+            const xPos = Math.random() * (container.offsetWidth - 200);
+            const yPos = Math.random() * (container.offsetHeight - 50);
+            
+            driftingDiv.style.left = `${xPos}px`;
+            driftingDiv.style.top = `${yPos}px`;
+            driftingDiv.style.transform = 'skewY(-20deg) translateZ(20px)';
+            
+            const content = driftingTexts[Math.floor(Math.random() * driftingTexts.length)];
+            driftingDiv.textContent = content;
+            driftingDiv.dataset.content = content;
+            driftingDiv.style.whiteSpace = 'pre';
+            driftingDiv.style.animation = 'windBlow 35s steps(4) infinite';
+            
+            wrapper.appendChild(driftingDiv);
+            container.appendChild(wrapper);
+            observer.observe(driftingDiv);
+        }
+    }
 
     // Click event listener for "Scroll to enter"
     enterText.addEventListener('click', function() {
         // Make the canvas container visible again
         // Fade out graveyardCount over 2 seconds
         if (graveyardMain) {
-            graveyardMain.style.transition = 'opacity 1s ease-in-out'; // Reduced transition time
+            graveyardMain.style.transition = 'opacity 1s ease-in-out';
             graveyardMain.style.opacity = '0';
         }
 
         if (container) {
-            container.style.transition = 'opacity 1s ease-in-out'; // Reduced transition time
-            container.style.display = 'block'; // Change to 'block' or 'flex' as needed
-            container.style.visibility = 'visible'; // Ensure visibility is set to visible
+            container.style.transition = 'opacity 1s ease-in-out';
+            container.style.display = 'block';
+            container.style.visibility = 'visible';
         }
 
         if (graveyardCount) {
-            graveyardCount.style.transition = 'opacity 2s ease-in-out'; // Reduced transition time
+            graveyardCount.style.transition = 'opacity 2s ease-in-out';
             graveyardCount.style.opacity = '0';
-            console.log('graveyardCount is not visible'); // Debugging log
         }
-
-        // buryEntry.style.display = 'block'; 
 
         // Use requestAnimationFrame for smoother transitions
         const fadeOut = () => {
@@ -392,25 +470,29 @@ document.addEventListener('DOMContentLoaded', () => {
             grainedElement.style.opacity = '1';
             grainedElement.style.visibility = 'visible';
             grainedElement.style.display = 'block';
-            // Fade in grainedElement over 0.5 seconds
             grainedElement.style.transition = 'opacity 0.5s ease-in-out';
             grainedElement.style.opacity = '1';
+
+            // Show the bury entry after a delay
+            setTimeout(() => {
+                buryEntry.classList.add('visible');
+            }, 2000);
         };
 
         setTimeout(() => {
-            requestAnimationFrame(fadeOut); // Use requestAnimationFrame for better performance
-        }, 2500); // Wait for the fade-out to complete before hiding
+            requestAnimationFrame(fadeOut);
+        }, 2500);
 
         const style = document.createElement('style');
         style.textContent = `
             body {
-                background: radial-gradient(circle, rgba(2, 15, 4, 0.95), rgba(0, 0, 0, 1)); /* Update background only */
+                background: radial-gradient(circle, rgba(2, 15, 4, 0.95), rgba(0, 0, 0, 1));
             }
         `;
         document.head.appendChild(style);
-        createLandscapeElements(350); // Reduced from 20
-        createRandomDivs(45); // Reduced from 80
-
+        createLandscapeElements(350);
+        createRandomDivs(45);
+        createDriftingTexts(15); // Add drifting texts
     });
 
 
