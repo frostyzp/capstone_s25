@@ -132,6 +132,41 @@ let dreamTextIndex = 0;
 const mainTextWords = ["To love", "to share", "to text", "to dream"];
 let mainTextIndex = 0;
 
+const video = document.getElementById('video');
+    const cameraSelect = document.getElementById('cameraSelect');
+
+    // Step 1: List cameras
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+      videoDevices.forEach((device, index) => {
+        const option = document.createElement('option');
+        option.value = device.deviceId;
+        option.text = device.label || `Camera ${index + 1}`;
+        cameraSelect.appendChild(option);
+      });
+
+      // Optional: Auto-start the first camera
+      if (videoDevices.length > 0) {
+        startCamera(videoDevices[0].deviceId);
+      }
+    });
+
+    // Step 2: Start camera by deviceId
+    function startCamera(deviceId) {
+      navigator.mediaDevices.getUserMedia({
+        video: { deviceId: { exact: deviceId } }
+      }).then(stream => {
+        video.srcObject = stream;
+      }).catch(err => {
+        console.error('Camera access error:', err);
+      });
+    }
+
+    // Step 3: Handle selection change
+    cameraSelect.onchange = () => {
+      startCamera(cameraSelect.value);
+    };
+
 function mainTextChange(){
 
     const concretePoemWords = [
