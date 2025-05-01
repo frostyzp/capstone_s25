@@ -60,8 +60,8 @@ function initializeElements() {
         const y = Math.sin(angle) * radius;
 
         div.style.position = 'absolute';
-        div.style.left = `${viewportWidth / 2 + x}px`;
-        div.style.top = `${viewportHeight / 2 + y}px`;
+        div.style.left = `calc(50% + ${x}px)`;
+        div.style.top = `calc(50% + ${y}px)`;
         div.style.transform = 'translate(-50%, -50%)';
 
         div.addEventListener('click', () => {
@@ -140,14 +140,16 @@ function handleOrientation(event) {
         
         if (gamma < -15 && isFirstPart) {
             // Tilt left - reveal next first part word
-            if (index / 2 === revealedWords.left) {
+            if (index === revealedWords.left * 2) {
                 word.style.opacity = '1';
+                word.classList.add('oracleFadeIn');
                 revealedWords.left++;
             }
         } else if (gamma > 15 && !isFirstPart) {
             // Tilt right - reveal next second part word
-            if ((index - 1) / 2 === revealedWords.right) {
+            if (index === (revealedWords.right * 2) + 1) {
                 word.style.opacity = '1';
+                word.classList.add('oracleFadeIn');
                 revealedWords.right++;
             }
         }
@@ -182,7 +184,7 @@ function initializeOracleAnswer() {
     words.forEach((word, index) => {
         const wordElement = document.createElement('span');
         wordElement.className = 'oracle-word';
-        wordElement.textContent = word + ' ';
+        wordElement.textContent = word + ' ';  // Add space after each word
         wordElement.dataset.index = index;
         wordElement.dataset.type = index % 2 === 0 ? 'first' : 'second';
         wordElement.style.opacity = '0'; // Start all words invisible
@@ -207,71 +209,36 @@ document.addEventListener('DOMContentLoaded', function() {
     if (questionInput) {
         // Handle input events
         questionInput.addEventListener('input', function() {
-            if (this.value.trim().length > 0) {
-                permissionButton.classList.remove('hidden');
-            } else {
-                permissionButton.classList.add('hidden');
-            }
+            permissionButton.classList.toggle('hidden', this.value.trim().length === 0);
         });
 
-        // Handle keydown events to ensure spaces work
-        questionInput.addEventListener('keydown', function(e) {
-            e.stopPropagation();
-        });
-
-        // Handle keyup events
-        questionInput.addEventListener('keyup', function(e) {
-            e.stopPropagation();
-        });
+        // Handle key events to ensure spaces work
+        questionInput.addEventListener('keydown', e => e.stopPropagation());
+        questionInput.addEventListener('keyup', e => e.stopPropagation());
     }
     
     // Add permission button click handler
     if (permissionButton) {
-        permissionButton.addEventListener('click', function() {
-            switchToPage('main-page');
-        });
+        permissionButton.addEventListener('click', () => switchToPage('main-page'));
     }
     
     // Add continue button click handler
     const continueButton = document.querySelector('.continue-button');
     if (continueButton) {
-        console.log('Continue button found');
         continueButton.addEventListener('click', function() {
-            console.log('Continue button clicked');
-            console.log('Selected element:', selectedElement);
-            
-            // Check which page is currently visible
             const questionPage = document.querySelector('.question-page');
             const mainPage = document.querySelector('.main-page');
-            const oracleAnswerPage = document.querySelector('.oracle-answer-page');
-            
-            console.log('Question page visible:', questionPage.classList.contains('visible'));
-            console.log('Main page visible:', mainPage.classList.contains('visible'));
             
             if (questionPage.classList.contains('visible')) {
-                // If we're on the question page, go to main page
-                console.log('Switching from question page to main page');
                 switchToPage('main-page');
-                // Initialize the oracle answer
-                console.log('About to initialize oracle answer');
                 initializeOracleAnswer();
-            } else if (mainPage.classList.contains('visible')) {
-                if (selectedElement) {
-                    console.log('Switching from main page to oracle answer page');
-                    this.classList.add('hidden');
-                    switchToPage('oracle-answer-page');
-                    console.log('About to initialize oracle answer');
-                    initializeOracleAnswer();
-                    requestPermission();
-                } else {
-                    console.log('No element selected');
-                }
-            } else {
-                console.log('Neither question page nor main page is visible');
+            } else if (mainPage.classList.contains('visible') && selectedElement) {
+                this.classList.add('hidden');
+                switchToPage('oracle-answer-page');
+                initializeOracleAnswer();
+                requestPermission();
             }
         });
-    } else {
-        console.log('Continue button not found');
     }
 
     // Initialize elements
@@ -403,264 +370,6 @@ function changeOracleColor() {
     // Get random number between 1 and 5
     const newColorNum = Math.floor(Math.random() * 5) + 1;
     wrapper.classList.add(`oracle-color-${newColorNum}`);
-}
-
-// Perlin noise implementation
-class PerlinNoise {
-    constructor() {
-        this.grad3 = [
-            [1,1,0], [-1,1,0], [1,-1,0], [-1,-1,0],
-            [1,0,1], [-1,0,1], [1,0,-1], [-1,0,-1],
-            [0,1,1], [0,-1,1], [0,1,-1], [0,-1,-1]
-        ];
-        this.p = new Array(256);
-        this.perm = new Array(512);
-        this.seed();
-    }
-
-    seed() {
-        // Initialize p array
-        for (let i = 0; i < 256; i++) {
-            this.p[i] = i;
-        }
-        
-        // Shuffle p array
-        for (let i = 255; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [this.p[i], this.p[j]] = [this.p[j], this.p[i]];
-        }
-        
-        // Initialize perm array
-        for (let i = 0; i < 512; i++) {
-            this.perm[i] = this.p[i & 255];
-        }
-    }
-
-    noise2D(x, y) {
-        // Find unit square that contains point
-        const X = Math.floor(x) & 255;
-        const Y = Math.floor(y) & 255;
-        
-        // Find relative x,y of point in square
-        x -= Math.floor(x);
-        y -= Math.floor(y);
-        
-        // Compute fade curves for x,y
-        const u = this.fade(x);
-        const v = this.fade(y);
-        
-        // Hash coordinates of the corners
-        const A = this.perm[X] + Y;
-        const B = this.perm[X + 1] + Y;
-        
-        // Add blended results from corners
-        return this.lerp(v,
-            this.lerp(u,
-                this.grad(this.perm[A], x, y),
-                this.grad(this.perm[B], x - 1, y)),
-            this.lerp(u,
-                this.grad(this.perm[A + 1], x, y - 1),
-                this.grad(this.perm[B + 1], x - 1, y - 1)));
-    }
-
-    fade(t) { 
-        return t * t * t * (t * (t * 6 - 15) + 10); 
-    }
-
-    lerp(t, a, b) { 
-        return a + t * (b - a); 
-    }
-
-    grad(hash, x, y) {
-        const h = hash & 15;
-        const grad = this.grad3[h % this.grad3.length];
-        return grad[0] * x + grad[1] * y;
-    }
-}
-
-// Initialize Perlin noise
-const perlin = new PerlinNoise();
-
-// Fragment class to manage individual text fragments
-class TextFragment {
-    constructor(element, baseX, baseY, type, messageId, textContent) {
-        this.element = element;
-        this.baseX = baseX;
-        this.baseY = baseY;
-        this.time = Math.random() * 1000;
-        this.speed = (0.1 + Math.random() * 0.3) * 0.3; // Much slower base speed
-        this.opacityRange = {
-            min: 0.1 + Math.random() * 0.15,
-            max: 0.3 + Math.random() * 0.2
-        };
-        this.size = 16 + Math.random() * 12;
-        this.skew = -20 + Math.random() * 40;
-        this.type = type;
-        this.messageId = messageId;
-        this.textContent = textContent;
-        this.highlightTimeout = null;
-        this.orbitRadius = 20 + Math.random() * 30; // Random orbit radius between 20-50px
-        this.orbitSpeed = 0.1 + Math.random() * 0.3; // Much slower orbit speed
-        
-        this.element.style.fontSize = `${this.size}px`;
-        this.element.style.transform = `skew(${this.skew}deg)`;
-        this.element.textContent = textContent;
-    }
-
-    update(deltaTime) {
-        this.time += deltaTime * this.speed;
-        
-        // Calculate circular motion
-        const orbitAngle = this.time * this.orbitSpeed;
-        const orbitX = Math.cos(orbitAngle) * this.orbitRadius;
-        const orbitY = Math.sin(orbitAngle) * this.orbitRadius;
-        
-        // Add some noise to the orbit for more organic movement
-        const noiseX = perlin.noise2D(this.time * 0.0001, 0) * 5; // Slower noise
-        const noiseY = perlin.noise2D(0, this.time * 0.0001) * 5; // Slower noise
-        
-        const x = Math.max(0, Math.min(100, this.baseX + orbitX + noiseX));
-        const y = Math.max(0, Math.min(100, this.baseY + orbitY + noiseY));
-        this.element.style.left = `${x}%`;
-        this.element.style.top = `${y}%`;
-        
-        if (!this.element.classList.contains('highlighted')) {
-            const opacityNoise = (perlin.noise2D(this.time * 0.0005, this.time * 0.0005) + 1) * 0.5; // Slower opacity changes
-            const opacity = this.opacityRange.min + 
-                           (this.opacityRange.max - this.opacityRange.min) * opacityNoise;
-            this.element.style.opacity = opacity;
-        }
-    }
-
-    highlight(selectedStone) {
-        this.element.classList.add('highlighted', selectedStone);
-        clearTimeout(this.highlightTimeout);
-    }
-
-    unhighlight() {
-        const element = this.element;
-        this.highlightTimeout = setTimeout(() => {
-            element.classList.remove('highlighted', 'smoky-quartz', 'clear-quartz', 'amethyst');
-        }, 5000); // Increased from 0.7s to 5s
-    }
-}
-
-// Initialize text cloud with message types
-function initializeTextCloud() {
-    const textCloud = document.querySelector('.text-cloud');
-    if (!textCloud) return;
-    
-    // Clear existing elements
-    textCloud.innerHTML = '';
-    
-    // Remove any existing instruction text and ask again button
-    const oldInstructions = document.querySelectorAll('.instruction-text');
-    const oldButtons = document.querySelectorAll('.ask-again-button');
-    oldInstructions.forEach(el => el.remove());
-    oldButtons.forEach(el => el.remove());
-    
-    const fragments = [];
-    let currentMessageId = Math.floor(Math.random() * eightBallMessages.length);
-    const currentMessage = eightBallMessages[currentMessageId];
-    
-    // Split the message into words and create fragments
-    const words = currentMessage.split(' ');
-    words.forEach((word, index) => {
-        const type = index % 2 === 0 ? 'first' : 'second';
-        const fragment = createFragment(word, type, currentMessageId);
-        fragments.push(fragment);
-    });
-
-    // Add instruction text
-    const instruction = document.createElement('div');
-    instruction.className = 'instruction-text';
-    instruction.textContent = 'Tilt left to reveal the first part, tilt right to reveal the second part';
-    document.body.appendChild(instruction);
-
-    // Fade out instruction after 3 seconds
-    setTimeout(() => {
-        instruction.classList.add('fade-out');
-    }, 3000);
-
-    // Add "Ask Again" button
-    const askAgainBtn = document.createElement('button');
-    askAgainBtn.className = 'ask-again-button';
-    askAgainBtn.textContent = 'Ask Again';
-    askAgainBtn.onclick = () => {
-        initializeTextCloud();
-    };
-    document.body.appendChild(askAgainBtn);
-    
-    // Animation loop
-    let lastTime = performance.now();
-    function animate(currentTime) {
-        const deltaTime = (currentTime - lastTime) / 1000;
-        lastTime = currentTime;
-        fragments.forEach(fragment => fragment.update(deltaTime));
-        requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
-    return { fragments, currentMessageId };
-}
-
-function createFragment(word, type, messageId) {
-    const fragment = document.createElement('span');
-    fragment.className = 'text-fragment';
-    
-    // Calculate position on a circle with some noise
-    const angle = Math.random() * Math.PI * 2; // Random angle between 0 and 2π
-    const radius = 25 + Math.random() * 10; // Circle radius between 30-40% of screen
-    
-    // Calculate base position on circle
-    const baseX = 50 + Math.cos(angle) * radius; // Center at 50%
-    const baseY = 50 + Math.sin(angle) * radius; // Center at 50%
-    
-    const textFragment = new TextFragment(fragment, baseX, baseY, type, messageId, word);
-    document.querySelector('.text-cloud').appendChild(fragment);
-    
-    return textFragment;
-}
-
-let fragments = [];
-let selectedStone = '';
-let currentMessageId = Math.floor(Math.random() * eightBallMessages.length);
-
-// Update stone selection handler
-function handleStoneSelection(stoneId) {
-    const stones = document.querySelectorAll('.stone');
-    const stonesContainer = document.querySelector('.stones-container');
-    const instructionText = document.querySelector('.instruction-text');
-    
-    stones.forEach(stone => {
-        if (stone.id === stoneId) {
-            stone.classList.add('selected');
-            selectedStone = stoneId;
-            
-            // Fade out stones and instruction
-            if (stonesContainer) {
-                stonesContainer.style.opacity = '0';
-                setTimeout(() => {
-                    stonesContainer.style.display = 'none';
-                }, 500); // Match this with CSS transition time
-            }
-            if (instructionText) {
-                instructionText.style.opacity = '0';
-                setTimeout(() => {
-                    instructionText.style.display = 'none';
-                }, 500);
-            }
-            
-            // Initialize text cloud after stone selection
-            setTimeout(() => {
-                const result = initializeTextCloud();
-                fragments = result.fragments;
-                currentMessageId = result.currentMessageId;
-            }, 600); // Start after stones fade out
-            
-        } else {
-            stone.classList.remove('selected');
-        }
-    });
 }
 
 // Update markers array with more kaomojis

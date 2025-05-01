@@ -97,9 +97,12 @@ p, span, div, button {
 .elements-container {
     position: fixed;
     top: 0;
-    left: -10%;
+    left: 0;
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     transition: opacity 0.5s ease-out;
 }
 
@@ -178,9 +181,11 @@ button:hover {
 }
 
 .oracle-word {
+    display: inline-block;
+    /* margin-right: 0.3em; */
+    white-space: pre;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-    display: inline-block;
 }
 
 .instruction-text {
@@ -611,7 +616,7 @@ p {
 .question-input:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 /* Mobile-specific optimizations */
@@ -688,4 +693,17 @@ p {
 
 .debug-reveal-button:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes oracleFadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.oracleFadeIn {
+    animation: oracleFadeIn 4s ease-out forwards;
 }

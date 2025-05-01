@@ -10,10 +10,24 @@
 </head>
 <svg>
 	<defs>
-		<filter id="distort">
+		<!-- <filter id="distort">
 			<feTurbulence baseFrequency="0.01 0.01" numOctaves="10" result="noise"  />
 			<feDisplacementMap in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="R">
-		</filter>
+		</filter> -->
+
+        <filter id="distort">
+            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise">
+                <animate attributeName="baseFrequency" 
+                        values="0.02;0.03" 
+                        keyTimes="0;1"
+                        dur="4s" 
+                        repeatCount="indefinite"/>
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+
+        
+        
 	</defs>
 </svg>
 
@@ -61,14 +75,14 @@
             <!-- Elements will be dynamically added here -->
         </div>
 
-        <p class="oracle-instructions"> Pick an element </p>
+        <p class="oracle-instructions"> Pick an symbol </p>
         <button class="continue-button hidden" onclick="initializeOracleAnswer(); switchToPage('oracle-answer-page')">( continue )</button>
 
 
     </div>
 
     <div class="oracle-answer-page page hidden">
-        <p>Tilt left/right to read your message</p>
+        <p>Tilt your vessel left and right to reveal your message</p>
         <div class="oracle-content">
             <div class="oracle_wrapper">
                 <div class="oracle_answer"></div>
