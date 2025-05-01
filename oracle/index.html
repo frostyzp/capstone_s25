@@ -25,7 +25,7 @@
     
     <div class="intro-page page visible">
         <p class="oracle-title"> rock oracle </p>
-        <button class="debug-button" onclick="initializeOracleAnswer(); switchToPage('oracle-answer-page')">Test Oracle</button>
+        <!-- <button class="debug-button" onclick="initializeOracleAnswer(); switchToPage('oracle-answer-page')">Test Oracle</button> -->
 
         <div class="intro-content">
             <svg width="300" height="308" viewBox="0 0 300 308" fill="none" xmlns="http://www.w3.org/2000/svg" class="intro-svg">
@@ -62,20 +62,20 @@
         </div>
 
         <p class="oracle-instructions"> Pick an element </p>
-        <button class="continue-button hidden" onclick="switchToPage('oracle-answer-page')">( continue )</button>
+        <button class="continue-button hidden" onclick="initializeOracleAnswer(); switchToPage('oracle-answer-page')">( continue )</button>
 
 
     </div>
 
     <div class="oracle-answer-page page hidden">
-        <p>Tilt left to reveal the first part, tilt right to reveal the second part</p>
+        <p>Tilt left/right to read your message</p>
         <div class="oracle-content">
             <div class="oracle_wrapper">
                 <div class="oracle_answer"></div>
             </div>
         </div>
-        <button class="debug-reveal-button">Reveal All</button>
-        <button class="ask-again-button hidden">Ask Again</button>
+        <!-- <button class="debug-reveal-button">Reveal All</button> -->
+        <!-- <button class="ask-again-button"> ( ask again</button> -->
     </div>
     
     <script>

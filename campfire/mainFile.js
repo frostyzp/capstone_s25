@@ -51,45 +51,78 @@ const dreams = [
     [ 
         "last night",
         "yesterday",
-        "remember when we danced under stars?",
         "this morning"
     ],
     [
-        " she's the one left to carry everything for my parents while I chase something far away",
-        "it felt foreign, familiar, and distant",
-        "I once dreamt of my dad growing old while I was overseas studying.",
-        "I dreamt that her laptop screen fell off onto the tracks and she leapt down to go grab it.",
-        "I was talking to a classmate from high school that I haven't spoken to since high school LOL",
-        "but placed back in high school and just chatting abt if we did our English homework or not",
-        "remember two Japanese brothel woman in kimonos walking in seeing us and saying",
-        "Yeong-Yuh and I went on a trip somewhere with my family (I'm not sure where).",
+        " she's the one left to carry everything",
+        "for my parents while I chase something far away",
+        "it felt foreign",
+        "familiar",
+        "and distant",
+        "I once dreamt of my dad",
+        "growing old while I was overseas studying",
+        "I dreamt that her laptop screen fell off",
+        "onto the tracks",
+        "and she leapt down to go grab it",
+        "I was talking to a classmate from high school",
+        "that I haven't spoken to since high school LOL",
+        "but placed back in high school",
+        "just chatting about if we did our English homework",
+        "remember two Japanese brothel women in kimonos",
+        "walking in seeing us",
+        "Yeong-Yuh and I went on a trip somewhere",
+        "with my family",
         "Mom calling us home at sunset",
         "The old treehouse where we played"
     ],
     [ 
-        "I remember imagining the carnage—her half body becoming muscle flesh and bone",
-        "I was with the ex situationship and we were hanging out",
-        "despite like carrying memories of my college life",
-        "I woke up with a heavy feeling, like I had just glimpsed a future I couldn't change.",
-        "and we were back in our hs but I was talking to her about assignments and high school related things",
-        "last night I dreamt that Alex gave me an actual clear plastic box of coke.",
-        "but they continue to enter the room onto the bed.",
-        "I remember screaming and telling her to stop, but within less than a minute, a train came by and bulldozed her.",
-        "I didn't say it out loud, but I felt guilty,",
-        "They're definitely doing something together to which I try to ignore",
-        "I cried to my parents in the dream, not knowing what to say.",
-        "kind of dirty talked to me towards the end of the night,",        "Flying through cotton candy clouds",
+        "I remember imagining the carnage",
+        "her half body becoming muscle flesh and bone",
+        "I was with the ex situationship",
+        "and we were hanging out",
+        "despite carrying memories",
+        "of my college life",
+        "I woke up with a heavy feeling",
+        "like I had glimpsed a future I couldn't change",
+        "we were back in our high school",
+        "talking about assignments",
+        "last night I dreamt that Alex",
+        "gave me a clear plastic box of coke",
+        "but they continue to enter the room",
+        "onto the bed",
+        "I remember screaming",
+        "telling her to stop",
+        "but within less than a minute",
+        "a train came by and bulldozed her",
+        "I didn't say it out loud",
+        "but I felt guilty",
+        "They're definitely doing something together",
+        "which I try to ignore",
+        "I cried to my parents in the dream",
+        "not knowing what to say",
+        "kind of dirty talked to me",
+        "towards the end of the night",
+        "Flying through cotton candy clouds",
     ],
     [ 
-            "I told my sister about it over the phone.",
-            "but it had like a pointy nose like a pointy triangle nose head",
-            "The size of one of my suitcases. It must've cost millions.",
-            "\"I had a dream we go sent to prison tgt\"",
-            "\"Last night you appeared in my dream and you said you were getting a minor in Pokémon\"",
-            "then like two of your friends, were there and one of them that really curly hair",
-            "\"I had a dream I met Paul but he looked different like he had some plastic surgery\"",
-            "they were talking to me in Chinese and I was confused.",
-            "\"I had a dream last night that you were smashing my phone screen LOL\""
+            "I told my sister about it",
+            "over the phone",
+            "but it had a pointy nose",
+            "like a pointy triangle nose head",
+            "The size of one of my suitcases",
+            "It must've cost millions",
+            "I had a dream we got sent to prison together",
+            "Last night you appeared in my dream", 
+            "you said you were getting a minor in Pokémon",
+            "then like two of your friends were there",
+            "one of them had really curly hair",
+            "I had a dream I met Paul",
+            "but he looked different",
+            "like he had some plastic surgery",
+            "they were talking to me in Chinese",
+            "and I was confused",
+            "I had a dream last night",
+            "that you were smashing my phone screen LOL"
     ]
 ];
 
@@ -111,18 +144,16 @@ function mainTextChange(){
 }
 
 function createDreamText() {
-    if (dreamSequenceIndex >= dreams.length) dreamSequenceIndex = 0;
-    if (dreamTextIndex >= dreams[dreamSequenceIndex].length) dreamTextIndex = 0;
-
-    const text = dreams[dreamSequenceIndex][dreamTextIndex] || '';
+    // Randomly select a sub-array
+    const randomSequenceIndex = Math.floor(Math.random() * dreams.length);
+    const currentSequence = dreams[randomSequenceIndex];
     
-    // Increment indices
-    dreamTextIndex = (dreamTextIndex + 1) % dreams[dreamSequenceIndex].length;
-    if (dreamTextIndex === 0) {
-        dreamSequenceIndex = (dreamSequenceIndex + 1) % dreams.length;
-    }
-
-    // Create container
+    // Randomly select a text from the chosen sub-array
+    const randomTextIndex = Math.floor(Math.random() * currentSequence.length);
+    const text = currentSequence[randomTextIndex] || '';
+    
+    // Create container with document fragment
+    const fragment = document.createDocumentFragment();
     const container = document.createElement('div');
     container.className = 'dream-container';
     const randomX = Math.random() * (window.innerWidth - 300);
@@ -136,20 +167,8 @@ function createDreamText() {
         left: ${randomX}px;
     `;
 
-    // Create dream element
-    const dreamElement = document.createElement('div');
-    dreamElement.className = 'floating-dream';
-    dreamElement.style.cssText = `
-        position: absolute;
-        width: 100%;
-        color: rgba(254, 239, 165, 0.9);
-        font-size: 1.2rem;
-        transform-style: preserve-3d;
-        perspective: 1000px;
-    `;
-
-    // Create and append words
-    const fragment = document.createDocumentFragment();
+    // Create words with document fragment
+    const wordsFragment = document.createDocumentFragment();
     const words = text.split(' ').filter(word => word.trim());
     
     words.forEach((word, index) => {
@@ -160,13 +179,15 @@ function createDreamText() {
         const baseRotationX = (Math.random() - 0.5) * 60;
         const translateZ = Math.random() * -50;
         const baseSize = 1.2 + (Math.random() * 0.6);
-        const rotationSpeed = 0.5 + Math.random() * 0.5; // Random rotation speed for each word
+        const rotationSpeed = 0.5 + Math.random() * 0.5;
 
         wordDiv.textContent = word;
         wordDiv.style.cssText = `
             position: absolute;
             width: 100%;
             text-align: ${randomAlignment};
+            color: rgba(254, 239, 165, 0.9);
+            font-size: 1.2rem;
             transform: translateY(${index * 30}px) 
                        rotateY(${baseRotationY}deg) 
                        rotateX(${baseRotationX}deg) 
@@ -177,6 +198,7 @@ function createDreamText() {
             transform-style: preserve-3d;
             opacity: 0;
             transition: opacity 0.5s ease-in;
+            will-change: transform, opacity;
         `;
 
         // Fade in each word with a delay
@@ -184,12 +206,10 @@ function createDreamText() {
             wordDiv.style.opacity = '1';
         }, index * 200);
 
-        // Dynamic rotation and size animation
-        let startTime = performance.now();
+        // Optimize animation using requestAnimationFrame
+        let animationFrameId;
         const animateTransform = (currentTime) => {
-            const elapsedTime = (currentTime - startTime) / 1000; // Convert to seconds
-            
-            // Continuous rotation based on time
+            const elapsedTime = (currentTime - startTime) / 1000;
             const rotationY = baseRotationY + Math.sin(elapsedTime * rotationSpeed) * 30;
             const rotationX = baseRotationX + Math.cos(elapsedTime * rotationSpeed * 0.8) * 40;
             const scale = baseSize + Math.sin(elapsedTime * rotationSpeed * 1.2) * 0.05;
@@ -202,30 +222,74 @@ function createDreamText() {
                 scale(${scale})
             `;
             
-            requestAnimationFrame(animateTransform);
+            animationFrameId = requestAnimationFrame(animateTransform);
         };
         
-        requestAnimationFrame(animateTransform);
-        fragment.appendChild(wordDiv);
+        let startTime = performance.now();
+        animationFrameId = requestAnimationFrame(animateTransform);
+        
+        // Store animation ID for cleanup
+        wordDiv.dataset.animationId = animationFrameId;
+        
+        // Add blur animation
+        let blurValue = 1;
+        const blurInterval = setInterval(() => {
+            blurValue += 0.1;
+            wordDiv.style.filter = `blur(${blurValue}px)`;
+            if (blurValue >= 3) {
+                clearInterval(blurInterval);
+            }
+        }, 1000);
+
+        // Store blur interval for cleanup
+        wordDiv.dataset.blurInterval = blurInterval;
+        
+        wordsFragment.appendChild(wordDiv);
     });
 
-    dreamElement.appendChild(fragment);
-    container.appendChild(dreamElement);
-    document.body.appendChild(container);
+    container.appendChild(wordsFragment);
+    fragment.appendChild(container);
+    document.body.appendChild(fragment);
 
     // Animation
     let bottom = 0;
     const moveSpeed = 0.75;
     let animationFrameId;
+    let fadeOutTimeout;
+
+    const cleanup = () => {
+        // Cancel all animation frames
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+        
+        // Cancel all word animations
+        container.querySelectorAll('div').forEach(word => {
+            if (word.dataset.animationId) {
+                cancelAnimationFrame(parseInt(word.dataset.animationId));
+            }
+            if (word.dataset.blurInterval) {
+                clearInterval(parseInt(word.dataset.blurInterval));
+            }
+        });
+        
+        // Remove the container from DOM
+        if (container.parentNode) {
+            container.remove();
+        }
+        
+        // Clear any pending timeouts
+        if (fadeOutTimeout) {
+            clearTimeout(fadeOutTimeout);
+        }
+    };
 
     const animate = () => {
         bottom += moveSpeed;
         container.style.bottom = `${window.innerHeight * 0.2 + bottom}px`;
         
-        // Keep animating until we reach the top
         if (bottom > window.innerHeight + 100) {
-            cancelAnimationFrame(animationFrameId);
-            container.remove();
+            cleanup();
             return;
         }
 
@@ -235,17 +299,25 @@ function createDreamText() {
     animationFrameId = requestAnimationFrame(animate);
 
     // Fade out after 10 seconds
-    setTimeout(() => {
+    fadeOutTimeout = setTimeout(() => {
         const words = container.querySelectorAll('div');
+        let fadeComplete = true;
+        
         words.forEach(word => {
             word.style.transition = 'opacity 3s ease-out';
             word.style.opacity = '0';
+            
+            // Add event listener to check when fade is complete
+            word.addEventListener('transitionend', () => {
+                fadeComplete = fadeComplete && word.style.opacity === '0';
+                if (fadeComplete) {
+                    cleanup();
+                }
+            });
         });
         
-        // Remove container after fade out
-        setTimeout(() => {
-            container.remove();
-        }, 5000);
+        // Fallback cleanup in case transitionend doesn't fire
+        setTimeout(cleanup, 5000);
     }, 15000);
 }
 
@@ -282,6 +354,8 @@ let canSpawnWords = false; // Controls whether words can be spawned
 let backgroundSound = null;
 let soundtrack2 = null;
 let audioLoaded = false;
+let lastFaceCheck = 0;
+const FACE_CHECK_INTERVAL = 2000; // Check every 2 seconds instead of 1
 
 function initializeSound() {
     // Main soundtrack
@@ -292,7 +366,7 @@ function initializeSound() {
     // Second soundtrack
     soundtrack2 = new Audio('fire.mp3');
     soundtrack2.loop = true;
-    soundtrack2.volume = 0.5;
+    soundtrack2.volume = 0.8;
 
     // Add event listeners for loading
     const audioElements = [backgroundSound, soundtrack2];
@@ -314,12 +388,15 @@ function initializeSound() {
 }
 
 function checkFacePresence() {
+    const currentTime = Date.now();
+    if (currentTime - lastFaceCheck < FACE_CHECK_INTERVAL) return;
+    lastFaceCheck = currentTime;
+
     // Check if handsfree is initialized and has face data
     if (handsfree && handsfree.data && handsfree.data.facemesh) {
         const hasFace = handsfree.data.facemesh.multiFaceLandmarks && 
                        handsfree.data.facemesh.multiFaceLandmarks.length > 0;
         
-        const currentTime = Date.now();
         const timeSinceLastTransition = currentTime - lastTransitionTime;
         
         // Don't check if we're in cooldown period
@@ -327,15 +404,13 @@ function checkFacePresence() {
             return;
         }
         
-        console.log(`Face detection: ${hasFace ? 'Face present' : 'No face'}`);
-        
         if (hasFace && isFadedToBlack && !isTransitioning) {
             console.log('Face detected while faded to black, preparing to fade in...');
             startTransition(() => fadeToVideo(), FADE_IN_DURATION);
         } else if (!hasFace && !isFadedToBlack && !isTransitioning) {
             console.log('No face detected, preparing to fade out...');
             startTransition(() => fadeToBlack(), FADE_DURATION);
-            canSpawnWords = false; // Disable word spawning when no face is detected
+            canSpawnWords = false;
         }
     }
 }
@@ -369,7 +444,6 @@ function fadeToVideo() {
     const textContainer = document.querySelector('.awakening-text');
     const introSvg = document.querySelector('.intro-svg');
     const overlay = document.querySelector('.fade-black-overlay');
-    const campfireImage = document.getElementById('campfire-image');
     
     if (!video) {
         console.error('Video element not found!');
@@ -394,10 +468,6 @@ function fadeToVideo() {
     if (introSvg) {
         introSvg.classList.add('hidden');
     }
-    
-    // Fade out the image
-    campfireImage.style.transition = `opacity ${FADE_IN_DURATION/1000}s ease-out`;
-    campfireImage.style.opacity = '0';
     
     // Ensure video is visible and at full opacity
     video.style.display = 'block';
@@ -443,7 +513,6 @@ function fadeToBlack() {
     console.log('Starting fade to black...');
     const video = document.querySelector('video');
     const body = document.body;
-    const campfireImage = document.getElementById('campfire-image');
     let overlay = document.querySelector('.fade-black-overlay');
     
     if (!video) {
@@ -474,10 +543,6 @@ function fadeToBlack() {
     // Fade out video
     video.style.transition = `opacity ${FADE_DURATION/1000}s ease-out`;
     video.style.opacity = '0';
-    
-    // Fade in the image
-    campfireImage.style.transition = `opacity ${FADE_DURATION/1000}s ease-in`;
-    campfireImage.style.opacity = '1';
     
     // Set black background
     body.style.transition = `background-color ${FADE_DURATION/1000}s ease-out`;
@@ -550,6 +615,21 @@ window.createBlinkEffect = function() {
     video.style.transition = 'opacity 0.2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
     mainText.forEach(text => {
         text.style.transition = 'all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
+        // Reset blur to 1px
+        text.style.filter = 'blur(1px)';
+        // Clear and restart blur animation
+        if (text.dataset.blurInterval) {
+            clearInterval(parseInt(text.dataset.blurInterval));
+            let blurValue = 1;
+            const blurInterval = setInterval(() => {
+                blurValue += 0.1;
+                text.style.filter = `blur(${blurValue}px)`;
+                if (blurValue >= 3) {
+                    clearInterval(blurInterval);
+                }
+            }, 1000);
+            text.dataset.blurInterval = blurInterval;
+        }
     });
     video.style.opacity = '0.85';
 
@@ -564,8 +644,8 @@ window.createBlinkEffect = function() {
     }, 150);
 };
 
-// Check for face presence every second
-setInterval(checkFacePresence, 1000);
+// Change the interval to be less frequent
+setInterval(checkFacePresence, FACE_CHECK_INTERVAL);
 
 // ASCII art animation frames
 const asciiFrames = [

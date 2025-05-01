@@ -69,8 +69,6 @@
             <source src="campfire.mp4" type="video/mp4">
         </video>
         
-        <img id="campfire-image" src="campfire plain bg.png" style="position: fixed; width: 100vw; height: 100vh; object-fit: cover; opacity: 0; transition: opacity 2s ease-in-out; z-index: 2; bottom: 0; left: 0;">
-        
         <svg width="300" height="308" viewBox="0 0 300 308" fill="none" xmlns="http://www.w3.org/2000/svg" class="intro-svg">
             <defs>
                 <filter id="noise1">
@@ -88,64 +86,6 @@
 
         <div id="awakening-text"></div>
     </div>
-
-    <script>
-        let isFadedToBlack = false;
-        let fadeTimeout;
-        const fadeDuration = 2000; // 2 seconds
-        const video = document.querySelector('video');
-        const campfireImage = document.getElementById('campfire-image');
-        const awakeningText = document.getElementById('awakening-text');
-        const introSvg = document.querySelector('.intro-svg');
-        const mainContainer = document.querySelector('div');
-        const overlay = document.createElement('div');
-        overlay.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            opacity: 0;
-            transition: opacity ${fadeDuration}ms ease-in-out;
-            pointer-events: none;
-            z-index: 1;
-        `;
-        mainContainer.appendChild(overlay);
-
-        function fadeToBlack() {
-            if (isFadedToBlack) return;
-            isFadedToBlack = true;
-            overlay.style.opacity = '1';
-            video.style.opacity = '0';
-            campfireImage.style.opacity = '1';
-            awakeningText.style.opacity = '1';
-            awakeningText.style.display = 'block';
-            introSvg.style.opacity = '0';
-        }
-
-        function fadeFromBlack() {
-            if (!isFadedToBlack) return;
-            isFadedToBlack = false;
-            overlay.style.opacity = '0';
-            video.style.opacity = '1';
-            campfireImage.style.opacity = '0';
-            awakeningText.style.opacity = '0';
-            awakeningText.style.display = 'none';
-            introSvg.style.opacity = '1';
-        }
-
-        function handleFaceDetection() {
-            if (isFadedToBlack) {
-                fadeFromBlack();
-            }
-            clearTimeout(fadeTimeout);
-            fadeTimeout = setTimeout(fadeToBlack, 10000);
-        }
-
-        // Simulate face detection every 5 seconds
-        setInterval(handleFaceDetection, 5000);
-    </script>
 </body>
 </html>
 

@@ -111,6 +111,11 @@ function startTiltDetection() {
     window.addEventListener('deviceorientation', handleOrientation);
 }
 
+let revealedWords = {
+    left: 0,  // Number of words revealed by left tilt
+    right: 0  // Number of words revealed by right tilt
+};
+
 function handleOrientation(event) {
     if (!hasPermission) return;
 
@@ -118,23 +123,33 @@ function handleOrientation(event) {
     const oracleWrapper = document.querySelector('.oracle_wrapper');
     if (!oracleWrapper) return;
 
+    // Update background color based on tilt
+    const tiltIntensity = Math.abs(gamma) / 90; // 0 to 1
+    const baseColor = 34; // Dark gray base (from #222222)
+    const targetColor = 255; // White target
+    const colorValue = Math.floor(baseColor + (targetColor - baseColor) * tiltIntensity);
+    document.body.style.backgroundColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+
     // Get all word elements
     const words = document.querySelectorAll('.oracle-word');
     
     // Handle word visibility based on tilt
-    words.forEach(word => {
+    words.forEach((word, index) => {
         const type = word.dataset.type;
         const isFirstPart = type === 'first';
         
         if (gamma < -15 && isFirstPart) {
-            // Tilt left - reveal first part
-            word.style.opacity = '1';
+            // Tilt left - reveal next first part word
+            if (index / 2 === revealedWords.left) {
+                word.style.opacity = '1';
+                revealedWords.left++;
+            }
         } else if (gamma > 15 && !isFirstPart) {
-            // Tilt right - reveal second part
-            word.style.opacity = '1';
-        } else {
-            // Reset opacity when not tilted
-            word.style.opacity = '0';
+            // Tilt right - reveal next second part word
+            if ((index - 1) / 2 === revealedWords.right) {
+                word.style.opacity = '1';
+                revealedWords.right++;
+            }
         }
     });
 }
@@ -147,6 +162,12 @@ function initializeOracleAnswer() {
         console.log('ERROR: Oracle answer div not found');
         return;
     }
+
+    // Reset revealed words counter
+    revealedWords = {
+        left: 0,
+        right: 0
+    };
 
     // Get a random message
     const randomIndex = Math.floor(Math.random() * eightBallMessages.length);
@@ -163,36 +184,14 @@ function initializeOracleAnswer() {
         wordElement.className = 'oracle-word';
         wordElement.textContent = word + ' ';
         wordElement.dataset.index = index;
+        wordElement.dataset.type = index % 2 === 0 ? 'first' : 'second';
+        wordElement.style.opacity = '0'; // Start all words invisible
         oracleAnswer.appendChild(wordElement);
     });
 
-    // Add device orientation event listener
     window.addEventListener('deviceorientation', handleOrientation);
 }
 
-function handleOrientation(event) {
-    const gamma = event.gamma; // Left-right tilt (-90 to 90)
-    const words = document.querySelectorAll('.oracle-word');
-    
-    words.forEach(word => {
-        const index = parseInt(word.dataset.index);
-        // Alternate words based on index (even/odd)
-        const isEven = index % 2 === 0;
-        
-        if (gamma < -15 && isEven) {
-            // Tilt left - show even indexed words
-            word.style.opacity = '1';
-        } else if (gamma > 15 && !isEven) {
-            // Tilt right - show odd indexed words
-            word.style.opacity = '1';
-        } else {
-            // Reset opacity when not tilted
-            word.style.opacity = '0';
-        }
-    });
-}
-
-// Reset the oracle
 function resetOracle() {
     initializeOracleAnswer();
 }
@@ -253,17 +252,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // If we're on the question page, go to main page
                 console.log('Switching from question page to main page');
                 switchToPage('main-page');
+                // Initialize the oracle answer
+                console.log('About to initialize oracle answer');
+                initializeOracleAnswer();
             } else if (mainPage.classList.contains('visible')) {
                 if (selectedElement) {
                     console.log('Switching from main page to oracle answer page');
-                    // Hide the continue button
                     this.classList.add('hidden');
-                    // Switch to oracle answer page
                     switchToPage('oracle-answer-page');
-                    // Initialize the oracle answer
                     console.log('About to initialize oracle answer');
                     initializeOracleAnswer();
-                    // Request permission for device motion
                     requestPermission();
                 } else {
                     console.log('No element selected');
