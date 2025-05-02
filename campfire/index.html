@@ -19,31 +19,6 @@
     
     <!-- Local Stylesheet -->
     <link rel="stylesheet" type="text/css" href="style.css">
-    <style>
-        svg {
-            position: absolute;
-        }
-
-        .intro-svg {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 0;
-            opacity: 0.9;
-            transition: opacity 1s ease-out;
-        }
-
-        .intro-svg.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .intro-svg path {
-            stroke: #4C484A;
-            stroke-width: 3px;
-        }
-    </style>
 </head>
 <body>
     <select id="cameraSelect"></select>
@@ -58,7 +33,7 @@
                 <feDisplacementMap in="SourceGraphic" in2="NOISE" scale="10">
                 </feDisplacementMap>
                 <animate xlink:href="#turbulence" attributeName="baseFrequency" dur="60s" keyTimes="0;0.5;1"
-                    values="0.01 0.02;0.02 0.04;0.01 0.02" repeatCount="indefinite"></animate>
+                    values="0.02 0.04;0.2 0.5;0.52 0.04" repeatCount="indefinite"></animate>
             </filter>
         </defs>
     </svg>

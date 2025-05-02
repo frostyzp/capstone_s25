@@ -643,29 +643,30 @@ function swapRandomDivPositions(mainText, percent = 0.4) {
 }
 
 window.createBlinkEffect = function() {
+    console.log('Creating blink effect');
     const video = document.querySelector('video');
     const mainText = document.querySelectorAll('.mainText, .floating-dream');
     if (!video || !mainText || !canSpawnWords) return;
 
-    video.style.transition = 'opacity 0.2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
-    mainText.forEach(text => {
-        text.style.transition = 'all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
-        // Reset blur to 1px
-        text.style.filter = 'blur(1px)';
-        // Clear and restart blur animation
-        if (text.dataset.blurInterval) {
-            clearInterval(parseInt(text.dataset.blurInterval));
-            let blurValue = 1;
-            const blurInterval = setInterval(() => {
-                blurValue += 0.1;
-                text.style.filter = `blur(${blurValue}px)`;
-                if (blurValue >= 3) {
-                    clearInterval(blurInterval);
-                }
-            }, 1000);
-            text.dataset.blurInterval = blurInterval;
-        }
-    });
+    // video.style.transition = 'opacity 0.2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
+    // mainText.forEach(text => {
+    //     text.style.transition = 'all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
+    //     // Reset blur to 1px
+    //     text.style.filter = 'blur(1px)';
+    //     // Clear and restart blur animation
+    //     if (text.dataset.blurInterval) {
+    //         clearInterval(parseInt(text.dataset.blurInterval));
+    //         let blurValue = 1;
+    //         const blurInterval = setInterval(() => {
+    //             blurValue += 0.1;
+    //             text.style.filter = `blur(${blurValue}px)`;
+    //             if (blurValue >= 3) {
+    //                 clearInterval(blurInterval);
+    //             }
+    //         }, 1000);
+    //         text.dataset.blurInterval = blurInterval;
+    //     }
+    // });
     video.style.opacity = '0.85';
 
     // Swap 20% of div positions

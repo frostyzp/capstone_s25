@@ -76,7 +76,7 @@ h2 {
   transform: translate(-50%, -50%);
   text-align: center;
   font-size: 1rem;
-  transform: scale(2,1);
+  transform: scale(3,1);
   color: white;
   z-index: 10;
   filter: blur(0px);
@@ -100,8 +100,7 @@ h2 {
 
 .floating-dream {
   filter: url(#wavy);
-  transform: scale(1,2);
-
+  transform: scale(1,3);
 
   font-family: 'EarthTone', serif !important;
   padding: 1rem;
@@ -190,4 +189,28 @@ h2 {
   text-shadow: 0 0 8px #fff, 0 0 24px #ffe6b3, 0 0 40px #ffb347;
   opacity: 0.85;
   user-select: none;
+}
+
+svg {
+  position: absolute;
+}
+
+.intro-svg {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  opacity: 0.9;
+  transition: opacity 1s ease-out;
+}
+
+.intro-svg.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-svg path {
+  stroke: #4C484A;
+  stroke-width: 3px;
 }
