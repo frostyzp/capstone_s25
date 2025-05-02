@@ -989,21 +989,10 @@ canvas {
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    background: transparent;
+    background: none;
     color: #b4b4b4;
     padding: 10px 20px;
-    /* font-size: 16px; */
-    cursor: pointer;
     transition: all 0.3s ease;
     z-index: 1000;
     pointer-events: auto;
-}
-
-/* Mobile-specific optimizations */
-@media (max-width: 768px) {
-    .ask-again-button {
-        padding: 8px 16px;
-        bottom: 25px;
-        width: 90%;
-    }
 }
