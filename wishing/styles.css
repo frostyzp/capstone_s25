@@ -19,7 +19,7 @@ html, body {
 
 body {
     font-family: 'VictorMono', 'Courier New', Courier, monospace;
-    background-color: white;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.98), rgba(182, 179, 179, 0.99)), url('rock_pattern.png');
 }
 
 /* Apply filter only to specific elements that need it */
@@ -30,7 +30,7 @@ body {
     transform: translate(-50%, -50%);
     z-index: 0;
     opacity: 0.6;
-    filter: url(#distort);
+    filter: url(#noise);
     width: 80%;
     max-width: 400px;
     height: auto;
@@ -482,6 +482,8 @@ button {
 }
 
 #background_ascii div {
+    filter: url(#distort);
+
     animation: background_ascii 3s steps(2) infinite;
 
     display: grid; /* Set display to grid */
@@ -496,7 +498,7 @@ button {
     z-index: -3; /* Change color as needed */
     opacity: 0.2; /* Change color as needed */
     padding-bottom: 100px; /* Change color as needed */
-    filter: url(#distort);
+    
 }
 
 /* ----- SKIPPING ROCK STYLES ----- */
@@ -999,7 +1001,7 @@ canvas {
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: rgb(94, 94, 94);
     z-index: 1000;
 }

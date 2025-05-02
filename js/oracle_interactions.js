@@ -33,6 +33,21 @@ const eightBallMessages = [
 let hasPermission = false;
 let hasTiltTriggered = false;
 
+function switchToPage(pageClass) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.add('hidden');
+        page.classList.remove('visible');
+    });
+    
+    // Show the target page
+    const targetPage = document.querySelector('.' + pageClass);
+    if (targetPage) {
+        targetPage.classList.remove('hidden');
+        targetPage.classList.add('visible');
+    }
+}
+
 // Initialize elements in a circle
 function initializeElements() {
     console.log('Initializing elements');
@@ -286,7 +301,7 @@ const elements = [
     },
     { 
         symbol: `   .--.
- .(    ).
+ .((っ◔◡◔)っ).
 (___.__)__)`, 
         name: 'cloud' 
     },
@@ -294,7 +309,7 @@ const elements = [
         symbol: `   ___
   /   \\
  /     \\
-|       |
+| (╥﹏╥) |
  \\     /
   \\___/`, 
         name: 'rock' 
@@ -302,13 +317,13 @@ const elements = [
     { 
         symbol: `  ~ ~ ~
  ~ ~ ~ ~
-~ ~ ~ ~ ~`, 
+~ (╯°□°）╯~`, 
         name: 'water' 
     },
     { 
         symbol: `  (  )
  (    )
-(      )
+((◠‿◠))
  \\    /
   \\__/`, 
         name: 'fire' 

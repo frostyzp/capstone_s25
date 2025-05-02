@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const asciiLandscape = [
         "{{}}",
         "{}",
-        "w h i s p e r",
         "|",
         "^^^^^^",
         "              v .   ._, |_  .,\n           `-._\\/  .  \\ /    |/_\n               \\\\  _\\, y | \//\n         _\\_.___\\\\, \\/ -.\\||\n           `7-,--.`._||  / / ,\n           /'     `-. `./ / |/_.'\n                     |    |//\n                     |_    /\n                     |-   |\n                     |   =|\n                     |    |\n--------------------/ ,  . \\--",
@@ -68,7 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
         "The ghost of nothing but\n time\n and memory",
         "Memory and time, \nsuspended",
         "Presence",
-        "Remains\nand imprints"
+        "Remains\nand imprints",
+        "w h i s p e r",
     ];
 
     // Add typewriter effect to intro text
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cursor: ''
     });
     introTypewriter
-        .typeString('the bond of absence, the silence we carry around.')
+        .typeString('how intimate lies within the bond of absence, the silence we carry around?')
         .pauseFor(500)
         .typeString('<br>View the gravestones by tapping.')
         .start();
@@ -513,31 +513,61 @@ document.addEventListener('DOMContentLoaded', () => {
         // Pause music when modal is opened
         audio.pause();
 
-        const modal = document.createElement('div');
-        modal.style.position = 'fixed';
-        modal.style.top = '50%';
-        modal.style.left = '50%';
-        modal.style.transform = 'translate(-50%, -50%)';
-        modal.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-        modal.style.border = '2px solid #000';
-        modal.style.padding = '20px';
-        modal.style.zIndex = '1000';
-        modal.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
-        modal.innerText = 'Contribute to the graveyard.';
+        const modal = document.querySelector('.bury-modal');
+        const form = modal.querySelector('.bury-modal-form');
+        const closeButton = modal.querySelector('.bury-modal-close');
+        const textarea = modal.querySelector('.bury-modal-textarea');
+        const title = modal.querySelector('.bury-modal-title');
+        const buryButton = modal.querySelector('.bury-modal-submit');
 
-        const closeButton = document.createElement('button');
-        closeButton.innerText = 'Close';
-        closeButton.style.marginTop = '10px';
+        // Show the modal
+        modal.style.display = 'flex';
+
+        // Handle close button
         closeButton.addEventListener('click', () => {
             modal.style.display = 'none';
+            // Reset modal state
+            title.textContent = 'Contribute to the cemetery';
+            form.style.display = 'flex';
+            textarea.style.display = 'block';
+            closeButton.style.display = 'block';
+            buryButton.style.display = 'block';
             // Resume music when modal is closed
             audio.play().catch(error => {
                 console.log('Audio playback failed:', error);
             });
         });
 
-        modal.appendChild(closeButton);
-        document.body.appendChild(modal);        
+        // Handle bury button click
+        buryButton.addEventListener('click', () => {
+            const message = textarea.value.trim();
+            if (message) {
+                // Add the new message to the asciiElements array
+                asciiElements.push(message);
+                title.textContent = 'your words will be buried and preserved';
+
+                // Hide form elements
+                form.style.display = 'none';
+                textarea.style.display = 'none';
+                closeButton.style.display = 'none';
+                buryButton.style.display = 'none';
+                textarea.value = '';
+                
+                // Close modal after delay
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    // Reset modal state
+                    title.textContent = 'Contribute to the cemetery';
+                    form.style.display = 'flex';
+                    textarea.style.display = 'block';
+                    closeButton.style.display = 'block';
+                    buryButton.style.display = 'block';
+                    audio.play().catch(error => {
+                        console.log('Audio playback failed:', error);
+                    });
+                }, 5000);
+            }
+        });
     });
 
     $(document).ready(function() {

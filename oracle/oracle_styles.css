@@ -45,8 +45,10 @@ body {
     transition: opacity 0.3s ease;
 }
 
-/* Apply filter to all text elements */
-p, span, div, button {
+/* Apply filter to specific text elements */
+/* p, span, button, .oracle-wrapper, .oracle-title, .oracle-instructions { */
+
+span, .oracle-wrapper, .oracle-title, .oracle-instructions {
     filter: url(#distort);
 }
 
@@ -181,7 +183,7 @@ button:hover {
 
 .oracle-word {
     display: inline-block;
-    /* margin-right: 0.3em; */
+    color: #d2d2d2;
     white-space: pre;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
@@ -535,6 +537,8 @@ button:hover {
     margin: 0 auto;
     text-align: center;
     box-sizing: border-box;
+    padding: 4%;
+
 }
 
 /* SVG styles */

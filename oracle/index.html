@@ -17,11 +17,11 @@
 
         <filter id="distort">
             <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise">
-                <!-- <animate attributeName="baseFrequency" 
+                <animate attributeName="baseFrequency" 
                         values="0.02;0.03" 
                         keyTimes="0;1"
                         dur="4s" 
-                        repeatCount="indefinite"/> -->
+                        repeatCount="indefinite"/>
             </feTurbulence>
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
         </filter>
@@ -92,21 +92,5 @@
         <button class="ask-again-button" onclick="switchToPage('question-page')"> ( ask the rock again )</button>
     </div>
     
-    <script>
-        function switchToPage(pageClass) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.add('hidden');
-                page.classList.remove('visible');
-            });
-            
-            // Show the target page
-            const targetPage = document.querySelector('.' + pageClass);
-            if (targetPage) {
-                targetPage.classList.remove('hidden');
-                targetPage.classList.add('visible');
-            }
-        }
-    </script>
 </body>
 </html>

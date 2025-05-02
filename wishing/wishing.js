@@ -528,7 +528,13 @@ function createRipplingText(lines, startPosition = 20) {
         lineElement.className = 'lineElement'; // Add class for textillate
         lineElement.textContent = line;
         
-        // Get a random color for this line
+
+        // Add slight delay before playing splash sound
+        await new Promise(resolve => setTimeout(resolve, 800));
+        const splashSound = new Audio('/wishing/water splash.mp3');
+        splashSound.volume = 0.2; // Set volume to 30%
+        splashSound.play().catch(e => console.error('Error playing splash sound:', e));
+        
         const lineColor = getRandomColor();
         
         // Calculate opacity, size, and width based on line index
