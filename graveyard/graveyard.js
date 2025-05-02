@@ -510,9 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // BURY ENTRY MODAL - CONTRIBUTE TO THE GRAVEYARD ------------------------------------------------------------
     buryEntry.addEventListener('click', function() {
-        // Pause music when modal is opened
-        audio.pause();
-
         const modal = document.querySelector('.bury-modal');
         const form = modal.querySelector('.bury-modal-form');
         const closeButton = modal.querySelector('.bury-modal-close');
@@ -532,10 +529,6 @@ document.addEventListener('DOMContentLoaded', () => {
             textarea.style.display = 'block';
             closeButton.style.display = 'block';
             buryButton.style.display = 'block';
-            // Resume music when modal is closed
-            audio.play().catch(error => {
-                console.log('Audio playback failed:', error);
-            });
         });
 
         // Handle bury button click
@@ -562,9 +555,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     textarea.style.display = 'block';
                     closeButton.style.display = 'block';
                     buryButton.style.display = 'block';
-                    audio.play().catch(error => {
-                        console.log('Audio playback failed:', error);
-                    });
                 }, 5000);
             }
         });

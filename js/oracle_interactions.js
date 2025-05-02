@@ -7,6 +7,22 @@
 // document.addEventListener('touchstart', handleTouchStart, false);        
 // document.addEventListener('touchmove', handleTouchMove, false);
 
+// Make switchToPage available globally
+window.switchToPage = function(pageClass) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.add('hidden');
+        page.classList.remove('visible');
+    });
+    
+    // Show the target page
+    const targetPage = document.querySelector('.' + pageClass);
+    if (targetPage) {
+        targetPage.classList.remove('hidden');
+        targetPage.classList.add('visible');
+    }
+};
+
 const eightBallMessages = [
     "It is certain – go touch grass.",
     "It is decidedly so – go befriend a tree.",
@@ -33,22 +49,6 @@ const eightBallMessages = [
 let hasPermission = false;
 let hasTiltTriggered = false;
 
-function switchToPage(pageClass) {
-    // Hide all pages
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.add('hidden');
-        page.classList.remove('visible');
-    });
-    
-    // Show the target page
-    const targetPage = document.querySelector('.' + pageClass);
-    if (targetPage) {
-        targetPage.classList.remove('hidden');
-        targetPage.classList.add('visible');
-    }
-}
-
-// Initialize elements in a circle
 function initializeElements() {
     console.log('Initializing elements');
     const container = document.querySelector('.elements-container');
@@ -225,6 +225,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener for question input
     const questionInput = document.querySelector('.question-input');
     const permissionButton = document.querySelector('.permission-button');
+    const introButton = document.querySelector('.intro-button');
+    
+    // Add intro button click handler
+    if (introButton) {
+        console.log('Found intro button, adding click handler');
+        introButton.addEventListener('click', function() {
+            console.log('Intro button clicked');
+            switchToPage('question-page');
+        });
+    } else {
+        console.log('Intro button not found');
+    }
     
     if (questionInput) {
         // Handle input events
@@ -267,7 +279,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener for ask again button
     const askAgainBtn = document.querySelector('.ask-again-button');
     if (askAgainBtn) {
-        askAgainBtn.addEventListener('click', resetOracle);
+        askAgainBtn.addEventListener('click', function() {
+            // Clear the question input
+            const questionInput = document.querySelector('.question-input');
+            if (questionInput) {
+                questionInput.value = '';
+                // Hide the permission button since input is empty
+                const permissionButton = document.querySelector('.permission-button');
+                if (permissionButton) {
+                    permissionButton.classList.add('hidden');
+                }
+            }
+            resetOracle();
+        });
     }
 });
 
@@ -503,25 +527,5 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeMarkers();
     showContent();
 });
-
-// Update the switchToPage function
-function switchToPage(pageClass) {
-    console.log('Switching to page:', pageClass);
-    // Hide all pages
-    document.querySelectorAll('.page').forEach(page => {
-        page.classList.add('hidden');
-        page.classList.remove('visible');
-    });
-    
-    // Show the target page
-    const targetPage = document.querySelector('.' + pageClass);
-    if (targetPage) {
-        targetPage.classList.remove('hidden');
-        targetPage.classList.add('visible');
-        console.log('Page switched successfully:', pageClass);
-    } else {
-        console.log('Target page not found:', pageClass);
-    }
-}
 
 

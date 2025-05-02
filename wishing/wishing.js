@@ -45,7 +45,11 @@ function createAsciiRipple(x, y, color) {
     // ASCII ripple patterns - wave-like patterns
     const patterns = [
         '   ~   \n~.   ~\n     ~',
-        '   /.  ~.  \\\n/. ~.    ~  \\\n\\.   ~.      /\n  ~  ~~ ~'
+        '   /.  ~.  \\\n/. ~.    ~  \\\n\\.   ~.      /\n  ~  ~~ ~',
+        '  ○ ◌ ○  \n◌  ○  ◌\n○ ◌ ○',
+        ' ≈≈≈≈≈ \n≈≈≈≈≈≈≈\n ≈≈≈≈≈ ',
+        '  ∿∿∿  \n∿∿∿∿∿∿∿\n  ∿∿∿  ',
+        ' ≋≋≋≋≋ \n≋≋≋≋≋≋≋\n ≋≋≋≋≋ '
     ];
 
     let currentPattern = 0;
@@ -530,7 +534,7 @@ function createRipplingText(lines, startPosition = 20) {
         
 
         // Add slight delay before playing splash sound
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(resolve => setTimeout(resolve, 300));
         const splashSound = new Audio('/wishing/water splash.mp3');
         splashSound.volume = 0.2; // Set volume to 30%
         splashSound.play().catch(e => console.error('Error playing splash sound:', e));
