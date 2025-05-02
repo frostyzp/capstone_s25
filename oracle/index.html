@@ -10,18 +10,13 @@
 </head>
 <svg>
 	<defs>
-		<!-- <filter id="distort">
-			<feTurbulence baseFrequency="0.01 0.01" numOctaves="10" result="noise"  />
-			<feDisplacementMap in="SourceGraphic" in2="noise" scale="1" xChannelSelector="R" yChannelSelector="R">
-		</filter> -->
-
         <filter id="distort">
             <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise">
-                <animate attributeName="baseFrequency" 
+                <!-- <animate attributeName="baseFrequency" 
                         values="0.02;0.03" 
                         keyTimes="0;1"
                         dur="4s" 
-                        repeatCount="indefinite"/>
+                        repeatCount="indefinite"/> -->
             </feTurbulence>
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
         </filter>
@@ -57,14 +52,14 @@
                 </defs>
                 <path filter="url(#noise1)" d="M4.72352 255.849C4.72352 240.141 4.72352 224.432 4.72352 208.724C4.72352 192.279 4.94402 176.101 14.5365 161.941C19.2251 155.02 26.0751 149.539 29.3701 141.631C31.5816 136.323 33.1872 131.594 36.5587 126.911C39.6391 122.633 42.8312 121.061 46.8281 118.011C54.4552 112.19 61.1628 102.967 65.8264 94.6765C70.1355 87.016 82.6581 80.4306 89.332 75.2217C97.9595 68.488 105.895 61.1909 116.66 58.1631C123.569 56.22 130.42 55.2508 137.256 53.5419C152.103 49.8301 162.634 38.6362 175.196 30.721C189.567 21.665 204.166 13.3832 219.354 5.78919C226.968 1.98228 234.557 0.366224 243.145 1.22501C253.668 2.27733 264.957 11.747 272.755 18.3977C280.182 24.733 286.89 28.9385 292.038 37.4532C300.891 52.0935 299.634 71.8361 295.119 87.4309C293.464 93.1504 287.131 96.7475 283.595 101.295C280.951 104.693 283.024 107.028 283.024 110.651C283.024 124.557 282.564 138.526 281.199 152.356C280.251 161.951 281.155 168.816 284.85 177.573C291.378 193.048 290.213 209.725 290.213 226.182C290.213 241.336 291.177 256.78 288.159 271.71C286.647 279.192 284.908 287.006 278.916 292.248C271.656 298.601 263.678 299.458 254.327 300.521C238.021 302.374 219.125 302.552 202.809 300.92C194.308 300.07 185.979 297.007 177.592 295.443C165.683 293.223 153.361 293.846 141.307 293.846C118.466 293.846 96.436 301.074 73.9849 304.914C52.9319 308.515 30.3217 309.413 12.4826 295.329C5.89585 290.129 -3.86016 275.647 3.69658 267.145C6.52667 263.962 7.39245 253.998 5.75046 250.714" stroke="#4C484A" fill="none" stroke-width="1px"/>
             </svg>
-            <p class="intro-text">The rocks hold ancient wisdom, waiting to share their secrets with those who seek guidance.</p>
+            <p class="intro-text">the rocks hold ancient wisdom, waiting to share their secrets with those who seek guidance.</p>
             <button class="intro-button" onclick="switchToPage('question-page')">( ask for a reading )</button>
         </div>
     </div>
 
     <div class="question-page page hidden">
         <div class="question-content">
-            <p class="intro-text">Ask a yes / no question</p>
+            <p class="intro-text">ask a yes / no question</p>
             <textarea class="question-input" placeholder=". . . " autocorrect="on" autocapitalize="sentences" spellcheck="true" inputmode="text"></textarea>
             <button class="permission-button hidden" onclick="requestPermission()">( trust this rock )</button>
         </div>
@@ -75,14 +70,14 @@
             <!-- Elements will be dynamically added here -->
         </div>
 
-        <p class="oracle-instructions"> Pick an symbol </p>
+        <p class="oracle-instructions">choose the one that calls to you</p>
         <button class="continue-button hidden" onclick="initializeOracleAnswer(); switchToPage('oracle-answer-page')">( continue )</button>
 
 
     </div>
 
     <div class="oracle-answer-page page hidden">
-        <p class="oracle-instructions">Oscillate your vessel left and right to reveal your message</p>
+        <p class="oracle-instructions answer">slowly oscillate your vessel left and right to reveal your message</p>
         <div class="oracle-content">
             <div class="oracle_wrapper">
                 <div class="oracle_answer"></div>

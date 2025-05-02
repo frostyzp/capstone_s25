@@ -99,7 +99,8 @@ h2 {
 }
 
 .floating-dream {
-  filter: url(#wavy);
+  /* filter: url(#wavy); */
+  filter: url(#distort);
   transform: scale(1,3);
 
   font-family: 'EarthTone', serif !important;
@@ -141,7 +142,7 @@ h2 {
 
 .awakening-text {
   font-family: 'EarthTone', serif;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   text-align: center;
   color: rgba(214, 211, 197, 0.9);
   position: fixed;

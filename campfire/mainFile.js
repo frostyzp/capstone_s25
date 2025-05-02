@@ -222,7 +222,7 @@ function createDreamText() {
             width: 100%;
             text-align: ${randomAlignment};
             color: rgba(254, 239, 165, 0.9);
-            font-size: 1.2rem;
+            font-size: 1.35rem;
             transform: translateY(${index * 30}px) 
                        rotateY(${baseRotationY}deg) 
                        rotateX(${baseRotationX}deg) 
@@ -603,7 +603,6 @@ function handleBlink() {
     const currentTime = Date.now();
     const timeSinceLastBlink = currentTime - lastBlinkTime;
 
-    // Only process blinks if we're not in cooldown, not faded to black, and video is fully visible
     if (timeSinceLastBlink >= BLINK_COOLDOWN && !isFadedToBlack && canSpawnWords) {
         lastBlinkTime = currentTime;
         createBlinkEffect();
@@ -612,10 +611,16 @@ function handleBlink() {
     }
 }
 
-function swapRandomDivPositions(mainText, percent = 0.4) {
+function swapRandomDivPositions(mainText, percent = 0.2) {
     const allElements = Array.from(mainText);
     const total = allElements.length;
-    if (total < 2) return; // Not enough elements to swap
+    console.log('Total elements found:', total);
+    if (total < 2) {
+        console.log('Not enough elements to swap');
+        return;
+    }
+
+    // console.log('swapping');
 
     const numToSwap = Math.max(1, Math.floor(total * percent));
     const selectedIndices = new Set();
@@ -645,31 +650,16 @@ function swapRandomDivPositions(mainText, percent = 0.4) {
 window.createBlinkEffect = function() {
     console.log('Creating blink effect');
     const video = document.querySelector('video');
-    const mainText = document.querySelectorAll('.mainText, .floating-dream');
-    if (!video || !mainText || !canSpawnWords) return;
+    const mainText = document.querySelectorAll('.dream-container');
+    console.log('Found video:', !!video);
+    console.log('Found mainText elements:', mainText.length);
+    console.log('canSpawnWords:', canSpawnWords);
+    
+    // if (!video || !mainText || !canSpawnWords) return;
 
-    // video.style.transition = 'opacity 0.2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
-    // mainText.forEach(text => {
-    //     text.style.transition = 'all 0.2s cubic-bezier(0.215, 0.610, 0.355, 1.000)';
-    //     // Reset blur to 1px
-    //     text.style.filter = 'blur(1px)';
-    //     // Clear and restart blur animation
-    //     if (text.dataset.blurInterval) {
-    //         clearInterval(parseInt(text.dataset.blurInterval));
-    //         let blurValue = 1;
-    //         const blurInterval = setInterval(() => {
-    //             blurValue += 0.1;
-    //             text.style.filter = `blur(${blurValue}px)`;
-    //             if (blurValue >= 3) {
-    //                 clearInterval(blurInterval);
-    //             }
-    //         }, 1000);
-    //         text.dataset.blurInterval = blurInterval;
-    //     }
-    // });
-    video.style.opacity = '0.85';
+    video.style.opacity = '0.9';
+    // console.log('video.style.opacity', video.style.opacity);
 
-    // Swap 20% of div positions
     swapRandomDivPositions(mainText, 0.2);
 
     setTimeout(() => {

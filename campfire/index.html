@@ -38,6 +38,21 @@
         </defs>
     </svg>
 
+    <svg>
+        <defs>
+              <filter id="distort">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise">
+                      <animate attributeName="baseFrequency" 
+                              values="0.02;0.05" 
+                              keyTimes="0;1"
+                              dur="4s" 
+                              repeatCount="indefinite"/>
+                  </feTurbulence>
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+              </filter>
+        </defs>
+      </svg>
+
     <!-- JavaScript Files -->
     <script src="sketch.js"></script>
     <script src="landmarks.js"></script>

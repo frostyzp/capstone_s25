@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const graveyardMain = document.getElementsByClassName('graveyardMain')[0];
     const introText = document.querySelector('.intro-text');
     const enterText = document.getElementById('enter');
+    const mainTitle = document.querySelector('.main-title');
+
     const asciiElements = [
         "I miss you everyday baby...",
         "Thank you for checking on me, everything will be alright. Have a great evening and see you tomorrow.",
@@ -268,7 +270,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Direct text update without typewriter
                 const revealedText = content.substring(0, revealAmount);
                 const remainingAscii = asciiCover.substring(revealAmount);
-                this.textContent = revealedText + remainingAscii;
+                
+                // Create a span for the revealed text with glow effect
+                const revealedSpan = document.createElement('span');
+                revealedSpan.textContent = revealedText;
+                revealedSpan.style.textShadow = '0 0 10px white, 0 0 20px white, 0 0 30px white';
+                revealedSpan.style.zIndex = '1000';
+                
+                // Create a span for the remaining ASCII
+                const asciiSpan = document.createElement('span');
+                asciiSpan.textContent = remainingAscii;
+                
+                // Clear and update content
+                this.innerHTML = '';
+                this.appendChild(revealedSpan);
+                this.appendChild(asciiSpan);
             });
 
             contentDiv.addEventListener('mouseleave', function() {
@@ -473,6 +489,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (graveyardCount) {
             graveyardCount.style.transition = 'opacity 2s ease-in-out';
             graveyardCount.style.opacity = '0';
+        }
+
+        if (mainTitle) {
+            mainTitle.style.transition = 'opacity 1s ease-in-out';
+            mainTitle.style.opacity = '0';
         }
 
         // Use requestAnimationFrame for smoother transitions

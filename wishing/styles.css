@@ -115,6 +115,7 @@ p, span, div, button {
 
 #landingPageButton {
     background-color: transparent;
+    color: black;
     border: none;
     font-size: 16px;
     margin-top: 20px;
@@ -894,30 +895,12 @@ canvas {
     will-change: transform;
 }
 
-/* Mobile-specific optimizations */
-@media (max-width: 768px) {
-    .filter-container {
-        /* Reduce the filter effect on mobile */
-        /* filter: url(#ripple-displacement) brightness(1.1); */
-    }
-    
-    .lineElement {
-        /* Optimize transitions for mobile */
-        transition: opacity 0.8s ease-out, transform 0.8s ease;
-    }
-
-    .landing-svg {
-        width: 90%;
-        max-width: 300px;
-    }
-}
-
 /* Remove the individual element filters */
 .lineElement {
     filter: url(#distort);
 
     position: absolute;
-    font-family: 'VictorMono', monospace;
+    font-family: 'EarthTone', monospace;
     font-size: 16px;
     color: white;
     transition: opacity 1s ease-out, width 1s ease, transform 10s ease;
