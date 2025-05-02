@@ -17,11 +17,11 @@
 
         <filter id="distort">
             <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="1" result="noise">
-                <animate attributeName="baseFrequency" 
+                <!-- <animate attributeName="baseFrequency" 
                         values="0.02;0.03" 
                         keyTimes="0;1"
                         dur="4s" 
-                        repeatCount="indefinite"/>
+                        repeatCount="indefinite"/> -->
             </feTurbulence>
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G"/>
         </filter>
@@ -82,14 +82,14 @@
     </div>
 
     <div class="oracle-answer-page page hidden">
-        <p>Tilt your vessel left and right to reveal your message</p>
+        <p class="oracle-instructions">Oscillate your vessel left and right to reveal your message</p>
         <div class="oracle-content">
             <div class="oracle_wrapper">
                 <div class="oracle_answer"></div>
             </div>
         </div>
         <!-- <button class="debug-reveal-button">Reveal All</button> -->
-        <!-- <button class="ask-again-button"> ( ask again</button> -->
+        <button class="ask-again-button" onclick="switchToPage('question-page')"> ( ask the rock again )</button>
     </div>
     
     <script>

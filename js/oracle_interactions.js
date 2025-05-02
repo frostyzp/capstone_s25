@@ -138,20 +138,25 @@ function handleOrientation(event) {
         const type = word.dataset.type;
         const isFirstPart = type === 'first';
         
-        if (gamma < -15 && isFirstPart) {
+        if (gamma < -15 && isFirstPart && !hasTiltTriggered) {
             // Tilt left - reveal next first part word
             if (index === revealedWords.left * 2) {
                 word.style.opacity = '1';
                 word.classList.add('oracleFadeIn');
                 revealedWords.left++;
+                hasTiltTriggered = true;
             }
-        } else if (gamma > 15 && !isFirstPart) {
+        } else if (gamma > 15 && !isFirstPart && !hasTiltTriggered) {
             // Tilt right - reveal next second part word
             if (index === (revealedWords.right * 2) + 1) {
                 word.style.opacity = '1';
                 word.classList.add('oracleFadeIn');
                 revealedWords.right++;
+                hasTiltTriggered = true;
             }
+        } else if (Math.abs(gamma) < 10) {
+            // Reset tilt trigger when device is back to neutral position
+            hasTiltTriggered = false;
         }
     });
 }

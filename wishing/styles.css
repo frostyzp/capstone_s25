@@ -276,6 +276,7 @@ canvas {
 #ripple-1 span, #ripple-2 span, #ripple-3 span {
     display: inline-block;
     transition: opacity 0.5s ease-in-out;
+    filter: url(#distort);
 }
 
 /* ----- WORD STYLING (FROM WISHING.JS) ----- */
@@ -495,6 +496,7 @@ button {
     z-index: -3; /* Change color as needed */
     opacity: 0.2; /* Change color as needed */
     padding-bottom: 100px; /* Change color as needed */
+    filter: url(#distort);
 }
 
 /* ----- SKIPPING ROCK STYLES ----- */
@@ -875,7 +877,7 @@ canvas {
     top: 0;
     pointer-events: none;
     z-index: 2;
-    filter: url(#ripple-displacement);
+    filter: url(#distort);
 }
 
 .filter-container {
@@ -884,7 +886,6 @@ canvas {
     left: 0;
     width: 100%;
     height: 100%;
-    /* filter: url(#ripple-displacement); */
     /* Add hardware acceleration */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
@@ -895,7 +896,7 @@ canvas {
 @media (max-width: 768px) {
     .filter-container {
         /* Reduce the filter effect on mobile */
-        filter: url(#ripple-displacement) brightness(1.1);
+        /* filter: url(#ripple-displacement) brightness(1.1); */
     }
     
     .lineElement {
@@ -911,6 +912,8 @@ canvas {
 
 /* Remove the individual element filters */
 .lineElement {
+    filter: url(#distort);
+
     position: absolute;
     font-family: 'VictorMono', monospace;
     font-size: 16px;
@@ -918,7 +921,6 @@ canvas {
     transition: opacity 1s ease-out, width 1s ease, transform 10s ease;
     z-index: 3;
     transform: scale(1);
-    /* Remove the filter from here */
 }
 
 /* Fallback for browsers that don't support SVG filters */

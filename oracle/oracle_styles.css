@@ -15,8 +15,8 @@ body {
     height: 100vh;
     width: 100vw;
     overflow: hidden;
-    background-color: #222222;
-    color: #ffffff;
+    background-color: #b1b1b1;
+    color: #333333;
     font-family: 'VictorMono', 'Courier New', monospace;
     display: flex;
     flex-direction: column;
@@ -24,8 +24,8 @@ body {
     justify-content: center;
     transition: background-color 0.5s ease-out;
     font-size: 1rem;
-    filter: url(#distort);
-    background-image: linear-gradient(rgba(53, 53, 53, 0.97), rgba(40, 40, 40, 0.97)), url('rock_pattern.png');
+    /* filter: url(#distort); */
+    background-image: linear-gradient(rgba(182, 177, 177, 0.98), rgba(182, 179, 179, 0.99)), url('rock_pattern.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -39,7 +39,7 @@ body {
     transform: translateX(-50%);
     /* font-family: 'EarthTone', monospace; */
     font-size: 1rem;
-    color: white;
+    color: #333333;
     z-index: 1000;
     opacity: 0.8;
     transition: opacity 0.3s ease;
@@ -62,7 +62,6 @@ p, span, div, button {
 .visible {
     display: block;
     opacity: 1;
-    animation-delay: 1s;
 }
 
 .hidden {
@@ -80,13 +79,13 @@ p, span, div, button {
 }
 
 .oracle-instructions {
-    position: fixed;
+    /* position: fixed; */
     font-family: 'EarthTone', serif;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    /* top: 50%; */
+    /* left: 50%; */
+    /* transform: translate(-50%, -50%); */
     font-size: 1.2rem;
-    color: #808080;
+    color: #333333;
     text-align: center;
     width: 80%;
     max-width: 600px;
@@ -114,7 +113,7 @@ p, span, div, button {
 /* Base button styles */
 button {
     background-color: transparent;
-    color: white;
+    color: #333333;
     text-align: center;
     font-family: 'VictorMono', 'Courier New', monospace;
     border: none;
@@ -143,7 +142,7 @@ button:hover {
 .permission-button button {
     font-size: 1.2rem;
     background-color: transparent;
-    color: rgb(194, 194, 194);
+    color: #333333;
     border: none;
     cursor: pointer;
     transition: opacity 0.5s ease;
@@ -193,7 +192,7 @@ button:hover {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    color: #fff;
+    color: #333333;
     font-size: 18px;
     text-align: center;
     opacity: 1;
@@ -209,9 +208,10 @@ button:hover {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
+    width: 100%;
     background: transparent;
-    border: 1px solid #fff;
-    color: #fff;
+    /* border: 1px solid #fff; */
+    color: #b4b4b4;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -228,8 +228,20 @@ button:hover {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    background: #000;
+    background-image: linear-gradient(rgba(19, 19, 19, 0.98), rgba(10, 10, 10, 0.99)), url('rock_pattern.png');
     transition: background-color 0.3s ease;
+    animation: oraclePageFadeIn 1.2s ease-out forwards;
+}
+
+@keyframes oraclePageFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Add smooth transitions for page switching */
@@ -239,7 +251,7 @@ button:hover {
     left: 0;
     width: 100%;
     height: 100%;   
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
     opacity: 0;
     visibility: hidden;
     display: flex;
@@ -254,42 +266,30 @@ button:hover {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    display: none;
 }
 
 .page.visible {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    display: flex;
 }
 
 /* Oracle answer */
 .oracle_answer {
     font-family: 'VictorMono', 'Courier New', monospace;
     font-size: 1.2rem;
-    color: #ffffff;
+    color: #333333;
     text-align: center;
     padding: 20px;
-    width: 100%;
+    width: 100%;    
     box-sizing: border-box;
     word-wrap: break-word;
-}
-
-.oracle-answer-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: #000;
-    transition: background-color 0.3s ease;
 }
 
 /* Rotation counter */
 .rotation-counter {
     font-family: 'VictorMono', 'Courier New', monospace;
-    color: #808080;
+    color: #333333;
     margin-bottom: 20px;
     text-align: center;
     opacity: 0;
@@ -339,31 +339,29 @@ button:hover {
 }
 
 /* Add animation delay for each element */
-.element:nth-child(1) { animation-delay: 0.5s; }
-.element:nth-child(2) { animation-delay: 1s; }
-.element:nth-child(3) { animation-delay: 1.5s; }
-.element:nth-child(4) { animation-delay: 2s; }
-.element:nth-child(5) { animation-delay: 2.5s; }
-.element:nth-child(6) { animation-delay: 3s; }
-.element:nth-child(7) { animation-delay: 3.5s; }
-.element:nth-child(8) { animation-delay: 4s; }
-.element:nth-child(9) { animation-delay: 4.5s; }
-.element:nth-child(10) { animation-delay: 5s; }
+.element:nth-child(1) { animation-delay: 0.2s; }
+.element:nth-child(2) { animation-delay: 0.4s; }
+.element:nth-child(3) { animation-delay: 0.6s; }
+.element:nth-child(4) { animation-delay: 0.8s; }
+.element:nth-child(5) { animation-delay: 1.0s; }
+.element:nth-child(6) { animation-delay: 1.2s; }
+.element:nth-child(7) { animation-delay: 1.4s; }
+.element:nth-child(8) { animation-delay: 1.6s; }
+.element:nth-child(9) { animation-delay: 1.8s; }
+.element:nth-child(10) { animation-delay: 2.0s; }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
 .element:hover {
     transform: scale(1.1);
-    color: #ffffff;
+    color: #2f2f2f;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
@@ -375,7 +373,7 @@ button:hover {
 
 /* Text styles */
 .intro-text {
-    color: #bebebe;
+    color: #333333;
     opacity: 1;
     font-family: 'EarthTone', serif;
     padding: 0 3rem;
@@ -558,7 +556,7 @@ p {
 }
 
 .intro-svg path {
-    stroke: #4C484A;
+    stroke: #828282;
     stroke-width: 3px;
 }
 
@@ -596,7 +594,7 @@ p {
     background: rgba(255, 255, 255, 0.1);
     border: 1px dashed rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    color: #ffffff;
+    color: #141414;
     font-family: 'VictorMono', 'Courier New', monospace;
     font-size: 1rem;
     resize: none;
@@ -637,7 +635,7 @@ p {
     font-family: 'VictorMono', 'Courier New', monospace;
     background: transparent;
     border: none;
-    color: #ffffff;
+    color: #171717;
     padding: 15px 30px;
     cursor: pointer;
     transition: opacity 0.5s ease;
