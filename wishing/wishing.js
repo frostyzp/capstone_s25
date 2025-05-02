@@ -173,6 +173,41 @@ async function loadWishes() {
     }
 }
 
+// Function to format date as 2025-05-DD
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    return `2025-05-${day}`;
+}
+
+// Function to update the wishes list in the modal
+async function updateWishesList() {
+    try {
+        const wishes = await loadWishes();
+        const wishesList = document.getElementById('wishes-list');
+        if (!wishesList) return;
+
+        // Clear existing wishes
+        wishesList.innerHTML = '';
+
+        // Add each wish to the list
+        wishes.forEach(wish => {
+            const wishElement = document.createElement('div');
+            wishElement.className = 'wish-item';
+            wishElement.innerHTML = `
+                <p class="wish-text">${wish.wish}</p>
+                <div class="wish-meta">
+                    <span class="wish-date">${formatDate(wish.date)}</span>
+                    <span class="wish-skips">${wish.skips} skips</span>
+                </div>
+            `;
+            wishesList.appendChild(wishElement);
+        });
+    } catch (error) {
+        console.error('Error updating wishes list:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM Content Loaded');
     
@@ -474,13 +509,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>`;
     }
 
-    function formatDate(date) {
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        const yy = String(date.getFullYear()).slice(-2);
-        return `${mm}/${dd}/${yy}`;
-    }
-
     function addWishToList(wishText) {
         const today = new Date();
         const wish = {
@@ -555,7 +583,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             wishes.unshift(newWish);
             currentWishIndex = 0;
             updateWishesList();
-            switchToPage('first-page');
+            switchToPage('thirdPage');
         });
     }
 

@@ -229,19 +229,28 @@ function enableOrientationFeatures() {
 
  // Function to switch pages
  function switchToPage(pageClass) {
+    // Hide all pages
     document.querySelectorAll('.page').forEach(page => {
-      page.classList.add('hidden');
-      page.classList.remove('visible');
+        if (page) {
+            page.classList.add('hidden');
+            page.classList.remove('visible');
+        }
     });
     
-    document.querySelector('.' + pageClass).classList.remove('hidden');
-    document.querySelector('.' + pageClass).classList.add('visible');
-  }
-  
-  // Add event listener to transition to second page
-  document.getElementById('landingPageButton').addEventListener('click', function() {
+    // Show the requested page
+    const targetPage = document.querySelector('.' + pageClass);
+    if (targetPage) {
+        targetPage.classList.remove('hidden');
+        targetPage.classList.add('visible');
+    } else {
+        console.error('Page not found:', pageClass);
+    }
+}
+
+// Add event listener to transition to second page
+document.getElementById('landingPageButton')?.addEventListener('click', function() {
     switchToPage('secondPage');
-  });
+});
   
 
   const gridContainer = document.createElement('div'); // Changed to 'div' for proper element creation
