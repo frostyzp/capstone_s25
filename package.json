@@ -1,0 +1,26 @@
+{
+  "name": "capstone_s25",
+  "version": "1.0.0",
+  "main": "mainWeb.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frostyzp/capstone_s25.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/frostyzp/capstone_s25/issues"
+  },
+  "homepage": "https://github.com/frostyzp/capstone_s25#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mongoose": "^8.14.1"
+  }
+}

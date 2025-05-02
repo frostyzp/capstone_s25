@@ -24,26 +24,25 @@ window.switchToPage = function(pageClass) {
 };
 
 const eightBallMessages = [
-    "It is certain – go touch grass.",
-    "It is decidedly so – go befriend a tree.",
-    "Without a doubt – go lie on the grass and stare at the sky.",
-    "Yes, definitely – go hug a tree.",
+    "It is certain – go console a rock.",
+    "It is decidedly so – go adopt a rock.",
+    "Rock on – go lie on the grass and stare at the sky.",
+    "Yes, definitely – go hug a rock.",
     "You may rely on it – take a deep breath of fresh air.",
-    "As I see it, yes – listen to the wind in the leaves.",
-    "Most likely – follow a butterfly.",
-    "Outlook good – go chase the sun.",
-    "Yes – listen to the oceanwaves.",
+    "As the rocks see it, yes – listen to the wind in the rocks.",
+    "Most likely – follow a a path of rocks.",
+    "Outlook good – go find a rock to sit on.",
+    "Yes – listen to the sound of rocks.",
     "Signs point to yes – dip your feet in a stream.",
     "Reply hazy, try again – let the breeze decide.",
     "Ask again later – take a walk until you forget the question.",
-    "Better not tell you now – look at the clouds above you instead.",
-    "Cannot predict now – wait for the wind's answer.",
-    "Concentrate and ask again – but first, touch the earth.",
+    "Better not tell you now – observe at the rocks below you instead.",
+    "Concentrate and ask again – but first, touch some rocks.",
     "Don't count on it – go count some clouds instead.",
-    "My reply is no – go watch the waves crash.",
-    "My sources say no – go touch some tree bark.",
-    "Outlook not so good – plant something and see what grows.",
-    "Very doubtful – go listen to the birds anyway."
+    "My reply is no – go listen to some (rock) music.",
+    "The rock sources say no – go touch some tree bark.",
+    "Outlook a little rocky – go touch some rocks.",
+    "Very doubtful – throw a rock into the sky."
 ];
 
 let hasPermission = false;
@@ -319,7 +318,7 @@ const elements = [
         symbol: `  _\\|/_
    /|\\ 
   / | \\
- /  |  \\
+ / x o x \\
 /___|___\\`, 
         name: 'grass' 
     },

@@ -79,48 +79,101 @@ function createAsciiRipple(x, y, color) {
 }
 
 // Define mock data and state variables globally
-const mockWishes = [
-    {
-        wish: "I dream of a treehouse where birds sing ancient melodies, feelings of wonder",
-        skips: 13,
-        date: "4/20/25"
-    },
-    {
-        wish: "I dream of a garden where time stands still, feelings of peace", 
-        skips: 17,
-        date: "4/21/25"
-    },
-    {
-        wish: "I dream of a cloud where rainbows are born, feelings of joy",
-        skips: 29,
-        date: "4/22/25"
-    },
-    {
-        wish: "I dream of a moonlit lake where stars dance on ripples, feelings of serenity",
-        skips: 14,
-        date: "4/23/25"
-    },
-    {
-        wish: "I dream of a forest clearing where fireflies paint stories, feelings of magic",
-        skips: 24,
-        date: "4/24/25"
-    },
-    {
-        wish: "I dream of a barn peak where winds talk like cows, feelings of freedom",
-        skips: 13,
-        date: "4/25/25"
-    },
-    {
-        wish: "I dream of a hidden cave where crystals hold memories, feelings of mystery",
-        skips: 3,
-        date: "4/26/25"
-    }
-];
+// const mockWishes = [
+//     {
+//         wish: "I dream of a treehouse where birds sing opera, feelings of wonder",
+//         skips: 13,
+//         date: "4/20/25"
+//     },
+//     {
+//         wish: "I dream of a garden where time stands still, feelings of peace", 
+//         skips: 17,
+//         date: "4/21/25"
+//     },
+//     {
+//         wish: "I dream of a cloud where rainbows are born, feelings of joy",
+//         skips: 29,
+//         date: "5/2/25"
+//     },
+//     {
+//         wish: "I dream of a moonlit lake where i walk on water, feelings of serenity",
+//         skips: 14,
+//         date: "5/1/25"
+//     },
+//     {
+//         wish: "I dream of a forest clearing where fireflies form constellations, feelings of magic",
+//         skips: 24,
+//         date: "5/2/25"
+//     },
+//     {
+//         wish: "I dream of a barn peak where winds moo like cows, feelings of freedom",
+//         skips: 13,
+//         date: "5/1/25"
+//     },
+//     {
+//         wish: "I dream of a hidden cave where i can hide from the world, feelings of isolation",
+//         skips: 3,
+//         date: "5/2/25"
+//     },
+//     {
+//         wish: "I dream of a misty meadow where wildflowers whisper secrets, feelings of enchantment",
+//         skips: 8,
+//         date: "5/1/25"
+//     },
+//     {
+//         wish: "I dream of a coastal cliff where waves tell ancient tales, feelings of awe",
+//         skips: 11,
+//         date: "5/2/25"
+//     }
+// ];
 
 let currentWishIndex = 0;
-let wishes = [...mockWishes];
+let wishes = [];
 
-document.addEventListener('DOMContentLoaded', () => {
+// Update the submitWish function to use the API
+async function submitWish(wishText) {
+    try {
+        const response = await fetch('http://localhost:3000/api/wishes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ wish: wishText })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to submit wish');
+        }
+        
+        const newWish = await response.json();
+        return newWish;
+    } catch (error) {
+        console.error('Error submitting wish:', error);
+        // Fallback to mock data if API fails
+        return {
+            wish: wishText,
+            skips: Math.floor(Math.random() * 50) + 1,
+            date: new Date().toISOString()
+        };
+    }
+}
+
+// Use this function to fetch wishes from the backend
+async function loadWishes() {
+    try {
+        const response = await fetch('http://localhost:3000/api/wishes');
+        if (!response.ok) {
+            throw new Error('Failed to load wishes');
+        }
+        const wishes = await response.json();
+        return wishes;
+    } catch (error) {
+        console.error('Error loading wishes:', error);
+        return []; // Return empty array if fetch fails
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOM Content Loaded');
     
     // Initialize background music
@@ -490,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Form submission handler
     if (submitButton) {
-        submitButton.addEventListener('click', () => {
+        submitButton.addEventListener('click', async () => {
             if (!areAllInputsFilled()) return; // Double check before submission
             
             const input1 = document.getElementById('wish-input-1').value;
@@ -498,10 +551,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const input3 = document.getElementById('wish-input-3').value;
             
             const wishText = `I dream of a ${input1} where ${input2} feelings of ${input3}`;
-            addWishToList(wishText);
-            switchToPage('thirdPage');
+            const newWish = await submitWish(wishText);
+            wishes.unshift(newWish);
+            currentWishIndex = 0;
+            updateWishesList();
+            switchToPage('first-page');
         });
     }
+
+    // Update the initialization to load wishes from API
+    wishes = await loadWishes();
+    updateWishesList();
 });
 
 function createRipplingText(lines, startPosition = 20) {
