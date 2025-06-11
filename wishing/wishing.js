@@ -283,23 +283,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Start the throw animation
             rock.classList.add('throwing');
             
-            // After throw animation completes, wait 3 seconds then fade in
+            // After throw animation completes, wait 3 seconds then fade in and reset position
             setTimeout(() => {
                 rock.classList.remove('throwing');
                 rock.classList.add('reappearing');
-                
-                // Don't remove the reappearing class - let it stay visible
-                // The next swipe will reset it anyway
+                rock.style.opacity = '1';
+                // Ensure the rock is visible and ready for the next throw
             }, 3000);
             
             const { lines } = generateSimplePoem(storedUserInput);
             console.log('Generated lines:', lines);
             
             // Calculate starting position based on velocity and distance
-            const basePosition = 5; // Base starting position (5% from bottom)
-            const velocityFactor = Math.min(Math.max(swipeVelocity * 500, -10), 20);
-            const distanceFactor = Math.min(swipeDistance / 20, 20);
-            const startPosition = basePosition + velocityFactor + distanceFactor;
+            let startPosition;
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                // Mobile/touch: use velocity/distance logic
+                const basePosition = 5;
+                const velocityFactor = Math.min(Math.max(velocityY * 500, -10), 20);
+                const distanceFactor = 10;
+                startPosition = basePosition + velocityFactor + distanceFactor;
+                if (startPosition < 50) startPosition = 50;
+            } else {
+                // Desktop: always start near the middle
+                startPosition = 55;
+            }
             
             console.log('Text starting position:', startPosition);
             
@@ -370,8 +377,40 @@ document.addEventListener('DOMContentLoaded', async () => {
         rock.classList.remove('dragging');
 
         // Check if velocity is high enough for a "fling"
-        if (velocityY < -1.5) { // Negative velocity means upward movement
-            // handleRockThrow();
+        if (velocityY < -0.15) { // Negative velocity means upward movement
+            // Play ocean sound
+            const oceanSound = new Audio('/wishing/ocean.mp3');
+            oceanSound.play().catch(e => console.error('Error playing sound:', e));
+
+            // Animate the rock
+            rock.classList.remove('throwing', 'reappearing');
+            void rock.offsetWidth;
+            rock.classList.add('throwing');
+
+            // After throw animation completes, wait 3 seconds then fade in and reset position
+            setTimeout(() => {
+                rock.classList.remove('throwing');
+                rock.classList.add('reappearing');
+                rock.style.opacity = '1';
+                // Ensure the rock is visible and ready for the next throw
+            }, 3000);
+
+            // Generate and animate a new poem
+            const { lines } = generateSimplePoem(storedUserInput);
+            // Calculate starting position based on velocity
+            let startPosition;
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                // Mobile/touch: use velocity/distance logic
+                const basePosition = 5;
+                const velocityFactor = Math.min(Math.max(velocityY * 500, -10), 20);
+                const distanceFactor = 10;
+                startPosition = basePosition + velocityFactor + distanceFactor;
+                if (startPosition < 50) startPosition = 50;
+            } else {
+                // Desktop: always start near the middle
+                startPosition = 55;
+            }
+            createRipplingText(lines.slice(0, 7), startPosition);
         }
     }
 
@@ -568,7 +607,6 @@ function createRipplingText(lines, startPosition = 20) {
         lineElement.className = 'lineElement'; // Add class for textillate
         lineElement.textContent = line;
         
-
         // Add slight delay before playing splash sound
         await new Promise(resolve => setTimeout(resolve, 300));
         const splashSound = new Audio('/wishing/water splash.mp3');
@@ -583,17 +621,30 @@ function createRipplingText(lines, startPosition = 20) {
         const width = 80 - (lineIndex * 8); // Each line is 8% narrower
         
         // Calculate line position
-        const bottomPosition = startPosition + lineIndex * 4;
+        let bottomPosition = startPosition + lineIndex * 4;
+        // Desktop: add random vertical offset between 0 and 50px
+        let verticalOffset = 0;
+        if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            verticalOffset = Math.random() * 50; // 0 to 50px
+        }
         
-        // Randomly choose left or right alignment with varying offsets
-        const isLeft = Math.random() < 0.5;
-        const randomOffset = Math.random() * 20; // Random offset between 0 and 20%
-        const leftPosition = isLeft ? randomOffset : (100 - randomOffset - width);
+        // Desktop: randomize x position between 40% and 60% of vw
+        let leftPosition;
+        let isLeft;
+        if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+            leftPosition = 40 + Math.random() * 20; // 40% to 60%
+            isLeft = true; // Center-ish
+        } else {
+            // Mobile: keep original random left/right logic
+            isLeft = Math.random() < 0.5;
+            const randomOffset = Math.random() * 20; // Random offset between 0 and 20%
+            leftPosition = isLeft ? randomOffset : (100 - randomOffset - width);
+        }
         
         lineElement.style.cssText = `
             position: absolute;
             left: ${leftPosition}%;
-            bottom: ${bottomPosition}%;
+            bottom: calc(${bottomPosition}% + ${verticalOffset}px);
             text-align: ${isLeft ? 'left' : 'right'};
             width: ${width}%;
             opacity: 0;
